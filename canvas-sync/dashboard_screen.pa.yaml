@@ -1,11 +1,3 @@
-# ************************************************************************************************
-# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
-# Use the maker portal to create and edit your Power Apps.
-# 
-# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
-# 
-# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
-# ************************************************************************************************
 Screens:
   dashboard_screen:
     Properties:
@@ -115,7 +107,7 @@ Screens:
           )
     Children:
       - dbd_root:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -125,7 +117,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - dbd_topbar:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -141,7 +133,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - dbd_brand_container:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -157,7 +149,7 @@ Screens:
                         Width: =fxDbdSidebarWidth + (fxDbdPagePadding * 2)
                       Children:
                         - dbd_logo:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(255, 255, 255, 1)
@@ -177,7 +169,7 @@ Screens:
                               Text: ="KESSEL"
                               Width: =32
                         - dbd_topbar_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(18, 31, 52, 1)
                               FillPortions: =1
@@ -192,7 +184,7 @@ Screens:
                               Text: =fxTranslate("ItServicePortal", "IT Service Portal")
                               Wrap: =false
                   - dbd_header_spacer:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: ManualLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -200,7 +192,7 @@ Screens:
                         LayoutMinHeight: =0
                         LayoutMinWidth: =0
                   - dbd_header_actions:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -215,7 +207,7 @@ Screens:
                         Width: =364
                       Children:
                         - dbd_language_selector:
-                            Control: ModernDropdown@1.0.2
+                            Control: ModernDropdown
                             Properties:
                               AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
                               Default: |-
@@ -227,7 +219,7 @@ Screens:
                               OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
                               Width: =72
                         - dbd_notification_button_frame:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: ManualLayout
                             Properties:
                               AlignInContainer: =AlignInContainer.Center
@@ -243,7 +235,7 @@ Screens:
                               Width: =36
                             Children:
                               - dbd_notifications:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ShowNotifications", "Benachrichtigungen anzeigen")
                                     Appearance: =ButtonAppearance.Transparent
@@ -267,7 +259,7 @@ Screens:
                                     Tooltip: =fxTranslate("ShowNewComments", "Neue Kommentare anzeigen")
                                     Width: =36
                               - dbd_notification_badge:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     Color: =RGBA(255, 255, 255, 1)
@@ -289,7 +281,7 @@ Screens:
                                     X: =20
                                     Y: =-2
                         - dbd_user_menu:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -309,7 +301,7 @@ Screens:
                               Width: =132
                             Children:
                               - dbd_avatar:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     Color: =RGBA(87, 35, 129, 1)
@@ -329,7 +321,7 @@ Screens:
                                     Text: =Upper(Left(fxCurrentUser.FullName, 2))
                                     Width: =32
                               - dbd_user_name:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(35, 39, 47, 1)
                                     FillPortions: =1
@@ -346,7 +338,7 @@ Screens:
                                     Width: =58
                                     Wrap: =false
                         - dbd_refresh:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("RefreshDashboard", "Dashboard aktualisieren")
                               Appearance: =ButtonAppearance.Transparent
@@ -374,7 +366,7 @@ Screens:
                               Tooltip: =fxTranslate("RefreshDashboard", "Dashboard aktualisieren")
                               Width: =36
             - dbd_header_divider:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: ManualLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -385,7 +377,7 @@ Screens:
                   LayoutMinWidth: =0
                   Width: =Parent.Width
             - dbd_shell:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -398,7 +390,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - dbd_sidebar:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -412,7 +404,7 @@ Screens:
                         Width: =fxDbdSidebarWidth
                       Children:
                         - dbd_nav_create:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               BasePaletteColor: =RGBA(87, 35, 129, 1)
@@ -428,7 +420,7 @@ Screens:
                               Text: =fxTranslate("CreateTicket", "Ticket erstellen")
                               Width: =Parent.Width
                         - dbd_sidebar_nav_divider:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: ManualLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -439,7 +431,7 @@ Screens:
                               LayoutMinWidth: =0
                               Width: =Parent.Width
                         - dbd_sidebar_panel:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -454,7 +446,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - dbd_search_box:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(205, 205, 212, 1)
@@ -477,7 +469,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - dbd_search_icon:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AlignInContainer: =AlignInContainer.Stretch
                                           Appearance: =ButtonAppearance.Subtle
@@ -488,7 +480,7 @@ Screens:
                                           LayoutMinWidth: =0
                                           Width: =32
                                     - dbd_inp_search:
-                                        Control: ModernTextInput@1.1.1
+                                        Control: ModernTextInput
                                         Properties:
                                           AlignInContainer: =AlignInContainer.Stretch
                                           Appearance: =Appearance.FilledLighter
@@ -503,7 +495,7 @@ Screens:
                                           Size: =12
                                           TriggerOutput: =TriggerOutput.Delayed
                               - dbd_filter_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(100, 100, 110, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -519,7 +511,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - dbd_status_filter_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(70, 70, 80, 1)
@@ -535,7 +527,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - dbd_status_filter:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Appearance: =Appearance.FilledLighter
@@ -574,7 +566,7 @@ Screens:
                                       Set(varDbdShowSaveView, false)
                                     Width: =Parent.Width
                               - dbd_ticket_type_filter_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(70, 70, 80, 1)
@@ -590,7 +582,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - dbd_ticket_type_filter:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Appearance: =Appearance.FilledLighter
@@ -631,7 +623,7 @@ Screens:
                                       Set(varDbdShowSaveView, false)
                                     Width: =Parent.Width
                               - dbd_scope_filter_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(70, 70, 80, 1)
@@ -648,7 +640,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - dbd_scope_filter:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Appearance: =Appearance.FilledLighter
@@ -685,7 +677,7 @@ Screens:
                                     Visible: =fxIsAgentExperience && varDbdShowMoreFilters
                                     Width: =Parent.Width
                               - dbd_category_filter_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(70, 70, 80, 1)
@@ -702,7 +694,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - dbd_category_filter:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Appearance: =Appearance.FilledLighter
@@ -744,7 +736,7 @@ Screens:
                                     Visible: =fxIsAgentExperience && varDbdShowMoreFilters
                                     Width: =Parent.Width
                               - dbd_department_filter_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(70, 70, 80, 1)
@@ -761,7 +753,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - dbd_department_filter:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Appearance: =Appearance.FilledLighter
@@ -803,7 +795,7 @@ Screens:
                                     Visible: =fxIsAgentExperience && varDbdShowMoreFilters
                                     Width: =Parent.Width
                               - dbd_risk_filter_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(70, 70, 80, 1)
@@ -820,7 +812,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - dbd_risk_filter:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Appearance: =Appearance.FilledLighter
@@ -862,7 +854,7 @@ Screens:
                                     Visible: =fxIsAgentExperience && varDbdShowMoreFilters
                                     Width: =Parent.Width
                               - dbd_saved_view_name:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("NewViewName", "Name für neue Ansicht")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -878,7 +870,7 @@ Screens:
                                     Visible: =varDbdShowSaveView && varDbdFiltersDirty
                                     Width: =Parent.Width
                               - dbd_saved_view_scope:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SelectViewVisibility", "Sichtbarkeit der Ansicht auswählen")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -907,7 +899,7 @@ Screens:
                                     Visible: =varDbdShowSaveView && varDbdFiltersDirty && fxCanManageGlobalSavedViews
                                     Width: =Parent.Width
                               - dbd_saved_view_save:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SaveCurrentFiltersAsView", "Aktuelle Filter als Ansicht speichern")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -994,7 +986,7 @@ Screens:
                                     Visible: =varDbdShowSaveView && varDbdFiltersDirty
                                     Width: =Parent.Width
                               - dbd_saved_views_divider:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(100, 100, 110, 1)
@@ -1011,7 +1003,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - dbd_saved_view_picker_row:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -1024,7 +1016,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - dbd_saved_view_picker:
-                                        Control: ModernCombobox@1.1.1
+                                        Control: ModernCombobox
                                         Properties:
                                           AccessibleLabel: =fxTranslate("SelectSavedView", "Gespeicherte Ansicht auswählen")
                                           AlignInContainer: =AlignInContainer.Stretch
@@ -1074,7 +1066,7 @@ Screens:
                                           SelectMultiple: =false
                                           Size: =12
                                     - dbd_saved_view_actions_toggle:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AccessibleLabel: =fxTranslate("OpenSavedViewActions", "Aktionen für gespeicherte Ansicht öffnen")
                                           AlignInContainer: =AlignInContainer.Stretch
@@ -1092,7 +1084,7 @@ Screens:
                                           Tooltip: =fxTranslate("MoreActions", "Weitere Aktionen")
                                           Width: =40
                               - dbd_saved_view_delete:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("DeleteSavedView", "Gespeicherte Ansicht löschen")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -1127,7 +1119,7 @@ Screens:
                                     Visible: =varDbdShowSavedViewActions && !IsBlank(dbd_saved_view_picker.Selected.ID)
                                     Width: =Parent.Width
                               - dbd_saved_view_action_row:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -1141,7 +1133,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - dbd_saved_view_save_toggle:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AccessibleLabel: =fxTranslate("SaveCurrentFiltersAsView", "Aktuelle Filter als Ansicht speichern")
                                           Appearance: =ButtonAppearance.Secondary
@@ -1156,7 +1148,7 @@ Screens:
                                           Text: =If(IsBlank(dbd_saved_view_picker.Selected.ID), fxTranslate("SaveView", "Ansicht speichern"), fxTranslate("SaveChanges", "Änderungen speichern"))
                                           Visible: =varDbdFiltersDirty
                               - dbd_saved_views_section_divider:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: ManualLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -1167,7 +1159,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Width: =Parent.Width
                               - dbd_priority_filter_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(70, 70, 80, 1)
@@ -1184,7 +1176,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - dbd_priority_filter:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Appearance: =Appearance.FilledLighter
@@ -1217,7 +1209,7 @@ Screens:
                                     Visible: =fxIsAgentExperience
                                     Width: =Parent.Width
                               - dbd_more_filters_toggle:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     Appearance: =ButtonAppearance.Subtle
                                     LayoutMinHeight: =0
@@ -1228,7 +1220,7 @@ Screens:
                                     Visible: =fxIsAgentExperience
                                     Width: =Parent.Width
                               - dbd_filter_reset:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Appearance: =ButtonAppearance.Subtle
@@ -1273,7 +1265,7 @@ Screens:
                                     Visible: =varDbdFiltersDirty
                                     Width: =Parent.Width
                         - fh_filter_hub:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -1287,7 +1279,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - fh_view_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(100, 100, 110, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -1303,7 +1295,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - fh_view_picker:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =fxTranslate("OpenSavedFilterView", "Gespeicherte Filteransicht öffnen")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -1350,7 +1342,7 @@ Screens:
                                     Size: =12
                                     Width: =Parent.Width
                               - fh_new_view:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("CreateNewFilterView", "Neue Filteransicht erstellen")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -1384,7 +1376,7 @@ Screens:
                                     Text: =fxTranslate("NewFilterView", "Neue Filteransicht")
                                     Width: =Parent.Width
                               - fh_new_view_name:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("NewFilterViewName", "Name für die neue Filteransicht")
                                     Appearance: =Appearance.FilledLighter
@@ -1398,7 +1390,7 @@ Screens:
                                     Visible: =varDbdIsCreatingView
                                     Width: =Parent.Width
                               - fh_create_view:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SaveNewFilterView", "Neue Filteransicht speichern")
                                     Height: =34
@@ -1448,7 +1440,7 @@ Screens:
                                     Visible: =varDbdIsCreatingView
                                     Width: =Parent.Width
                               - fh_section_divider:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: ManualLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -1459,7 +1451,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Width: =Parent.Width
                               - fh_requester_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(70, 70, 80, 1)
                                     Height: =18
@@ -1474,7 +1466,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - fh_requester:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =fxTranslate("FilterRequester", "Nach Anforderer filtern")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -1525,7 +1517,7 @@ Screens:
                                     SelectMultiple: =false
                                     Width: =Parent.Width
                               - fh_ticket_type_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(70, 70, 80, 1)
                                     Height: =18
@@ -1540,7 +1532,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - fh_ticket_type:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("FilterTicketType", "Tickettyp filtern")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -1561,7 +1553,7 @@ Screens:
                                       Set(varDbdFiltersDirty, true)
                                     Width: =Parent.Width
                               - fh_status_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(70, 70, 80, 1)
                                     Height: =18
@@ -1576,7 +1568,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - fh_status:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("FilterStatus", "Status filtern")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -1597,7 +1589,7 @@ Screens:
                                       Set(varDbdFiltersDirty, true)
                                     Width: =Parent.Width
                               - fh_priority_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(70, 70, 80, 1)
                                     Height: =18
@@ -1613,7 +1605,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - fh_priority:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("FilterPriority", "Priorität filtern")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -1635,7 +1627,7 @@ Screens:
                                     Visible: =fxIsAgentExperience
                                     Width: =Parent.Width
                               - fh_more_toggle:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Appearance: =ButtonAppearance.Subtle
@@ -1648,7 +1640,7 @@ Screens:
                                     Visible: =fxIsAgentExperience
                                     Width: =Parent.Width
                               - fh_active_filter_chips:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(87, 35, 129, 1)
                                     Fill: =RGBA(245, 240, 250, 1)
@@ -1669,7 +1661,7 @@ Screens:
                                     Visible: =fxIsAgentExperience && varDbdShowMoreFilters && (varDbdScopeFilter.Value <> "Alle" Or varDbdCategoryFilter.Value <> "Alle" Or varDbdDepartmentFilter.Value <> "Alle" Or varDbdRiskFilter.Value <> "Alle")
                                     Width: =Parent.Width
                               - fh_risk_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(70, 70, 80, 1)
                                     Height: =18
@@ -1685,7 +1677,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - fh_category:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("FilterRisk", "Risiko filtern")
                                     Appearance: =Appearance.FilledLighter
@@ -1706,7 +1698,7 @@ Screens:
                                     Visible: =fxIsAgentExperience && varDbdShowMoreFilters
                                     Width: =Parent.Width
                               - fh_department_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(70, 70, 80, 1)
                                     Height: =18
@@ -1722,7 +1714,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - fh_department:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("FilterDepartment", "Abteilung filtern")
                                     Appearance: =Appearance.FilledLighter
@@ -1743,7 +1735,7 @@ Screens:
                                     Visible: =fxIsAgentExperience && varDbdShowMoreFilters
                                     Width: =Parent.Width
                               - fh_category_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(70, 70, 80, 1)
                                     Height: =18
@@ -1759,7 +1751,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - fh_risk:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("FilterCategory", "Kategorie filtern")
                                     Appearance: =Appearance.FilledLighter
@@ -1780,7 +1772,7 @@ Screens:
                                     Visible: =fxIsAgentExperience && varDbdShowMoreFilters
                                     Width: =Parent.Width
                               - fh_update_view:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     Height: =34
                                     LayoutMinHeight: =0
@@ -1816,7 +1808,7 @@ Screens:
                                     Visible: =varDbdFiltersDirty && !varDbdIsCreatingView && !IsBlank(fh_view_picker.Selected.ID)
                                     Width: =Parent.Width
                               - fh_discard_changes:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     Appearance: =ButtonAppearance.Subtle
                                     Height: =34
@@ -1863,7 +1855,7 @@ Screens:
                                     Visible: =varDbdIsCreatingView Or (varDbdFiltersDirty && !IsBlank(fh_view_picker.Selected.ID))
                                     Width: =Parent.Width
                   - dbd_content:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -1872,7 +1864,7 @@ Screens:
                         LayoutMinHeight: =0
                       Children:
                         - dbd_notifications_panel:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(229, 231, 235, 1)
@@ -1897,7 +1889,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - dbd_notifications_panel_header:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -1911,7 +1903,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - dbd_notifications_panel_title:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           AlignInContainer: =AlignInContainer.Stretch
                                           Color: =RGBA(17, 24, 39, 1)
@@ -1928,7 +1920,7 @@ Screens:
                                           Text: =fxTranslate("NewComments", "Neue Kommentare")
                                           Wrap: =false
                                     - dbd_notifications_mark_read:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           Appearance: =ButtonAppearance.Subtle
                                           LayoutMinHeight: =0
@@ -1950,7 +1942,7 @@ Screens:
                                           Text: =fxTranslate("MarkAsRead", "Als gelesen markieren")
                                           Width: =150
                               - dbd_notifications_empty:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     Color: =RGBA(100, 116, 139, 1)
@@ -1966,7 +1958,7 @@ Screens:
                                     Text: =fxTranslate("NoNewCommentsSinceLastCheck", "Keine neuen Kommentare seit dem letzten Check.")
                                     Visible: =IsEmpty(fxDbdNotifications)
                               - dbd_notifications_gallery:
-                                  Control: Gallery@2.15.0
+                                  Control: Gallery
                                   Variant: Vertical
                                   Properties:
                                     Height: =210
@@ -1979,7 +1971,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - dbd_notification_item:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           BorderColor: =RGBA(229, 231, 235, 1)
@@ -2000,7 +1992,7 @@ Screens:
                                           Width: =Parent.TemplateWidth - 8
                                         Children:
                                           - dbd_notification_initials:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 Align: =Align.Center
                                                 AlignInContainer: =AlignInContainer.Center
@@ -2022,7 +2014,7 @@ Screens:
                                                 Text: ="!"
                                                 Width: =36
                                           - dbd_notification_text_block:
-                                              Control: GroupContainer@1.5.0
+                                              Control: GroupContainer
                                               Variant: AutoLayout
                                               Properties:
                                                 DropShadow: =DropShadow.None
@@ -2033,7 +2025,7 @@ Screens:
                                                 LayoutMinWidth: =0
                                               Children:
                                                 - dbd_notification_meta:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       AlignInContainer: =AlignInContainer.Stretch
                                                       Color: =RGBA(55, 65, 81, 1)
@@ -2049,7 +2041,7 @@ Screens:
                                                       Text: =Substitute(Substitute(fxTranslate("TicketNotificationTemplate", "Ticket {0} - {1}"), "{0}", Text(ThisItem.TicketId)), "{1}", Text(ThisItem.Created, "[$-de-DE]dd.mm. HH:mm"))
                                                       Wrap: =false
                                                 - dbd_notification_comment:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       AlignInContainer: =AlignInContainer.Stretch
                                                       Color: =RGBA(15, 23, 42, 1)
@@ -2064,7 +2056,7 @@ Screens:
                                                       Size: =12
                                                       Text: =If(ThisItem.NotificationType = "Internal", fxTranslate("NewInternalNote", "Neue interne Notiz"), fxTranslate("NewTicketActivity", "Neue Ticketaktivität"))
                                           - dbd_notification_open:
-                                              Control: ModernButton@1.0.0
+                                              Control: ModernButton
                                               Properties:
                                                 Appearance: =ButtonAppearance.Subtle
                                                 Height: =36
@@ -2092,7 +2084,7 @@ Screens:
                                                 Tooltip: =fxTranslate("OpenTicket", "Ticket öffnen")
                                                 Width: =36
                         - dbd_ticket_card:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(225, 226, 230, 1)
@@ -2107,7 +2099,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - dbd_ticket_card_header:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -2123,7 +2115,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - dbd_current_ticket_title:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           AutoHeight: =true
                                           Color: =RGBA(17, 24, 39, 1)
@@ -2133,7 +2125,7 @@ Screens:
                                           Size: =16
                                           Text: =If(fxIsAgentExperience, fxTranslate("AktuelleTickets", "Aktuelle Tickets"), fxTranslate("MyTickets", "Meine Tickets"))
                                     - dbd_current_ticket_count:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Align: =Align.Right
                                           Color: =RGBA(90, 90, 100, 1)
@@ -2149,7 +2141,7 @@ Screens:
                                           Text: =Substitute(fxTranslate("TicketCountTemplate", "{0} Tickets"), "{0}", dbd_ticket_gallery.AllItemsCount)
                                           Width: =120
                               - dbd_table_header:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -2164,7 +2156,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - dbd_hdr_id:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(90, 90, 100, 1)
                                           FontWeight: =FontWeight.Semibold
@@ -2173,7 +2165,7 @@ Screens:
                                           Text: =fxTranslate("TicketId", "TICKET ID")
                                           Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.12, 0.13)
                                     - dbd_hdr_title:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(90, 90, 100, 1)
                                           FontWeight: =FontWeight.Semibold
@@ -2182,7 +2174,7 @@ Screens:
                                           Text: =Upper(fxTranslate("Title", "TITEL"))
                                           Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.16, 0.32)
                                     - dbd_hdr_requester:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(90, 90, 100, 1)
                                           FontWeight: =FontWeight.Semibold
@@ -2191,7 +2183,7 @@ Screens:
                                           Text: =Upper(fxTranslate("Requester", "ANFORDERER"))
                                           Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.12, 0.19)
                                     - dbd_hdr_assigned_to:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(90, 90, 100, 1)
                                           FontWeight: =FontWeight.Semibold
@@ -2201,7 +2193,7 @@ Screens:
                                           Visible: =fxIsAgentExperience && App.Width >= 1180
                                           Width: =(Parent.Width - (fxDbdCardPadding * 2)) * 0.20
                                     - dbd_hdr_status:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(90, 90, 100, 1)
                                           FontWeight: =FontWeight.Semibold
@@ -2210,7 +2202,7 @@ Screens:
                                           Text: =Upper(fxTranslate("Status", "STATUS"))
                                           Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.14, 0.18)
                                     - dbd_hdr_priority:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(90, 90, 100, 1)
                                           FontWeight: =FontWeight.Semibold
@@ -2220,7 +2212,7 @@ Screens:
                                           Visible: =fxIsAgentExperience && App.Width >= 1180
                                           Width: =(Parent.Width - (fxDbdCardPadding * 2)) * 0.10
                                     - dbd_hdr_updated:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(90, 90, 100, 1)
                                           FontWeight: =FontWeight.Semibold
@@ -2229,13 +2221,13 @@ Screens:
                                           Text: =fxTranslate("Updated", "AKTUALISIERT")
                                           Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.09, 0.11)
                                     - dbd_hdr_action:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           LayoutMinWidth: =0
                                           Text: =""
                                           Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.05, 0.07)
                               - dbd_ticket_gallery:
-                                  Control: Gallery@2.15.0
+                                  Control: Gallery
                                   Variant: Vertical
                                   Properties:
                                     Fill: =RGBA(255, 255, 255, 1)
@@ -2291,7 +2283,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - dbd_ticket_row:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           DropShadow: =DropShadow.None
@@ -2309,7 +2301,7 @@ Screens:
                                           Width: =Parent.TemplateWidth
                                         Children:
                                           - dbd_row_id:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 Color: =RGBA(55, 65, 81, 1)
                                                 FontWeight: =If(ThisItem.ID = varLastViewedTicketId || Coalesce(ThisItem.SlaBreached, false) || !IsBlank(LookUp(fxDbdNotifications, TicketId = ThisItem.ID)), FontWeight.Bold, FontWeight.Semibold)
@@ -2320,7 +2312,7 @@ Screens:
                                                 Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.12, 0.13)
                                                 Wrap: =false
                                           - dbd_row_title:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 Color: =RGBA(17, 24, 39, 1)
                                                 FontWeight: =If(ThisItem.ID = varLastViewedTicketId || !IsBlank(LookUp(fxDbdNotifications, TicketId = ThisItem.ID)), FontWeight.Bold, FontWeight.Semibold)
@@ -2332,7 +2324,7 @@ Screens:
                                                 Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.16, 0.32)
                                                 Wrap: =false
                                           - dbd_row_requester:
-                                              Control: GroupContainer@1.5.0
+                                              Control: GroupContainer
                                               Variant: AutoLayout
                                               Properties:
                                                 DropShadow: =DropShadow.None
@@ -2347,7 +2339,7 @@ Screens:
                                                 Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.12, 0.19)
                                               Children:
                                                 - dbd_row_requester_photo:
-                                                    Control: Image@2.2.3
+                                                    Control: Image
                                                     Properties:
                                                       AccessibleLabel: =Substitute(fxTranslate("ProfilePictureTemplate", "Profilbild {0}"), "{0}", Coalesce(ThisItem.RequestedBy.DisplayName, ThisItem.RequestedBy.Email, "-"))
                                                       Height: =24
@@ -2360,7 +2352,7 @@ Screens:
                                                       Visible: =App.Width >= 1100 && !IsBlank(ThisItem.RequestedBy.Picture)
                                                       Width: =24
                                                 - dbd_row_requester_avatar:
-                                                    Control: Avatar@1.0.40
+                                                    Control: Avatar
                                                     Properties:
                                                       AccessibleLabel: =Substitute(fxTranslate("AvatarTemplate", "Avatar {0}"), "{0}", Coalesce(ThisItem.RequestedBy.DisplayName, ThisItem.RequestedBy.Email, "-"))
                                                       Height: =24
@@ -2368,7 +2360,7 @@ Screens:
                                                       Visible: =App.Width >= 1100 && IsBlank(ThisItem.RequestedBy.Picture)
                                                       Width: =24
                                                 - dbd_row_requester_name:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       Color: =RGBA(55, 65, 81, 1)
                                                       Height: =Parent.Height
@@ -2378,7 +2370,7 @@ Screens:
                                                       Width: =Parent.Width - If(App.Width < 1100, 0, 32)
                                                       Wrap: =false
                                           - dbd_row_assigned_to:
-                                              Control: GroupContainer@1.5.0
+                                              Control: GroupContainer
                                               Variant: AutoLayout
                                               Properties:
                                                 DropShadow: =DropShadow.None
@@ -2393,7 +2385,7 @@ Screens:
                                                 Width: =(Parent.Width - (fxDbdCardPadding * 2)) * 0.20
                                               Children:
                                                 - dbd_row_assigned_photo:
-                                                    Control: Image@2.2.3
+                                                    Control: Image
                                                     Properties:
                                                       AccessibleLabel: =Substitute(fxTranslate("ProfilePictureTemplate", "Profilbild {0}"), "{0}", Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen")))
                                                       Height: =24
@@ -2406,7 +2398,7 @@ Screens:
                                                       Visible: =false
                                                       Width: =24
                                                 - dbd_row_assigned_avatar:
-                                                    Control: Avatar@1.0.40
+                                                    Control: Avatar
                                                     Properties:
                                                       AccessibleLabel: =Substitute(fxTranslate("AvatarTemplate", "Avatar {0}"), "{0}", Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen")))
                                                       Height: =24
@@ -2414,7 +2406,7 @@ Screens:
                                                       Visible: =false
                                                       Width: =24
                                                 - dbd_row_assigned_name:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       Color: =RGBA(55, 65, 81, 1)
                                                       Height: =Parent.Height
@@ -2424,7 +2416,7 @@ Screens:
                                                       Width: =Parent.Width
                                                       Wrap: =false
                                           - dbd_row_status:
-                                              Control: GroupContainer@1.5.0
+                                              Control: GroupContainer
                                               Variant: AutoLayout
                                               Properties:
                                                 DropShadow: =DropShadow.None
@@ -2437,7 +2429,7 @@ Screens:
                                                 Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.14, 0.18)
                                               Children:
                                                 - dbd_row_status_text:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       Align: =Align.Center
                                                       AlignInContainer: =AlignInContainer.Center
@@ -2480,7 +2472,7 @@ Screens:
                                                       Width: =Min(Parent.Width, Max(72, Len(Coalesce(ThisItem.Status.Value, fxTranslate("NotSet", "Nicht gesetzt"))) * 8 + 28))
                                                       Wrap: =false
                                           - dbd_row_priority:
-                                              Control: GroupContainer@1.5.0
+                                              Control: GroupContainer
                                               Variant: AutoLayout
                                               Properties:
                                                 DropShadow: =DropShadow.None
@@ -2494,7 +2486,7 @@ Screens:
                                                 Width: =(Parent.Width - (fxDbdCardPadding * 2)) * 0.10
                                               Children:
                                                 - dbd_row_priority_text:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       Align: =Align.Center
                                                       AlignInContainer: =AlignInContainer.Center
@@ -2531,7 +2523,7 @@ Screens:
                                                       Text: =Coalesce(ThisItem.Priority.Value, fxTranslate("NotSet", "Nicht gesetzt"))
                                                       Width: =Min(Parent.Width, Max(64, Len(Coalesce(ThisItem.Priority.Value, fxTranslate("NotSet", "Nicht gesetzt"))) * 7 + 24))
                                           - dbd_row_updated:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 Color: =RGBA(55, 65, 81, 1)
                                                 Height: =Parent.Height
@@ -2541,7 +2533,7 @@ Screens:
                                                 Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.09, 0.11)
                                                 Wrap: =false
                                           - dbd_row_open:
-                                              Control: ModernButton@1.0.0
+                                              Control: ModernButton
                                               Properties:
                                                 Appearance: =ButtonAppearance.Transparent
                                                 BorderThickness: =0
@@ -2560,7 +2552,7 @@ Screens:
                                                 RadiusTopRight: =4
                                                 Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.05, 0.07)
                                     - dbd_row_divider:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: ManualLayout
                                         Properties:
                                           DropShadow: =DropShadow.None
@@ -2569,7 +2561,7 @@ Screens:
                                           Width: =Parent.TemplateWidth
                                           Y: =Parent.TemplateHeight - 1
                                     - dbd_row_click_target:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AccessibleLabel: =Substitute(fxTranslate("OpenTicketTemplate", "Ticket {0} öffnen"), "{0}", Coalesce(ThisItem.Titel, ThisItem.TicketId, Text(ThisItem.ID)))
                                           Appearance: =ButtonAppearance.Transparent
@@ -2583,7 +2575,7 @@ Screens:
                                           Text: =""
                                           Width: =Parent.TemplateWidth
       - dbd_notifications_overlay:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -2592,7 +2584,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - dbd_notifications_dismiss:
-                Control: Button@0.0.45
+                Control: Button
                 Properties:
                   AcceptsFocus: =false
                   AccessibleLabel: =fxTranslate("CloseNotifications", "Benachrichtigungen schließen")
@@ -2603,7 +2595,7 @@ Screens:
                   Text: =""
                   Width: =Parent.Width
             - dbd_notifications_flyout:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(224, 226, 231, 1)
@@ -2626,7 +2618,7 @@ Screens:
                   Y: =50
                 Children:
                   - dbd_notifications_flyout_header:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -2640,7 +2632,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - dbd_notifications_flyout_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(17, 24, 39, 1)
@@ -2655,7 +2647,7 @@ Screens:
                               Text: =fxTranslate("NewUpdates", "Neue Updates")
                               Wrap: =false
                         - dbd_notifications_flyout_count:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(87, 35, 129, 1)
@@ -2676,7 +2668,7 @@ Screens:
                               Text: =fxTranslate("Neu", "Neu")
                               Width: =38
                         - dbd_notifications_flyout_mark_read:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("MarkAllNotificationsAsRead", "Alle Benachrichtigungen als gelesen markieren")
                               Appearance: =ButtonAppearance.Secondary
@@ -2700,7 +2692,7 @@ Screens:
                               Text: =fxTranslate("AllRead", "Alle gelesen")
                               Width: =118
                   - dbd_notifications_flyout_empty:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         Align: =Align.Center
                         AlignInContainer: =AlignInContainer.Stretch
@@ -2716,7 +2708,7 @@ Screens:
                         Text: =fxTranslate("NoNewComments", "Keine neuen Kommentare.")
                         Visible: =!varDbdNotificationsLoading && IsEmpty(fxDbdNotifications)
                   - dbd_notifications_flyout_gallery:
-                      Control: Gallery@2.15.0
+                      Control: Gallery
                       Variant: Vertical
                       Properties:
                         AccessibleLabel: =fxTranslate("NewUpdates", "Neue Updates")
@@ -2730,7 +2722,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - dbd_notifications_flyout_item:
-                            Control: Button@0.0.45
+                            Control: Button
                             Properties:
                               AccessibleLabel: =Substitute(fxTranslate("OpenTicketNotificationTemplate", "Benachrichtigung zu Ticket {0} öffnen"), "{0}", Text(ThisItem.TicketId))
                               Align: =Align.Left
@@ -2773,7 +2765,7 @@ Screens:
                               VerticalAlign: =VerticalAlign.Middle
                               Width: =Parent.TemplateWidth - 6
                   - dbd_notifications_flyout_loading:
-                      Control: Spinner@1.4.6
+                      Control: Spinner
                       Properties:
                         AccessibleLabel: =fxTranslate("CommentsBeingLoaded", "Kommentare werden geladen")
                         AlignInContainer: =AlignInContainer.Stretch
@@ -2786,7 +2778,7 @@ Screens:
                         SpinnerColor: =RGBA(87, 35, 129, 1)
                         Visible: =varDbdNotificationsLoading
       - dbd_loading_overlay:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -2795,7 +2787,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - dbd_loading_logo:
-                Control: Image@2.2.3
+                Control: Image
                 Properties:
                   AccessibleLabel: ="Kessel"
                   Height: =52
@@ -2805,7 +2797,7 @@ Screens:
                   X: =(Parent.Width - Self.Width) / 2
                   Y: =(Parent.Height - 130) / 2
             - dbd_loading_spinner:
-                Control: Spinner@1.4.6
+                Control: Spinner
                 Properties:
                   AccessibleLabel: =fxTranslate("DashboardBeingRefreshed", "Dashboard wird aktualisiert")
                   FontColor: =RGBA(55, 65, 81, 1)
@@ -2818,7 +2810,7 @@ Screens:
                   X: =(Parent.Width - Self.Width) / 2
                   Y: =(Parent.Height - 18) / 2
             - dbd_loading_card:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: ManualLayout
                 Properties:
                   BorderColor: =RGBA(225, 226, 230, 1)
@@ -2834,7 +2826,7 @@ Screens:
                   Y: =(Parent.Height - Self.Height) / 2
                 Children:
                   - dbd_loading_card_spinner:
-                      Control: Spinner@1.4.6
+                      Control: Spinner
                       Properties:
                         AccessibleLabel: =fxTranslate("DashboardBeingRefreshed", "Dashboard wird aktualisiert")
                         FontColor: =RGBA(31, 41, 55, 1)
@@ -2846,7 +2838,7 @@ Screens:
                         X: =70
                         Y: =106
                   - dbd_loading_card_logo:
-                      Control: Image@2.2.3
+                      Control: Image
                       Properties:
                         AccessibleLabel: ="Kessel"
                         Height: =92

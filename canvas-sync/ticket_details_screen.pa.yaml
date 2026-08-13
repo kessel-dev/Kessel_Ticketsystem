@@ -1,11 +1,3 @@
-# ************************************************************************************************
-# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
-# Use the maker portal to create and edit your Power Apps.
-# 
-# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
-# 
-# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
-# ************************************************************************************************
 Screens:
   ticket_details_screen:
     Properties:
@@ -157,7 +149,7 @@ Screens:
         )
     Children:
       - tds_root_1:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -174,7 +166,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - mobile_ticket_header:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -194,7 +186,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - btn_mobile_back:
-                      Control: ModernButton@1.0.0
+                      Control: ModernButton
                       Properties:
                         AccessibleLabel: =fxTranslate("BackToPreviousView", "Zurück zur vorherigen Ansicht")
                         AlignInContainer: =AlignInContainer.Center
@@ -207,7 +199,7 @@ Screens:
                         OnSelect: =Navigate(dashboard_screen, ScreenTransition.CoverRight); Set(varCurrentTicket, Blank())
                         Width: =36
                   - lbl_mobile_tickets:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         AlignInContainer: =AlignInContainer.Center
                         Color: =RGBA(71, 85, 105, 1)
@@ -224,7 +216,7 @@ Screens:
                         Width: =48
                         Wrap: =false
                   - lbl_mobile_ticket_number:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         AccessibleLabel: =fxTranslate("CurrentTicket", "Aktuelles Ticket")
                         AlignInContainer: =AlignInContainer.Center
@@ -242,7 +234,7 @@ Screens:
                         Text: =Coalesce(varCurrentTicket.TicketId, varCurrentTicket.Titel, Text(varCurrentTicket.ID), fxTranslate("TicketDetails", "Ticketdetails"))
                         Wrap: =false
                   - btn_mobile_overflow:
-                      Control: ModernButton@1.0.0
+                      Control: ModernButton
                       Properties:
                         AccessibleLabel: =fxTranslate("MoreActions", "Weitere Aktionen")
                         AlignInContainer: =AlignInContainer.Center
@@ -255,7 +247,7 @@ Screens:
                         OnSelect: =Reset(ddown_actions)
                         Width: =36
             - mobile_ticket_summary:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(226, 232, 240, 1)
@@ -281,7 +273,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - mobile_status_item:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -292,7 +284,7 @@ Screens:
                         PaddingRight: =6
                       Children:
                         - mobile_status_label:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(100, 116, 139, 1)
@@ -308,7 +300,7 @@ Screens:
                               Width: =Parent.Width
                               Wrap: =false
                         - mobile_status_value_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -322,7 +314,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - mobile_status_dot:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     AlignInContainer: =AlignInContainer.Center
@@ -338,7 +330,7 @@ Screens:
                                     Text: ="●"
                                     Width: =12
                               - mobile_status_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Center
                                     Color: =RGBA(15, 23, 42, 1)
@@ -355,7 +347,7 @@ Screens:
                                     Text: =Coalesce(fxCurrentTicketStatus, "Nicht gesetzt")
                                     Wrap: =false
                   - mobile_priority_item:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -366,7 +358,7 @@ Screens:
                         PaddingRight: =6
                       Children:
                         - mobile_priority_label:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(100, 116, 139, 1)
@@ -382,7 +374,7 @@ Screens:
                               Width: =Parent.Width
                               Wrap: =false
                         - mobile_priority_value_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -396,7 +388,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - mobile_priority_dot:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     AlignInContainer: =AlignInContainer.Center
@@ -412,7 +404,7 @@ Screens:
                                     Text: ="●"
                                     Width: =12
                               - mobile_priority_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Center
                                     Color: =RGBA(15, 23, 42, 1)
@@ -429,7 +421,7 @@ Screens:
                                     Text: =Coalesce(varCurrentTicket.Priority.Value, "Mittel")
                                     Wrap: =false
                   - mobile_opened_item:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -440,7 +432,7 @@ Screens:
                         PaddingRight: =6
                       Children:
                         - mobile_opened_label:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(100, 116, 139, 1)
@@ -456,7 +448,7 @@ Screens:
                               Width: =Parent.Width
                               Wrap: =false
                         - mobile_opened_value:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(15, 23, 42, 1)
@@ -473,7 +465,7 @@ Screens:
                               Width: =Parent.Width
                               Wrap: =false
             - conHeader:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(226, 232, 240, 1)
@@ -496,7 +488,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - hdr_top_row:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -509,7 +501,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - lbl_page_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AccessibleLabel: =fxTranslate("CurrentTicket", "Aktuelles Ticket")
                               AlignInContainer: =AlignInContainer.Stretch
@@ -529,7 +521,7 @@ Screens:
                                     " - " & Text(varCurrentTicket.Titel)
                                 )
                         - hdr_actions:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -544,7 +536,7 @@ Screens:
                               Visible: =locTicketMode <> "Edit"
                             Children:
                               - btn_back:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =If(App.Width < 600, "Details bearbeiten", fxTranslate("BackToPreviousView", "Zurück zur vorherigen Ansicht"))
                                     Appearance: =ButtonAppearance.Secondary
@@ -569,7 +561,7 @@ Screens:
                                     Text: =If(App.Width < 600, "Details bearbeiten", fxTranslate("Zurück", "Zurück"))
                                     Width: =If(App.Width < 600, 132, 130)
                               - btn_save:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SaveTicket", "Ticket speichern")
                                     DisplayMode: =If(locTicketMode = "Edit" && fxCanEditCurrentTicket, DisplayMode.Edit, DisplayMode.Disabled)
@@ -620,7 +612,7 @@ Screens:
                                     Visible: =false
                                     Width: =120
                               - ddown_actions:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =fxTranslate("MoreActions", "Weitere Aktionen")
                                     Appearance: =Appearance.Outline
@@ -789,7 +781,7 @@ Screens:
                                     Visible: =App.Width >= 600
                                     Width: =120
                               - btn_refresh_ticket:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("RefreshTicketData", "Ticketdaten aktualisieren")
                                     Appearance: =ButtonAppearance.Secondary
@@ -848,7 +840,7 @@ Screens:
                                     Visible: =App.Width >= 600
                                     Width: =42
                               - tds_language_selector:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
                                     Default: |-
@@ -863,7 +855,7 @@ Screens:
                                     Visible: =App.Width >= 600
                                     Width: =72
                   - hdr_meta_row:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -877,7 +869,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - chip_status:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               AlignInContainer: =AlignInContainer.Center
@@ -897,7 +889,7 @@ Screens:
                               RadiusTopRight: =6
                             Children:
                               - lbl_chip_status_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Status", "Status")
                                     Color: =RGBA(51, 65, 85, 1)
@@ -914,7 +906,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - lbl_chip_status_dot:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Status", "Status")
                                     Align: =Align.Center
@@ -933,7 +925,7 @@ Screens:
                                     Visible: =false
                                     Width: =12
                               - lbl_chip_status_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: |-
                                       =fxTranslate("Status", "Status") & ": " & Coalesce(fxCurrentTicketStatus, "-")
@@ -951,7 +943,7 @@ Screens:
                                     Text: =Coalesce(fxCurrentTicketStatus, "Nicht gesetzt")
                                     Wrap: =false
                         - chip_priority:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               AlignInContainer: =AlignInContainer.Center
@@ -971,7 +963,7 @@ Screens:
                               RadiusTopRight: =6
                             Children:
                               - lbl_chip_prio_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Priorität", "Priorität")
                                     Color: =RGBA(51, 65, 85, 1)
@@ -987,7 +979,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - lbl_chip_prio_dot:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Priorität", "Priorität")
                                     AlignInContainer: =AlignInContainer.Center
@@ -1004,7 +996,7 @@ Screens:
                                     Visible: =false
                                     Width: =12
                               - lbl_chip_prio_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: |-
                                       =fxTranslate("Priorität", "Priorität") & ": " & Coalesce(varCurrentTicket.Priority.Value, "Mittel")
@@ -1021,7 +1013,7 @@ Screens:
                                     Text: =Coalesce(varCurrentTicket.Priority.Value, "Mittel")
                                     Wrap: =false
                         - chip_opened:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               AlignInContainer: =AlignInContainer.Center
@@ -1041,7 +1033,7 @@ Screens:
                               RadiusTopRight: =6
                             Children:
                               - lbl_chip_open_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Opened", "Geöffnet")
                                     Color: =RGBA(51, 65, 85, 1)
@@ -1056,7 +1048,7 @@ Screens:
                                     Text: =fxTranslate("Opened", "Geöffnet")
                                     Width: =Parent.Width
                               - lbl_chip_open_icon:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Opened", "Geöffnet")
                                     AlignInContainer: =AlignInContainer.Center
@@ -1074,7 +1066,7 @@ Screens:
                                     Visible: =false
                                     Width: =12
                               - lbl_chip_open_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: |-
                                       =fxTranslate("Opened", "Geöffnet") & ": " & If(IsBlank(varCurrentTicket.Erstellt), "-", Text(varCurrentTicket.Erstellt, "[$-de-DE]dd.mm.yyyy"))
@@ -1091,7 +1083,7 @@ Screens:
                                     Text: =If(IsBlank(varCurrentTicket.Erstellt), "-", Text(varCurrentTicket.Erstellt, "[$-de-DE]dd.mm.yyyy"))
                                     Wrap: =false
                         - chip_role:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               AlignInContainer: =AlignInContainer.Center
@@ -1111,7 +1103,7 @@ Screens:
                               Visible: =App.Width >= 600 && !IsBlank(varCurrentTicket)
                             Children:
                               - lbl_role_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Assignee", "Bearbeiter")
                                     Color: =RGBA(51, 65, 85, 1)
@@ -1127,7 +1119,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - lbl_role_dot:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Assignee", "Bearbeiter")
                                     Align: =Align.Center
@@ -1145,7 +1137,7 @@ Screens:
                                     Visible: =false
                                     Width: =12
                               - lbl_role_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: |-
                                       =fxTranslate("Assignee", "Bearbeiter") & ": " & Coalesce(varCurrentTicket.'Zugewiesen an'.DisplayName, "-")
@@ -1162,7 +1154,7 @@ Screens:
                                     Text: =Coalesce(varCurrentTicket.'Zugewiesen an'.DisplayName, "-")
                                     Wrap: =false
                         - btn_edit_ticket_details_header:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("EditTicketDetails", "Ticketdetails bearbeiten")
                               AlignInContainer: =AlignInContainer.Center
@@ -1183,7 +1175,7 @@ Screens:
                               Visible: =false
                               Width: =20
                         - chip_category:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               AlignInContainer: =AlignInContainer.Center
@@ -1203,7 +1195,7 @@ Screens:
                               Visible: =App.Width >= 600
                             Children:
                               - lbl_chip_category_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Kategorie", "Kategorie")
                                     Color: =RGBA(51, 65, 85, 1)
@@ -1219,7 +1211,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - lbl_chip_category_dot:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Kategorie", "Kategorie")
                                     Align: =Align.Center
@@ -1237,7 +1229,7 @@ Screens:
                                     Visible: =false
                                     Width: =12
                               - lbl_chip_category_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: |-
                                       =fxTranslate("Kategorie", "Kategorie") & ": " & Coalesce(varCurrentTicket.Category.Value, varCurrentTicket.CategoryINC.Value, "-")
@@ -1254,7 +1246,7 @@ Screens:
                                     Text: =Coalesce(varCurrentTicket.Category.Value, varCurrentTicket.CategoryINC.Value, "-")
                                     Wrap: =false
                         - chip_subcategory:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               AlignInContainer: =AlignInContainer.Center
@@ -1274,7 +1266,7 @@ Screens:
                               Visible: =App.Width >= 600
                             Children:
                               - lbl_chip_subcategory_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Subcategory", "Unterkategorie")
                                     Color: =RGBA(51, 65, 85, 1)
@@ -1290,7 +1282,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - lbl_chip_subcategory_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: |-
                                       =fxTranslate("Subcategory", "Unterkategorie") & ": " & Coalesce(varCurrentTicket.Subcategory.Value, varCurrentTicket.SubcategoryINC.Value, "-")
@@ -1307,7 +1299,7 @@ Screens:
                                     Text: =Coalesce(varCurrentTicket.Subcategory.Value, varCurrentTicket.SubcategoryINC.Value, "-")
                                     Wrap: =false
                         - chip_recorded_by:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               AlignInContainer: =AlignInContainer.Center
@@ -1327,7 +1319,7 @@ Screens:
                               Visible: =App.Width >= 600
                             Children:
                               - lbl_chip_recorded_by_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("CreatedBy", "Erfasst von")
                                     Color: =RGBA(51, 65, 85, 1)
@@ -1343,7 +1335,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - lbl_chip_recorded_by_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: |-
                                       =fxTranslate("CreatedBy", "Erfasst von") & ": " & Coalesce(varCurrentTicket.'Erstellt von'.DisplayName, varCurrentTicket.RequestedBy.DisplayName, "-")
@@ -1360,7 +1352,7 @@ Screens:
                                     Text: =Coalesce(varCurrentTicket.'Erstellt von'.DisplayName, varCurrentTicket.RequestedBy.DisplayName, "-")
                                     Wrap: =false
                         - chip_watchers:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               AlignInContainer: =AlignInContainer.Center
@@ -1380,7 +1372,7 @@ Screens:
                               Visible: =App.Width >= 600
                             Children:
                               - lbl_chip_watchers_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Watchers", "Beobachter")
                                     Color: =RGBA(51, 65, 85, 1)
@@ -1396,7 +1388,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - lbl_chip_watchers_value:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AccessibleLabel: |-
                                       =fxTranslate("Watchers", "Beobachter") & ": " & If(IsEmpty(varCurrentTicket.Beobachter), "-", Concat(varCurrentTicket.Beobachter, DisplayName, ", "))
@@ -1413,7 +1405,7 @@ Screens:
                                     Text: =If(IsEmpty(varCurrentTicket.Beobachter), fxTranslate("None", "Keine"), CountRows(varCurrentTicket.Beobachter) & " " & fxTranslate("Watchers", "Beobachter"))
                                     Wrap: =false
                         - spacer_header_meta:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -1422,7 +1414,7 @@ Screens:
                               LayoutMinWidth: =16
                               Visible: =App.Width >= 600
                         - btn_edit_ticket_details_header_right:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("EditTicketDetails", "Ticketdetails bearbeiten")
                               Appearance: =ButtonAppearance.Subtle
@@ -1442,7 +1434,7 @@ Screens:
                               Visible: =App.Width >= 600 && locTicketMode <> "Edit" && fxCanViewCurrentTicket
                               Width: =42
             - line_header:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -1452,7 +1444,7 @@ Screens:
                   LayoutMinHeight: =1
                   Width: =Parent.Width
             - banner_permission_state:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(253, 186, 116, 1)
@@ -1472,7 +1464,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - lbl_banner_icon:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         Color: =RGBA(154, 52, 18, 1)
                         Height: =24
@@ -1480,7 +1472,7 @@ Screens:
                         Text: ="⚠"
                         Width: =24
                   - lbl_banner_text:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         Color: =RGBA(154, 52, 18, 1)
                         FillPortions: =1
@@ -1489,7 +1481,7 @@ Screens:
                         Text: =fxTranslate("NoTicketAccess", "Kein Zugriff auf dieses Ticket")
                         Width: =Parent.Width - 60
             - banner_closed:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(252, 165, 165, 1)
@@ -1509,7 +1501,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - lbl_closed_icon:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         AutoHeight: =true
                         Color: =RGBA(220, 38, 38, 1)
@@ -1519,7 +1511,7 @@ Screens:
                           ="🔒"
                         Width: =24
                   - lbl_closed_text:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         AutoHeight: =true
                         Color: =RGBA(220, 38, 38, 1)
@@ -1529,7 +1521,7 @@ Screens:
                         Text: =fxTranslate("TicketClosedChangesLocked", "Dieses Ticket ist geschlossen. Änderungen sind gesperrt.")
                         Width: =Parent.Width - 60
             - card_details:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(226, 232, 240, 1)
@@ -1553,7 +1545,7 @@ Screens:
                   Width: =If(App.Width < 600, Parent.Width, Min(Parent.Width - 48, 1440))
                 Children:
                   - row_details_title:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -1566,7 +1558,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - lbl_details_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AutoHeight: =true
                               Color: =RGBA(15, 23, 42, 1)
@@ -1577,7 +1569,7 @@ Screens:
                               Text: =fxTranslate("Details", "Details")
                               Width: =90
                         - lbl_details_summary:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(71, 85, 105, 1)
                               FillPortions: =1
@@ -1591,7 +1583,7 @@ Screens:
                               Text: ="Bearbeitbare Ticketfelder"
                               Wrap: =false
                         - btn_cancel_ticket_details:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("CancelEditTicketDetails", "Bearbeiten der Ticketdetails abbrechen")
                               Appearance: =ButtonAppearance.Secondary
@@ -1607,7 +1599,7 @@ Screens:
                               Visible: =false
                               Width: =110
                         - btn_save_ticket_details:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("SaveTicketDetails", "Ticketdetails speichern")
                               DisplayMode: =If(fxCanEditCurrentTicket, DisplayMode.Edit, DisplayMode.Disabled)
@@ -1632,7 +1624,7 @@ Screens:
                               Visible: =false
                               Width: =110
                         - btn_edit_ticket_details:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("EditTicketDetails", "Ticketdetails bearbeiten")
                               Appearance: =ButtonAppearance.Secondary
@@ -1651,7 +1643,7 @@ Screens:
                               Visible: =false
                               Width: =42
                   - frmTicketDetails:
-                      Control: Form@2.4.4
+                      Control: Form
                       Variant: Modern
                       Layout: Vertical
                       Properties:
@@ -1672,7 +1664,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - Zugewiesenan_DataCard1:
-                            Control: TypedDataCard@1.0.7
+                            Control: TypedDataCard
                             Variant: ModernComboBoxEdit
                             IsLocked: true
                             Properties:
@@ -1687,7 +1679,7 @@ Screens:
                               Y: =0
                             Children:
                               - dck_assignedto:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AutoHeight: =true
                                     FontWeight: =FontWeight.Semibold
@@ -1699,7 +1691,7 @@ Screens:
                                     X: =16
                                     Y: =6
                               - dcv_assignedto:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
@@ -1743,8 +1735,63 @@ Screens:
                                     Width: =Parent.Width - 32
                                     X: =16
                                     Y: =dck_assignedto.Y + dck_assignedto.Height + 4
+                        - CommentByClaims_DataCard1:
+                            Control: TypedDataCard
+                            Variant: TextualEdit
+                            Properties:
+                              DataField: ="CommentByClaims"
+                              Default: =ThisItem.CommentByClaims
+                              DisplayName: =DataSourceInfo([@ev_sp_list_comments],DataSourceInfo.DisplayName,CommentByClaims)
+                              Height: =0
+                              MaxLength: =DataSourceInfo([@ev_sp_list_comments], DataSourceInfo.MaxLength, CommentByClaims)
+                              Required: =false
+                              Update: =fxCurrentUser.Claims
+                              Visible: =false
+                              X: =0
+                              Y: =0
+                            Children:
+                              - DataCardKey4:
+                                  Control: Text
+                                  Properties:
+                                    Height: =22
+                                    Text: =Parent.DisplayName
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =10
+                              - DataCardValue4:
+                                  Control: TextInput
+                                  Properties:
+                                    AccessibleLabel: =Parent.DisplayName
+                                    DisplayMode: =Parent.DisplayMode
+                                    Mode: ="'TextInputCanvas.Mode'.TextInputModeSingleLine"
+                                    Required: =Parent.Required
+                                    ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                    Value: =Parent.Default
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardKey4.Y + DataCardKey4.Height + 4
+                              - ErrorMessage4:
+                                  Control: Text
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardValue4.Y + DataCardValue4.Height
+                              - StarVisible4:
+                                  Control: Text
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.Center
+                                    Height: =30
+                                    Text: ="*"
+                                    Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =30
+                                    Y: =DataCardKey4.Y
                         - RequestedBy_DataCard1:
-                            Control: TypedDataCard@1.0.7
+                            Control: TypedDataCard
                             Variant: ModernComboBoxEdit
                             IsLocked: true
                             Properties:
@@ -1758,7 +1805,7 @@ Screens:
                               Y: =1
                             Children:
                               - dck_requestedby:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AutoHeight: =true
                                     FontWeight: =FontWeight.Semibold
@@ -1770,7 +1817,7 @@ Screens:
                                     X: =16
                                     Y: =6
                               - dcv_requestedby:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
@@ -1817,7 +1864,7 @@ Screens:
                                     X: =16
                                     Y: =dck_requestedby.Y + dck_requestedby.Height + 4
                         - Priority_DataCard1:
-                            Control: TypedDataCard@1.0.7
+                            Control: TypedDataCard
                             Variant: ModernComboBoxEdit
                             IsLocked: true
                             Properties:
@@ -1832,7 +1879,7 @@ Screens:
                               Y: =2
                             Children:
                               - dck_priority:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AutoHeight: =true
                                     FontWeight: =FontWeight.Semibold
@@ -1844,7 +1891,7 @@ Screens:
                                     X: =16
                                     Y: =6
                               - dcv_priority:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
@@ -1858,7 +1905,7 @@ Screens:
                                     X: =16
                                     Y: =dck_priority.Y + dck_priority.Height + 4
                         - Status_DataCard1:
-                            Control: TypedDataCard@1.0.7
+                            Control: TypedDataCard
                             Variant: ModernComboBoxEdit
                             Properties:
                               DataField: ="Status"
@@ -1873,7 +1920,7 @@ Screens:
                               Y: =3
                             Children:
                               - dck_status:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AutoHeight: =true
                                     FontWeight: =FontWeight.Semibold
@@ -1885,7 +1932,7 @@ Screens:
                                     X: =16
                                     Y: =6
                               - dcv_status:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
@@ -1899,7 +1946,7 @@ Screens:
                                     X: =16
                                     Y: =dck_status.Y + dck_status.Height + 4
                         - Category_DataCard1:
-                            Control: TypedDataCard@1.0.7
+                            Control: TypedDataCard
                             Variant: ModernComboBoxEdit
                             IsLocked: true
                             Properties:
@@ -1914,7 +1961,7 @@ Screens:
                               Y: =4
                             Children:
                               - dck_category:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AutoHeight: =true
                                     FontWeight: =FontWeight.Semibold
@@ -1926,7 +1973,7 @@ Screens:
                                     X: =16
                                     Y: =6
                               - dcv_category:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
@@ -1941,7 +1988,7 @@ Screens:
                                     X: =16
                                     Y: =dck_category.Y + dck_category.Height + 4
                         - CategoryINC_DataCard1:
-                            Control: TypedDataCard@1.0.7
+                            Control: TypedDataCard
                             Variant: ModernComboBoxEdit
                             Properties:
                               DataField: ="CategoryINC"
@@ -1955,7 +2002,7 @@ Screens:
                               Y: =5
                             Children:
                               - dck_category_inc:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AutoHeight: =true
                                     FontWeight: =FontWeight.Semibold
@@ -1967,7 +2014,7 @@ Screens:
                                     X: =16
                                     Y: =6
                               - dcv_category_inc:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
@@ -1982,7 +2029,7 @@ Screens:
                                     X: =16
                                     Y: =dck_category_inc.Y + dck_category_inc.Height + 4
                         - SubcategoryINC_DataCard1:
-                            Control: TypedDataCard@1.0.7
+                            Control: TypedDataCard
                             Variant: ModernComboBoxEdit
                             Properties:
                               DataField: ="SubcategoryINC"
@@ -1996,7 +2043,7 @@ Screens:
                               Y: =6
                             Children:
                               - dck_subcategory_inc:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AutoHeight: =true
                                     FontWeight: =FontWeight.Semibold
@@ -2008,7 +2055,7 @@ Screens:
                                     X: =16
                                     Y: =6
                               - dcv_subcategory_inc:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
@@ -2022,7 +2069,7 @@ Screens:
                                     X: =16
                                     Y: =dck_subcategory_inc.Y + dck_subcategory_inc.Height + 4
                         - Subcategory_DataCard1:
-                            Control: TypedDataCard@1.0.7
+                            Control: TypedDataCard
                             Variant: ModernComboBoxEdit
                             Properties:
                               DataField: ="Subcategory"
@@ -2036,7 +2083,7 @@ Screens:
                               Y: =7
                             Children:
                               - dck_subcategory:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AutoHeight: =true
                                     FontWeight: =FontWeight.Semibold
@@ -2048,7 +2095,7 @@ Screens:
                                     X: =16
                                     Y: =6
                               - dcv_subcategory:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
@@ -2062,7 +2109,7 @@ Screens:
                                     X: =16
                                     Y: =dck_subcategory.Y + dck_subcategory.Height + 4
                         - Reason_DataCard1:
-                            Control: TypedDataCard@1.0.7
+                            Control: TypedDataCard
                             Variant: TextualEdit
                             Properties:
                               DataField: ="Reason"
@@ -2076,7 +2123,7 @@ Screens:
                               Y: =8
                             Children:
                               - dck_reason:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AutoHeight: =true
                                     FontWeight: =FontWeight.Semibold
@@ -2088,7 +2135,7 @@ Screens:
                                     X: =16
                                     Y: =6
                               - dcv_reason:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Default: |-
@@ -2124,57 +2171,8 @@ Screens:
                                     Width: =Parent.Width - 32
                                     X: =16
                                     Y: =dck_reason.Y + dck_reason.Height + 4
-                        - Attachments_DataCard1:
-                            Control: TypedDataCard@1.0.7
-                            Variant: ClassicAttachmentsEdit
-                            Properties:
-                              DataField: ="{Attachments}"
-                              Default: =ThisItem.Anlagen
-                              DisplayName: =fxTranslate("Anlagen", "Anhänge")
-                              Height: =210
-                              Required: =false
-                              Update: =dcv_ticket_attachments.Attachments
-                              Width: =Parent.Width
-                              X: =0
-                              Y: =9
-                            Children:
-                              - dck_ticket_attachments:
-                                  Control: ModernText@1.0.0
-                                  Properties:
-                                    AutoHeight: =true
-                                    FontWeight: =FontWeight.Semibold
-                                    Height: =22
-                                    Size: =13
-                                    Text: =fxTranslate("Anlagen", "Anhänge")
-                                    Width: =Parent.Width - 32
-                                    Wrap: =false
-                                    X: =16
-                                    Y: =6
-                              - dcv_ticket_attachments:
-                                  Control: Attachments@2.3.0
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("TicketAttachments", "Ticketanlagen")
-                                    AddAttachmentColor: =RGBA(87, 35, 129, 1)
-                                    AddAttachmentText: =fxTranslate("ChooseFile", "Datei auswählen")
-                                    BorderColor: =RGBA(226, 232, 240, 1)
-                                    BorderThickness: =1
-                                    DisplayMode: =If(locTicketMode = "Edit" && fxCanEditCurrentTicket && !fxIsCurrentTicketClosed, DisplayMode.Edit, DisplayMode.Disabled)
-                                    Height: =150
-                                    Items: =Parent.Default
-                                    MaxAttachments: =10
-                                    MaxAttachmentsText: =fxTranslate("MaxAttachmentsReached", "Max. Anzahl von Anhängen erreicht.")
-                                    NoAttachmentsText: =fxTranslate("NoFileSelected", "Keine Datei ausgewählt")
-                                    PaddingBottom: =6
-                                    PaddingLeft: =6
-                                    PaddingRight: =6
-                                    PaddingTop: =6
-                                    Size: =12
-                                    Tooltip: =fxTranslate("ChooseFile", "Datei auswählen")
-                                    Width: =Parent.Width - 32
-                                    X: =16
-                                    Y: =dck_ticket_attachments.Y + dck_ticket_attachments.Height + 6
                   - row_details_actions:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         AlignInContainer: =AlignInContainer.End
@@ -2190,7 +2188,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - btn_cancel_ticket_details_footer:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: ="Änderungen verwerfen"
                               Appearance: =ButtonAppearance.Secondary
@@ -2205,7 +2203,7 @@ Screens:
                               Text: ="Abbrechen"
                               Width: =120
                         - btn_save_ticket_details_footer:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: ="Änderungen speichern"
                               BasePaletteColor: =RGBA(122, 74, 160, 1)
@@ -2260,7 +2258,7 @@ Screens:
                               Text: ="Änderungen speichern"
                               Width: =210
                   - con_type_specific_summary:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -2285,7 +2283,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - txt_type_specific_secondary:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(15, 23, 42, 1)
                               FillPortions: =1
@@ -2301,7 +2299,7 @@ Screens:
                                 )
                               Width: =Parent.Width / 3
                         - txt_type_specific_kind:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(15, 23, 42, 1)
                               FillPortions: =1
@@ -2312,7 +2310,7 @@ Screens:
                               Text: =fxTranslate("TicketType", "Tickettyp") & Char(10) & fxTranslate(Coalesce(varCurrentTicket.TicketType.Value, "Ticket"), Coalesce(varCurrentTicket.TicketType.Value, "Ticket"))
                               Width: =Parent.Width / 3
                         - txt_type_specific_primary:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(15, 23, 42, 1)
                               FillPortions: =1
@@ -2328,7 +2326,7 @@ Screens:
                                 )
                               Width: =Parent.Width / 3
             - conBody:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -2341,7 +2339,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - conBodyColumns:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -2363,7 +2361,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - conTicketList:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(229, 231, 235, 1)
@@ -2388,7 +2386,7 @@ Screens:
                               Width: =If(App.Width < 1180, Parent.Width, 240)
                             Children:
                               - inp_ticket_list_search:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SearchTickets", "Tickets durchsuchen")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -2400,7 +2398,7 @@ Screens:
                                     Placeholder: =fxTranslate("SearchChangesPlaceholder", "Change suchen...")
                                     Width: =Parent.Width
                               - gal_tickets:
-                                  Control: Gallery@2.15.0
+                                  Control: Gallery
                                   Variant: Vertical
                                   Properties:
                                     AccessibleLabel: =fxTranslate("TicketList", "Ticketliste")
@@ -2437,7 +2435,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - shp_selected_bar:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           Fill: =If(ThisItem.ID = varCurrentTicket.ID, RGBA(122, 74, 160, 1), RGBA(255, 255, 255, 0))
@@ -2446,7 +2444,7 @@ Screens:
                                           Width: =If(ThisItem.ID = varCurrentTicket.ID, 4, 0)
                                           Y: =2
                                     - row_ticket_item:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           BorderColor: =RGBA(229, 231, 235, 1)
@@ -2469,7 +2467,7 @@ Screens:
                                           Y: =1
                                         Children:
                                           - txt_ticket_avatar:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(255, 255, 255, 1)
@@ -2500,7 +2498,7 @@ Screens:
                                                 Text: =Switch(Coalesce(ThisItem.TicketType.Value, ""), "Change", "CH", "Incident", "IN", "Service Request", "SR", "TK")
                                                 Width: =34
                                           - con_ticket_text:
-                                              Control: GroupContainer@1.5.0
+                                              Control: GroupContainer
                                               Variant: AutoLayout
                                               Properties:
                                                 DropShadow: =DropShadow.None
@@ -2511,7 +2509,7 @@ Screens:
                                                 Width: =Parent.Width - 70
                                               Children:
                                                 - lbl_ticket_number:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       AutoHeight: =true
                                                       Color: =RGBA(15, 23, 42, 1)
@@ -2532,7 +2530,7 @@ Screens:
                                                       Text: =Coalesce(ThisItem.Titel, "")
                                                       Width: =Parent.Width
                                                 - lbl_ticket_name:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       AlignInContainer: =AlignInContainer.Stretch
                                                       AutoHeight: =true
@@ -2554,7 +2552,7 @@ Screens:
                                                       Text: =ThisItem.TicketTitel
                                                       Width: =Parent.Width
                                                 - lbl_ticket_status:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       AutoHeight: =true
                                                       Color: =RGBA(100, 116, 139, 1)
@@ -2574,7 +2572,7 @@ Screens:
                                                       Text: =Coalesce(ThisItem.Status.Value, ThisItem.StatusINC.Value, "")
                                                       Width: =Parent.Width
                                     - btn_select_ticket:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AccessibleLabel: =Coalesce(ThisItem.Titel, ThisItem.Titel, ThisItem.Name, fxTranslate("Ticket", "Ticket"))
                                           Appearance: =ButtonAppearance.Transparent
@@ -2598,7 +2596,7 @@ Screens:
                                           X: =8
                                           Y: =2
                         - card_access_denied:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(226, 232, 240, 1)
@@ -2621,7 +2619,7 @@ Screens:
                               Visible: =!IsBlank(varCurrentTicket) && !fxCanViewCurrentTicket
                             Children:
                               - lbl_denied_icon:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     Color: =RGBA(239, 68, 68, 1)
@@ -2630,7 +2628,7 @@ Screens:
                                       ="🔒"
                                     Width: =100
                               - lbl_denied_title:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     Color: =RGBA(15, 23, 42, 1)
@@ -2640,7 +2638,7 @@ Screens:
                                     Text: =fxTranslate("NoAccess", "Kein Zugriff")
                                     Width: =300
                               - lbl_denied_text:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     Color: =RGBA(71, 85, 105, 1)
@@ -2649,7 +2647,7 @@ Screens:
                                     Text: =fxTranslate("NoPermissionViewTicket", "Du hast keine Berechtigung, dieses Ticket anzuzeigen.")
                                     Width: =360
                         - conTicketMain:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -2668,7 +2666,7 @@ Screens:
                               Visible: =fxCanViewCurrentTicket
                             Children:
                               - btn_mobile_edit_details:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("EditTicketDetails", "Ticketdetails bearbeiten")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -2690,7 +2688,7 @@ Screens:
                                     Visible: =App.Width < 600 && locTicketMode <> "Edit"
                                     Width: =Parent.Width
                               - card_description:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(229, 231, 235, 1)
@@ -2715,7 +2713,7 @@ Screens:
                                     RadiusTopRight: =8
                                   Children:
                                     - row_desc_title:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           DropShadow: =DropShadow.None
@@ -2727,7 +2725,7 @@ Screens:
                                           Width: =Parent.Width
                                         Children:
                                           - lbl_desc_title:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 AutoHeight: =true
                                                 Color: =RGBA(15, 23, 42, 1)
@@ -2739,7 +2737,7 @@ Screens:
                                                 Text: =fxTranslate("Beschreibung", "Beschreibung")
                                                 Width: =Parent.Width - 260
                                           - btn_cancel_description:
-                                              Control: ModernButton@1.0.0
+                                              Control: ModernButton
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("CancelEditDescription", "Bearbeiten der Beschreibung abbrechen")
                                                 Appearance: =ButtonAppearance.Secondary
@@ -2754,7 +2752,7 @@ Screens:
                                                 Visible: =varDescriptionEditMode
                                                 Width: =110
                                           - btn_save_description:
-                                              Control: ModernButton@1.0.0
+                                              Control: ModernButton
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("SaveDescription", "Beschreibung speichern")
                                                 DisplayMode: =If(varDescriptionSaving, DisplayMode.Disabled, DisplayMode.Edit)
@@ -2785,7 +2783,7 @@ Screens:
                                                 Visible: =varDescriptionEditMode
                                                 Width: =110
                                           - btn_edit_description:
-                                              Control: ModernButton@1.0.0
+                                              Control: ModernButton
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("EditDescription", "Beschreibung bearbeiten")
                                                 Appearance: =ButtonAppearance.Secondary
@@ -2801,7 +2799,7 @@ Screens:
                                                 Visible: =!varDescriptionEditMode && fxCanEditCurrentTicket
                                                 Width: =120
                                     - txt_description_image_processing:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           AutoHeight: =true
                                           Color: =RGBA(126, 85, 0, 1)
@@ -2820,7 +2818,7 @@ Screens:
                                           Visible: =!IsBlank(Find("data:image/", Coalesce(varCurrentTicket.Description, "")))
                                           Width: =Parent.Width
                                     - html_description:
-                                        Control: HtmlViewer@2.1.0
+                                        Control: HtmlViewer
                                         Properties:
                                           AlignInContainer: =AlignInContainer.Stretch
                                           DisplayMode: =DisplayMode.View
@@ -2833,7 +2831,7 @@ Screens:
                                           Visible: =!varDescriptionEditMode && !IsBlank(varCurrentTicket.Description)
                                           Width: =Parent.Width
                                     - con_empty_description:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           DropShadow: =DropShadow.None
@@ -2846,7 +2844,7 @@ Screens:
                                           Visible: =!varDescriptionEditMode && IsBlank(varCurrentTicket.Description)
                                         Children:
                                           - con_empty_description_icon:
-                                              Control: GroupContainer@1.5.0
+                                              Control: GroupContainer
                                               Variant: AutoLayout
                                               Properties:
                                                 AlignInContainer: =AlignInContainer.Center
@@ -2867,7 +2865,7 @@ Screens:
                                                 Width: =56
                                               Children:
                                                 - lbl_empty_description_icon:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       Align: =Align.Center
                                                       AlignInContainer: =AlignInContainer.Stretch
@@ -2884,7 +2882,7 @@ Screens:
                                                       Text: ="▤"
                                                       Width: =56
                                           - lbl_empty_description:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 Align: =Align.Center
                                                 AlignInContainer: =AlignInContainer.Center
@@ -2901,7 +2899,7 @@ Screens:
                                                 Width: =220
                                                 Wrap: =false
                                     - gal_description_screenshots:
-                                        Control: Gallery@2.15.0
+                                        Control: Gallery
                                         Variant: Horizontal
                                         Properties:
                                           AccessibleLabel: =fxTranslate("ClickableDescriptionScreenshots", "Klickbare Screenshots aus der Beschreibung")
@@ -2917,7 +2915,7 @@ Screens:
                                           Width: =Parent.Width
                                         Children:
                                           - img_description_screenshot_thumbnail:
-                                              Control: Image@2.2.3
+                                              Control: Image
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("ShowScreenshotLarge", "Screenshot groß anzeigen")
                                                 BorderColor: =RGBA(203, 213, 225, 1)
@@ -2936,7 +2934,7 @@ Screens:
                                                 X: =4
                                                 Y: =4
                                     - rte_ticket_description:
-                                        Control: RichTextEditor@2.7.0
+                                        Control: RichTextEditor
                                         Properties:
                                           AccessibleLabel: =fxTranslate("EditDescription", "Beschreibung bearbeiten")
                                           BorderColor: =RGBA(87, 35, 129, 1)
@@ -2947,7 +2945,7 @@ Screens:
                                           Visible: =varDescriptionEditMode
                                           Width: =Parent.Width
                               - card_attachments:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(226, 232, 240, 1)
@@ -2972,7 +2970,7 @@ Screens:
                                     Visible: =App.Width >= 600
                                   Children:
                                     - row_attach_title:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           DropShadow: =DropShadow.None
@@ -2984,7 +2982,7 @@ Screens:
                                           Width: =Parent.Width
                                         Children:
                                           - lbl_attach_title:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 AutoHeight: =true
                                                 Color: =RGBA(15, 23, 42, 1)
@@ -2994,7 +2992,7 @@ Screens:
                                                 Size: =14
                                                 Text: =fxTranslate("Anlagen", "Anhänge")
                                     - con_attachment_body:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           BorderColor: =RGBA(226, 232, 240, 1)
@@ -3015,7 +3013,7 @@ Screens:
                                           Width: =Parent.Width
                                         Children:
                                           - lbl_attach_empty:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 Color: =RGBA(51, 65, 85, 1)
                                                 Size: =13
@@ -3023,7 +3021,7 @@ Screens:
                                                 Visible: =(IsBlank(varCurrentTicket) || (IsEmpty(varCurrentTicket.Anlagen) && IsEmpty(colTicketDetailComments))) && !varShowTicketAttachmentUpload
                                                 Width: =Parent.Width
                                           - att_ticket:
-                                              Control: Attachments@2.3.0
+                                              Control: Attachments
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("TicketAttachments", "Ticketanlagen")
                                                 AddAttachmentColor: =RGBA(87, 35, 129, 1)
@@ -3040,7 +3038,7 @@ Screens:
                                                 Size: =12
                                                 Width: =Parent.Width
                                           - gal_ticket_comment_attachments:
-                                              Control: Gallery@2.15.0
+                                              Control: Gallery
                                               Variant: Vertical
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("CommentAttachments", "Kommentaranhänge")
@@ -3055,7 +3053,7 @@ Screens:
                                                 Width: =Parent.Width
                                               Children:
                                                 - att_ticket_comment_attachment:
-                                                    Control: Attachments@2.3.0
+                                                    Control: Attachments
                                                     Properties:
                                                       AccessibleLabel: =fxTranslate("CommentAttachments", "Kommentaranhänge")
                                                       BorderColor: =RGBA(226, 232, 240, 1)
@@ -3070,7 +3068,7 @@ Screens:
                                                       Visible: =!IsEmpty(ThisItem.Anlagen)
                                                       Width: =Parent.TemplateWidth
                                           - form_ticket_attachments_inline:
-                                              Control: Form@2.4.4
+                                              Control: Form
                                               Layout: Vertical
                                               Properties:
                                                 DataSource: =ev_sp_list_tickets
@@ -3094,7 +3092,7 @@ Screens:
                                                 Width: =Parent.Width
                                               Children:
                                                 - dc_ticket_attachment_inline:
-                                                    Control: TypedDataCard@1.0.7
+                                                    Control: TypedDataCard
                                                     Variant: ClassicAttachmentsEdit
                                                     Properties:
                                                       DataField: ="{Attachments}"
@@ -3108,7 +3106,7 @@ Screens:
                                                       Y: =0
                                                     Children:
                                                       - att_ticket_inline_upload:
-                                                          Control: Attachments@2.3.0
+                                                          Control: Attachments
                                                           Properties:
                                                             AccessibleLabel: =fxTranslate("TicketAttachments", "Ticketanlagen")
                                                             AddAttachmentColor: =RGBA(87, 35, 129, 1)
@@ -3130,7 +3128,7 @@ Screens:
                                                             X: =4
                                                             Y: =4
                                           - row_ticket_attachment_actions:
-                                              Control: GroupContainer@1.5.0
+                                              Control: GroupContainer
                                               Variant: AutoLayout
                                               Properties:
                                                 DropShadow: =DropShadow.None
@@ -3144,7 +3142,7 @@ Screens:
                                                 Width: =Parent.Width
                                               Children:
                                                 - btn_cancel_ticket_attachment:
-                                                    Control: ModernButton@1.0.0
+                                                    Control: ModernButton
                                                     Properties:
                                                       Appearance: =ButtonAppearance.Secondary
                                                       DisplayMode: =If(varTicketAttachmentSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
@@ -3155,7 +3153,7 @@ Screens:
                                                       Text: =fxTranslate("Cancel", "Abbrechen")
                                                       Width: =110
                                                 - btn_save_ticket_attachment:
-                                                    Control: ModernButton@1.0.0
+                                                    Control: ModernButton
                                                     Properties:
                                                       DisplayMode: =If(fxCanEditCurrentTicket && !fxIsCurrentTicketClosed && !varTicketAttachmentSubmitting, DisplayMode.Edit, DisplayMode.Disabled)
                                                       Height: =34
@@ -3165,7 +3163,7 @@ Screens:
                                                       Text: =fxTranslate("Speichern", "Speichern")
                                                       Width: =110
                               - card_watchers_below_attachments:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(226, 232, 240, 1)
@@ -3189,7 +3187,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - lbl_watchers_below_title:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(15, 23, 42, 1)
                                           FontWeight: =FontWeight.Bold
@@ -3198,7 +3196,7 @@ Screens:
                                           Text: =fxTranslate("Watchers", "Beobachter")
                                           Width: =Parent.Width
                                     - dcv_watchers_below:
-                                        Control: ModernCombobox@1.1.1
+                                        Control: ModernCombobox
                                         Properties:
                                           AccessibleLabel: =fxTranslate("Watchers", "Beobachter")
                                           AlignInContainer: =AlignInContainer.Stretch
@@ -3247,7 +3245,7 @@ Screens:
                                           LayoutMinHeight: =0
                                           Width: =Parent.Width - 150
                                     - btn_save_watchers_below:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AccessibleLabel: =fxTranslate("SaveWatchers", "Beobachter speichern")
                                           AlignInContainer: =AlignInContainer.Stretch
@@ -3270,7 +3268,7 @@ Screens:
                                           Text: =fxTranslate("Speichern", "Speichern")
                                           Width: =130
                         - conActivity:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(229, 231, 235, 1)
@@ -3294,7 +3292,7 @@ Screens:
                               Visible: =fxCanViewCurrentTicket
                             Children:
                               - row_activity_title:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -3308,7 +3306,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - row_activity_title_left:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           DropShadow: =DropShadow.None
@@ -3321,7 +3319,7 @@ Screens:
                                           Width: =110
                                         Children:
                                           - lbl_activity_title:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 AlignInContainer: =AlignInContainer.Stretch
                                                 AutoHeight: =true
@@ -3335,7 +3333,7 @@ Screens:
                                                 Text: =If(App.Width < 600, "Verlauf", "Aktivität / Verlauf")
                                                 Width: =80
                                     - ddown_activity_filter:
-                                        Control: ModernCombobox@1.1.1
+                                        Control: ModernCombobox
                                         Properties:
                                           AccessibleLabel: =fxTranslate("ActivityFilter", "Aktivitätsfilter")
                                           Appearance: =Appearance.Outline
@@ -3365,7 +3363,7 @@ Screens:
                                           Visible: =App.Width >= 600 || varActivityExpanded
                                           Width: =140
                                     - btn_activity_toggle:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AccessibleLabel: =fxTranslate("ActivityHistory", "Aktivitätsverlauf")
                                           AlignInContainer: =AlignInContainer.Center
@@ -3377,7 +3375,7 @@ Screens:
                                           Visible: =App.Width < 600
                                           Width: =36
                               - gal_activity:
-                                  Control: Gallery@2.15.0
+                                  Control: Gallery
                                   Variant: Vertical
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ActivityHistory", "Aktivitätsverlauf")
@@ -3408,7 +3406,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - lbl_timeline_dot:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Align: =Align.Center
                                           Color: =RGBA(255, 255, 255, 1)
@@ -3432,7 +3430,7 @@ Screens:
                                           X: =8
                                           Y: =12
                                     - card_activity_item:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           BorderColor: |-
@@ -3485,7 +3483,7 @@ Screens:
                                           Y: =If(App.Width < 600, 6, 10)
                                         Children:
                                           - row_activity_meta:
-                                              Control: GroupContainer@1.5.0
+                                              Control: GroupContainer
                                               Variant: AutoLayout
                                               Properties:
                                                 DropShadow: =DropShadow.None
@@ -3498,7 +3496,7 @@ Screens:
                                                 Width: =Parent.Width
                                               Children:
                                                 - lbl_activity_meta:
-                                                    Control: ModernText@1.0.0
+                                                    Control: ModernText
                                                     Properties:
                                                       Align: =If(App.Width < 600 && ThisItem.CommentByClaims = fxCurrentUser.Claims, Align.Right, Align.Left)
                                                       AutoHeight: =true
@@ -3508,7 +3506,7 @@ Screens:
                                                       Text: =Coalesce(ThisItem.CommentBy, fxTranslate("Support", "Support")) & "  •  " & Text(ThisItem.Erstellt, "[$-de-DE]dd.mm.yyyy HH:mm")
                                                       Width: =Parent.Width - 40
                                           - lbl_activity_body:
-                                              Control: ModernText@1.0.0
+                                              Control: ModernText
                                               Properties:
                                                 Align: =If(App.Width < 600 && ThisItem.CommentByClaims = fxCurrentUser.Claims, Align.Right, Align.Left)
                                                 AutoHeight: =true
@@ -3519,7 +3517,7 @@ Screens:
                                                 VerticalAlign: =VerticalAlign.Top
                                                 Width: =Parent.Width
                                           - att_activity_item_attachments:
-                                              Control: Attachments@2.3.0
+                                              Control: Attachments
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("CommentAttachments", "Kommentaranhänge")
                                                 BorderColor: =RGBA(226, 232, 240, 1)
@@ -3534,7 +3532,7 @@ Screens:
                                                 Visible: =!IsEmpty(ThisItem.Anlagen)
                                                 Width: =Parent.Width
                               - txt_activity_empty:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -3546,7 +3544,7 @@ Screens:
                                     Visible: =(App.Width >= 600 || varActivityExpanded) && IsEmpty(gal_activity.AllItems)
                                     Width: =Parent.Width
                               - txt_closed_composer:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Align: =Align.Center
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -3566,7 +3564,7 @@ Screens:
                                     Visible: =(App.Width >= 600 || varActivityExpanded) && !IsBlank(varCurrentTicket) && fxIsCurrentTicketClosed && fxCanViewCurrentTicket
                                     Width: =Parent.Width
                               - con_message_composer:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(226, 232, 240, 1)
@@ -3592,7 +3590,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - form_comment_new:
-                                        Control: Form@2.4.4
+                                        Control: Form
                                         Layout: Vertical
                                         Properties:
                                           DataSource: =ev_sp_list_comments
@@ -3670,7 +3668,7 @@ Screens:
                                           Width: =Parent.Width
                                         Children:
                                           - CommentByClaims_DataCard1:
-                                              Control: TypedDataCard@1.0.7
+                                              Control: TypedDataCard
                                               Variant: TextualEdit
                                               Properties:
                                                 DataField: ="CommentByClaims"
@@ -3685,8 +3683,7 @@ Screens:
                                                 Y: =0
                                               Children:
                                                 - DataCardKey4:
-                                                    Control: Text@0.0.51
-                                                    MetadataKey: FieldName
+                                                    Control: Text
                                                     Properties:
                                                       Height: =22
                                                       Text: =Parent.DisplayName
@@ -3696,8 +3693,7 @@ Screens:
                                                       X: =24
                                                       Y: =10
                                                 - DataCardValue4:
-                                                    Control: TextInput@0.0.54
-                                                    MetadataKey: FieldValue
+                                                    Control: TextInput
                                                     Properties:
                                                       AccessibleLabel: =Parent.DisplayName
                                                       DisplayMode: =Parent.DisplayMode
@@ -3709,8 +3705,7 @@ Screens:
                                                       X: =24
                                                       Y: =DataCardKey4.Y + DataCardKey4.Height + 4
                                                 - ErrorMessage4:
-                                                    Control: Text@0.0.51
-                                                    MetadataKey: ErrorMessage
+                                                    Control: Text
                                                     Properties:
                                                       Height: =30
                                                       Text: =Parent.Error
@@ -3719,8 +3714,7 @@ Screens:
                                                       X: =24
                                                       Y: =DataCardValue4.Y + DataCardValue4.Height
                                                 - StarVisible4:
-                                                    Control: Text@0.0.51
-                                                    MetadataKey: FieldRequired
+                                                    Control: Text
                                                     Properties:
                                                       Align: ='TextCanvas.Align'.Center
                                                       Height: =30
@@ -3729,7 +3723,7 @@ Screens:
                                                       Width: =30
                                                       Y: =DataCardKey4.Y
                                           - dc_comment_text:
-                                              Control: TypedDataCard@1.0.7
+                                              Control: TypedDataCard
                                               Variant: TextualEdit
                                               Properties:
                                                 DataField: ="Comment"
@@ -3744,7 +3738,7 @@ Screens:
                                                 X: =0
                                                 Y: =0
                                           - dc_comment_by:
-                                              Control: TypedDataCard@1.0.7
+                                              Control: TypedDataCard
                                               Variant: TextualEdit
                                               Properties:
                                                 DataField: ="CommentBy"
@@ -3759,7 +3753,7 @@ Screens:
                                                 X: =0
                                                 Y: =1
                                           - dc_comment_ticket:
-                                              Control: TypedDataCard@1.0.7
+                                              Control: TypedDataCard
                                               Variant: TextualEdit
                                               Properties:
                                                 DataField: ="TicketNumber"
@@ -3774,7 +3768,7 @@ Screens:
                                                 X: =0
                                                 Y: =2
                                           - dc_comment_type:
-                                              Control: TypedDataCard@1.0.7
+                                              Control: TypedDataCard
                                               Variant: ComboBoxEdit
                                               Properties:
                                                 DataField: ="CommentType"
@@ -3789,7 +3783,7 @@ Screens:
                                                 X: =0
                                                 Y: =3
                                           - dc_comment_attachment:
-                                              Control: TypedDataCard@1.0.7
+                                              Control: TypedDataCard
                                               Variant: ClassicAttachmentsEdit
                                               Properties:
                                                 DataField: ="{Attachments}"
@@ -3804,7 +3798,7 @@ Screens:
                                                 Y: =4
                                               Children:
                                                 - att_comment_upload:
-                                                    Control: Attachments@2.3.0
+                                                    Control: Attachments
                                                     Properties:
                                                       AccessibleLabel: =fxTranslate("CommentAttachments", "Kommentaranhänge")
                                                       AddAttachmentColor: =RGBA(87, 35, 129, 1)
@@ -3829,7 +3823,7 @@ Screens:
                                                       Visible: =varShowCommentAttachmentTray Or !IsEmpty(Self.Attachments)
                                                       Width: =Parent.Width
                                     - inp_comment:
-                                        Control: ModernTextInput@1.1.1
+                                        Control: ModernTextInput
                                         Properties:
                                           AccessibleLabel: =fxTranslate("EnterComment", "Kommentar eingeben")
                                           AlignInContainer: =AlignInContainer.Stretch
@@ -3846,7 +3840,7 @@ Screens:
                                           X: =40
                                           Y: =40
                                     - row_message_input:
-                                        Control: GroupContainer@1.5.0
+                                        Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           DropShadow: =DropShadow.None
@@ -3859,7 +3853,7 @@ Screens:
                                           Width: =Parent.Width
                                         Children:
                                           - btn_comment_type_toggle:
-                                              Control: ModernButton@1.0.0
+                                              Control: ModernButton
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("ChangeCommentType", "Kommentartyp wechseln")
                                                 Appearance: =If(Coalesce(varCommentType, "Chat") = "Internal", ButtonAppearance.Primary, ButtonAppearance.Secondary)
@@ -3874,7 +3868,7 @@ Screens:
                                                 Visible: =fxCanSeeInternalNotes
                                                 Width: =If(App.Width < 760, 96, 120)
                                           - btn_attach_comment:
-                                              Control: ModernButton@1.0.0
+                                              Control: ModernButton
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("AddCommentAttachment", "Anhang zum Kommentar hinzufügen")
                                                 Appearance: =If(varShowCommentAttachmentTray Or !IsEmpty(att_comment_upload.Attachments), ButtonAppearance.Primary, ButtonAppearance.Secondary)
@@ -3890,7 +3884,7 @@ Screens:
                                                 Tooltip: =fxTranslate("AddAttachment", "Anhang hinzufügen")
                                                 Width: =36
                                           - btn_send_comment:
-                                              Control: ModernButton@1.0.0
+                                              Control: ModernButton
                                               Properties:
                                                 AccessibleLabel: =fxTranslate("SendComment", "Kommentar senden")
                                                 DisplayMode: =If(fxCanCommentOnCurrentTicket && !varCommentSubmitting && (!IsBlank(Trim(inp_comment.Text)) || !IsEmpty(att_comment_upload.Attachments)), DisplayMode.Edit, DisplayMode.Disabled)
@@ -3915,7 +3909,7 @@ Screens:
                                                 Tooltip: =fxTranslate("Send", "Senden")
                                                 Width: =36
                         - mobile_attachments_bottom:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(226, 232, 240, 1)
@@ -3940,7 +3934,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - lbl_mobile_attachments_title:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(15, 23, 42, 1)
@@ -3957,7 +3951,7 @@ Screens:
                                     Width: =Parent.Width
                                     Wrap: =false
                               - att_ticket_mobile:
-                                  Control: Attachments@2.3.0
+                                  Control: Attachments
                                   Properties:
                                     AccessibleLabel: =fxTranslate("TicketAttachments", "Ticketanlagen")
                                     AlignInContainer: =AlignInContainer.Stretch
@@ -3974,7 +3968,7 @@ Screens:
                                     Size: =10
                                     Width: =Parent.Width
                         - mobile_activity_primary:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(229, 231, 235, 1)
@@ -3999,7 +3993,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - row_mobile_activity_title:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -4013,7 +4007,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - lbl_mobile_activity_title:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           AlignInContainer: =AlignInContainer.Center
                                           Color: =RGBA(15, 23, 42, 1)
@@ -4030,7 +4024,7 @@ Screens:
                                           Text: =fxTranslate("Activity", "Aktivität")
                                           Wrap: =false
                                     - lbl_mobile_activity_count:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Align: =Align.Right
                                           AlignInContainer: =AlignInContainer.Center
@@ -4047,7 +4041,7 @@ Screens:
                                           Width: =68
                                           Wrap: =false
                               - gal_mobile_activity:
-                                  Control: Gallery@2.15.0
+                                  Control: Gallery
                                   Variant: Vertical
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ActivityHistory", "Aktivitätsverlauf")
@@ -4072,7 +4066,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - lbl_mobile_activity_author:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(100, 116, 139, 1)
                                           FontWeight: =FontWeight.Semibold
@@ -4088,7 +4082,7 @@ Screens:
                                           X: =12
                                           Y: =8
                                     - lbl_mobile_activity_body:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(15, 23, 42, 1)
                                           Height: =38
@@ -4103,7 +4097,7 @@ Screens:
                                           X: =12
                                           Y: =28
                               - row_mobile_activity_compose:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
@@ -4117,7 +4111,7 @@ Screens:
                                     Width: =Parent.Width
                                   Children:
                                     - inp_mobile_activity_comment:
-                                        Control: ModernTextInput@1.1.1
+                                        Control: ModernTextInput
                                         Properties:
                                           AccessibleLabel: =fxTranslate("EnterComment", "Kommentar eingeben")
                                           Appearance: =Appearance.Outline
@@ -4128,7 +4122,7 @@ Screens:
                                           Placeholder: =fxTranslate("MessageSupportPlaceholder", "Nachricht an Support schreiben...")
                                           Width: =Parent.Width - 52
                                     - btn_mobile_activity_send:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AccessibleLabel: =fxTranslate("SendComment", "Kommentar senden")
                                           DisplayMode: =If(!IsBlank(Trim(inp_mobile_activity_comment.Text)) && fxCanCommentOnCurrentTicket && !varCommentSubmitting, DisplayMode.Edit, DisplayMode.Disabled)
@@ -4147,7 +4141,7 @@ Screens:
                                             )
                                           Width: =40
       - tds_loading_overlay:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -4156,7 +4150,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - tds_loading_logo:
-                Control: Image@2.2.3
+                Control: Image
                 Properties:
                   AccessibleLabel: ="Kessel"
                   Height: =52
@@ -4166,7 +4160,7 @@ Screens:
                   X: =(Parent.Width - Self.Width) / 2
                   Y: =(Parent.Height - 130) / 2
             - tds_loading_spinner:
-                Control: Spinner@1.4.6
+                Control: Spinner
                 Properties:
                   AccessibleLabel: =fxTranslate("TicketBeingLoaded", "Ticket wird geladen")
                   FontColor: =RGBA(55, 65, 81, 1)
@@ -4179,7 +4173,7 @@ Screens:
                   X: =(Parent.Width - Self.Width) / 2
                   Y: =(Parent.Height - 18) / 2
             - tds_loading_card:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: ManualLayout
                 Properties:
                   BorderColor: =RGBA(225, 226, 230, 1)
@@ -4196,7 +4190,7 @@ Screens:
                   Y: =(Parent.Height - Self.Height) / 2
                 Children:
                   - tds_loading_card_spinner:
-                      Control: Spinner@1.4.6
+                      Control: Spinner
                       Properties:
                         AccessibleLabel: =fxTranslate("TicketBeingLoaded", "Ticket wird geladen")
                         FontColor: =RGBA(31, 41, 55, 1)
@@ -4208,7 +4202,7 @@ Screens:
                         X: =20
                         Y: =54
                   - tds_loading_card_logo:
-                      Control: Image@2.2.3
+                      Control: Image
                       Properties:
                         AccessibleLabel: ="Kessel"
                         Height: =30
@@ -4217,7 +4211,7 @@ Screens:
                         X: =(Parent.Width - Self.Width) / 2
                         Y: =14
       - tmr_ticket_id_polling:
-          Control: Timer@2.1.0
+          Control: Timer
           Properties:
             Duration: =2000
             OnTimerEnd: |-
@@ -4254,7 +4248,7 @@ Screens:
             Start: =varTicketIdPolling
             Visible: =false
       - tds_screenshot_preview_overlay:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -4264,7 +4258,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - tds_screenshot_preview_modal:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: ManualLayout
                 Properties:
                   DropShadow: =DropShadow.ExtraBold
@@ -4279,7 +4273,7 @@ Screens:
                   Y: =(Parent.Height - Self.Height) / 2
                 Children:
                   - img_screenshot_preview_large:
-                      Control: Image@2.2.3
+                      Control: Image
                       Properties:
                         AccessibleLabel: =fxTranslate("EnlargedScreenshot", "Vergrößerter Screenshot")
                         Height: =Parent.Height - 76
@@ -4292,7 +4286,7 @@ Screens:
                         X: =16
                         Y: =52
                   - btn_close_screenshot_preview:
-                      Control: ModernButton@1.0.0
+                      Control: ModernButton
                       Properties:
                         AccessibleLabel: =fxTranslate("CloseScreenshotPreview", "Screenshot-Großansicht schließen")
                         Appearance: =ButtonAppearance.Secondary
@@ -4304,8 +4298,68 @@ Screens:
                         Width: =36
                         X: =Parent.Width - 52
                         Y: =12
+      - form_ticket_attachments_inline:
+          Control: Form
+          Layout: Vertical
+          Properties:
+            DataSource: =ev_sp_list_tickets
+            FillPortions: =0
+            Height: =If(varShowTicketAttachmentUpload, 200, 0)
+            Item: =varCurrentTicket
+            LayoutMinHeight: =0
+            LayoutMinWidth: =0
+            OnFailure: |-
+              =Set(varTicketAttachmentSubmitting, false);
+              Notify(fxTranslate("AttachmentSaveFailed", "Anlage konnte nicht gespeichert werden."), NotificationType.Error, 4000)
+            OnSuccess: |-
+              =Set(varTicketAttachmentSubmitting, false);
+              Refresh(ev_sp_list_tickets);
+              Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = form_ticket_attachments_inline.LastSubmit.ID));
+              Set(varTicketLoadedModified, varCurrentTicket.Geändert);
+              ResetForm(form_ticket_attachments_inline);
+              Set(varShowTicketAttachmentUpload, false);
+              Notify(fxTranslate("AttachmentSaved", "Anlage gespeichert."), NotificationType.Success, 2500)
+            Visible: =varShowTicketAttachmentUpload
+            Width: =Parent.Width
+          Children:
+            - dc_ticket_attachment_inline:
+                Control: TypedDataCard
+                Variant: ClassicAttachmentsEdit
+                Properties:
+                  DataField: ="{Attachments}"
+                  Default: =ThisItem.Anlagen
+                  DisplayName: =fxTranslate("Anlagen", "Anhänge")
+                  Height: =190
+                  Required: =false
+                  Update: =att_ticket_inline_upload.Attachments
+                  Width: =Parent.Width
+                  X: =0
+                  Y: =0
+                Children:
+                  - att_ticket_inline_upload:
+                      Control: Attachments
+                      Properties:
+                        AccessibleLabel: =fxTranslate("TicketAttachments", "Ticketanlagen")
+                        AddAttachmentColor: =RGBA(87, 35, 129, 1)
+                        AddAttachmentText: =fxTranslate("ChooseFile", "Datei auswählen")
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DisplayMode: =If(fxCanEditCurrentTicket && !fxIsCurrentTicketClosed && !varTicketAttachmentSubmitting, DisplayMode.Edit, DisplayMode.Disabled)
+                        Height: =150
+                        Items: =Parent.Default
+                        MaxAttachments: =10
+                        MaxAttachmentsText: =fxTranslate("MaxAttachmentsReached", "Max. Anzahl von Anhängen erreicht.")
+                        NoAttachmentsText: =fxTranslate("NoFileSelected", "Keine Datei ausgewählt")
+                        PaddingBottom: =6
+                        PaddingLeft: =6
+                        PaddingRight: =6
+                        PaddingTop: =6
+                        Size: =12
+                        Width: =Parent.Width - 8
+                        X: =4
+                        Y: =4
       - tds_promote_change_overlay:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -4315,7 +4369,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - tds_promote_change_modal:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.ExtraBold
@@ -4336,7 +4390,7 @@ Screens:
                   Y: =(Parent.Height - Self.Height) / 2
                 Children:
                   - txt_promote_change_title:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         AutoHeight: =true
                         Color: =RGBA(15, 23, 42, 1)
@@ -4345,7 +4399,7 @@ Screens:
                         Text: =fxTranslate("PromoteToChangeTitle", "Ticket zu Change hochstufen?")
                         Width: =Parent.Width - 44
                   - txt_promote_change_body:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         AutoHeight: =true
                         Color: =RGBA(71, 85, 105, 1)
@@ -4354,7 +4408,7 @@ Screens:
                         Text: =fxTranslate("PromoteToChangeBody", "Das Ticket wird als Change angefordert. Bitte dokumentiere kurz, warum aus diesem Ticket ein Change werden soll.")
                         Width: =Parent.Width - 44
                   - inp_promote_change_note:
-                      Control: ModernTextInput@1.1.1
+                      Control: ModernTextInput
                       Properties:
                         AccessibleLabel: =fxTranslate("PromoteReason", "Grund für Hochstufung")
                         Appearance: =Appearance.FilledLighter
@@ -4367,7 +4421,7 @@ Screens:
                         Type: =TextInputType.Multiline
                         Width: =Parent.Width - 44
                   - row_promote_change_actions:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -4380,7 +4434,7 @@ Screens:
                         Width: =Parent.Width - 44
                       Children:
                         - btn_cancel_promote_change:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               Appearance: =ButtonAppearance.Secondary
                               DisplayMode: =If(varPromoteToChangeSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
@@ -4389,7 +4443,7 @@ Screens:
                               Text: =fxTranslate("Cancel", "Abbrechen")
                               Width: =120
                         - btn_confirm_promote_change:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               DisplayMode: =If(varPromoteToChangeSubmitting Or IsBlank(Trim(inp_promote_change_note.Text)), DisplayMode.Disabled, DisplayMode.Edit)
                               Height: =38
