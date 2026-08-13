@@ -1,12 +1,12 @@
 # Versioning workflow
 
-Both `canvas-sync/` and `canvas-server-check/` are versioned. Before every change, explicitly name the target directory or directories. Never assume that one directory is newer than the other.
+`canvas-sync/` is the single working directory for this Canvas app. Do not create additional in-repository copies for synchronization, comparison, validation, or rollback. Git history is the source for checkpoints and restores.
 
 ## Before a change
 
 1. Run `git status --short` and inspect existing changes.
 2. Create a focused branch, for example `git switch -c fix/ticket-navigation`.
-3. Record which Canvas directory is the source for the task.
+3. Sync, edit, compile, and validate only `canvas-sync/`.
 
 ## After a change
 
