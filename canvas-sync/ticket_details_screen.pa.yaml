@@ -11,6 +11,7 @@ Screens:
     Properties:
       Fill: =RGBA(242, 244, 248, 1)
       LoadingSpinnerColor: =RGBA(87, 35, 129, 1)
+      OnHidden: =Set(varTicketIdPolling, false); Set(varTicketLoadRequestId, GUID()); Set(varTicketRefreshing, false)
       OnVisible: |-
         =Set(
             varCommentType,
@@ -30,6 +31,8 @@ Screens:
             varTicketRefreshing,
             true
         );
+        Set(varTicketIdPolling, false);
+        Set(varTicketLoadRequestId, GUID());
         Set(
             varTicketIdToLoad,
             Coalesce(
@@ -2422,15 +2425,7 @@ Screens:
                                           SortOrder.Descending
                                       )
                                     LayoutMinWidth: =0
-                                    OnSelect: |-
-                                      =Set(
-                                          varCurrentTicket,
-                                          ThisItem
-                                      );
-                                      Set(
-                                          varTicketLoadedModified,
-                                          ThisItem.Geändert
-                                      )
+                                    OnSelect: =Select(btn_select_ticket)
                                     TabIndex: =0
                                     TemplatePadding: =0
                                     TemplateSize: =76
@@ -2483,15 +2478,7 @@ Screens:
                                                   )
                                                 FontWeight: =FontWeight.Bold
                                                 Height: =34
-                                                OnSelect: |-
-                                                  =Set(
-                                                      varCurrentTicket,
-                                                      ThisItem
-                                                  );
-                                                  Set(
-                                                      varTicketLoadedModified,
-                                                      ThisItem.Geändert
-                                                  )
+                                                OnSelect: =Select(btn_select_ticket)
                                                 RadiusBottomLeft: =17
                                                 RadiusBottomRight: =17
                                                 RadiusTopLeft: =17
@@ -2519,15 +2506,7 @@ Screens:
                                                       FontWeight: =FontWeight.Semibold
                                                       Height: =18
                                                       LayoutMinHeight: =0
-                                                      OnSelect: |-
-                                                        =Set(
-                                                            varCurrentTicket,
-                                                            ThisItem
-                                                        );
-                                                        Set(
-                                                            varTicketLoadedModified,
-                                                            ThisItem.Geändert
-                                                        )
+                                                      OnSelect: =Select(btn_select_ticket)
                                                       Size: =13
                                                       Text: =Coalesce(ThisItem.Titel, "")
                                                       Width: =Parent.Width
@@ -2541,15 +2520,7 @@ Screens:
                                                       Height: =18
                                                       LayoutMinHeight: =0
                                                       LayoutMinWidth: =0
-                                                      OnSelect: |-
-                                                        =Set(
-                                                            varCurrentTicket,
-                                                            ThisItem
-                                                        );
-                                                        Set(
-                                                            varTicketLoadedModified,
-                                                            ThisItem.Geändert
-                                                        )
+                                                      OnSelect: =Select(btn_select_ticket)
                                                       Size: =12
                                                       Text: =ThisItem.TicketTitel
                                                       Width: =Parent.Width
@@ -2561,15 +2532,7 @@ Screens:
                                                       FillPortions: =1
                                                       Height: =18
                                                       LayoutMinHeight: =18
-                                                      OnSelect: |-
-                                                        =Set(
-                                                            varCurrentTicket,
-                                                            ThisItem
-                                                        );
-                                                        Set(
-                                                            varTicketLoadedModified,
-                                                            ThisItem.Geändert
-                                                        )
+                                                      OnSelect: =Select(btn_select_ticket)
                                                       Size: =12
                                                       Text: =Coalesce(ThisItem.Status.Value, ThisItem.StatusINC.Value, "")
                                                       Width: =Parent.Width
@@ -2578,21 +2541,65 @@ Screens:
                                         Properties:
                                           AccessibleLabel: =Coalesce(ThisItem.Titel, ThisItem.Titel, ThisItem.Name, fxTranslate("Ticket", "Ticket"))
                                           Appearance: =ButtonAppearance.Transparent
+                                          DisplayMode: =If(Coalesce(varTicketRefreshing, false) Or Coalesce(varCommentSubmitting, false) Or Coalesce(varTicketAttachmentSubmitting, false) Or Coalesce(varDescriptionSaving, false) Or Coalesce(varTransitionSubmitting, false) Or Coalesce(varPromoteToChangeSubmitting, false), DisplayMode.Disabled, DisplayMode.Edit)
                                           Height: =78
                                           OnSelect: |-
-                                            =Set(varTicketRefreshing, true);
-                                            Set(
-                                                varCurrentTicket,
-                                                LookUp(ev_sp_list_tickets, ID = ThisItem.ID)
-                                            );
-                                            Set(
-                                                varTicketLoadedModified,
-                                                varCurrentTicket.Geändert
-                                            );
-                                            ResetForm(frmTicketDetails);
-                                            Set(locTicketMode, "View");
-                                            Set(varShowTicketDetails, true);
-                                            Set(varTicketRefreshing, false)
+                                            =With(
+                                                {
+                                                    selectedTicket: ThisItem,
+                                                    selectedTicketId: ThisItem.ID,
+                                                    selectedTicketNumber: Text(ThisItem.ID),
+                                                    ticketLoadRequestId: GUID()
+                                                },
+                                                Set(varTicketIdPolling, false);
+                                                Set(varTicketLoadRequestId, ticketLoadRequestId);
+                                                Set(varTicketIdToLoad, selectedTicketId);
+                                                Set(varTicketRefreshing, true);
+                                                Set(varCurrentTicket, selectedTicket);
+                                                Set(varTicketLoadedModified, selectedTicket.Geändert);
+                                                Set(varTicketIdPollingAttempts, 0);
+                                                ClearCollect(
+                                                    colTicketDetailComments,
+                                                    Filter(
+                                                        ev_sp_list_comments,
+                                                        TicketNumber = selectedTicketNumber
+                                                    )
+                                                );
+                                                ClearCollect(
+                                                    colTicketDetailCommentAttachments,
+                                                    Filter(colTicketDetailComments, !IsEmpty(Anlagen))
+                                                );
+                                                ResetForm(frmTicketDetails);
+                                                ResetForm(form_ticket_attachments_inline);
+                                                ResetForm(form_comment_new);
+                                                Reset(inp_comment);
+                                                Set(varCommentType, "Chat");
+                                                Set(varShowCommentAttachmentTray, false);
+                                                Set(varShowTicketAttachmentUpload, false);
+                                                Set(varDescriptionEditMode, false);
+                                                Set(varShowDescriptionScreenshotPreview, false);
+                                                Set(varSelectedDescriptionScreenshot, Blank());
+                                                Set(varSelectedTransition, Blank());
+                                                With(
+                                                    {
+                                                        selectedPendingTransition: LookUp(
+                                                            ev_sp_list_config_transition_requests,
+                                                            TicketID = selectedTicketId && RequestStatus = "Pending"
+                                                        )
+                                                    },
+                                                    If(
+                                                        varTicketLoadRequestId = ticketLoadRequestId && varTicketIdToLoad = selectedTicketId,
+                                                        Set(varPendingTransition, selectedPendingTransition)
+                                                    )
+                                                );
+                                                Set(locTicketMode, "View");
+                                                Set(varShowTicketDetails, true);
+                                                If(
+                                                    varTicketLoadRequestId = ticketLoadRequestId && varTicketIdToLoad = selectedTicketId,
+                                                    Set(varTicketIdPolling, IsBlank(selectedTicket.TicketId));
+                                                    Set(varTicketRefreshing, false)
+                                                )
+                                            )
                                           Text: =""
                                           Width: =Parent.TemplateWidth - 8
                                           X: =8
@@ -4221,32 +4228,54 @@ Screens:
           Properties:
             Duration: =2000
             OnTimerEnd: |-
-              =IfError(
-                  Refresh(ev_sp_list_tickets);
-                  With(
-                      {polledTicket: LookUp(ev_sp_list_tickets, ID = varTicketIdToLoad)},
+              =With(
+                  {
+                      pollTicketId: varTicketIdToLoad,
+                      pollRequestId: varTicketLoadRequestId
+                  },
+                  If(
+                      IsBlank(varCurrentTicket) || varCurrentTicket.ID <> pollTicketId,
                       If(
-                          IsBlank(polledTicket),
-                          Set(varTicketIdPolling, false),
-                          Set(varCurrentTicket, polledTicket);
+                          varTicketLoadRequestId = pollRequestId && varTicketIdToLoad = pollTicketId,
+                          Set(varTicketIdPolling, false)
+                      ),
+                      IfError(
+                          Refresh(ev_sp_list_tickets);
                           If(
-                              !frmTicketDetails.Unsaved,
-                              Set(varTicketLoadedModified, polledTicket.Geändert)
-                          );
-                          Set(varTicketIdPollingAttempts, varTicketIdPollingAttempts + 1);
+                              varTicketLoadRequestId = pollRequestId && varTicketIdToLoad = pollTicketId,
+                              With(
+                                  {polledTicket: LookUp(ev_sp_list_tickets, ID = pollTicketId)},
+                                  If(
+                                      varTicketLoadRequestId = pollRequestId && varTicketIdToLoad = pollTicketId,
+                                      If(
+                                          IsBlank(polledTicket) || IsBlank(varCurrentTicket) || varCurrentTicket.ID <> pollTicketId,
+                                          Set(varTicketIdPolling, false),
+                                          Set(varCurrentTicket, polledTicket);
+                                          If(
+                                              !frmTicketDetails.Unsaved,
+                                              Set(varTicketLoadedModified, polledTicket.Geändert)
+                                          );
+                                          Set(varTicketIdPollingAttempts, varTicketIdPollingAttempts + 1);
+                                          If(
+                                              IsBlank(polledTicket.TicketId) && varTicketIdPollingAttempts >= 15,
+                                              Set(varTicketIdPolling, false);
+                                              Notify(fxTranslate("TicketNumberStillGenerating", "Die Ticketnummer wird noch erzeugt. Bitte später über Aktualisieren erneut laden."), NotificationType.Information, 5000),
+                                              Set(varTicketIdPolling, IsBlank(polledTicket.TicketId))
+                                          )
+                                      )
+                                  )
+                              )
+                          ),
                           If(
-                              IsBlank(polledTicket.TicketId) && varTicketIdPollingAttempts >= 15,
+                              varTicketLoadRequestId = pollRequestId && varTicketIdToLoad = pollTicketId,
                               Set(varTicketIdPolling, false);
-                              Notify(fxTranslate("TicketNumberStillGenerating", "Die Ticketnummer wird noch erzeugt. Bitte später über Aktualisieren erneut laden."), NotificationType.Information, 5000),
-                              Set(varTicketIdPolling, IsBlank(polledTicket.TicketId))
+                              Notify(
+                                  fxTranslate("TicketDetailsRefreshFailed", "Die aktuellen Ticketdetails konnten noch nicht geladen werden."),
+                                  NotificationType.Warning,
+                                  5000
+                              )
                           )
                       )
-                  ),
-                  Set(varTicketIdPolling, false);
-                  Notify(
-                      fxTranslate("TicketDetailsRefreshFailed", "Die aktuellen Ticketdetails konnten noch nicht geladen werden."),
-                      NotificationType.Warning,
-                      5000
                   )
               )
             Repeat: =true
