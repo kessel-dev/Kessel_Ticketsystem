@@ -1,0 +1,1372 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  service_wizard_screen:
+    Properties:
+      Fill: =RGBA(242, 244, 248, 1)
+      LoadingSpinnerColor: =RGBA(87, 35, 129, 1)
+      OnVisible: |-
+        =Refresh(ev_sp_list_service_catalog);
+        Refresh(ev_sp_list_servicefield_definitions);
+        Refresh(ev_sp_list_servicefield_options);
+        Set(varServiceWizardStep, 1);
+        Set(varWizardTemplate, "General");
+         Set(varWizardPublished, false);
+         Set(varServiceWizardSubmitting, false);
+         Set(varServiceWizardChoiceFieldKey, Blank());
+        Clear(colServiceWizardFields);
+        Clear(colServiceWizardOptions)
+    Children:
+      - sws_root:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(242, 244, 248, 1)
+            Height: =Parent.Height
+            LayoutDirection: =LayoutDirection.Vertical
+            Width: =Parent.Width
+          Children:
+            - sws_header:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  BorderColor: =RGBA(226, 232, 240, 1)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.Semilight
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =72
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =14
+                  LayoutMinHeight: =0
+                  LayoutMinWidth: =0
+                  PaddingBottom: =12
+                  PaddingLeft: =28
+                  PaddingRight: =28
+                  PaddingTop: =12
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =Parent.Width
+                Children:
+                  - sws_header_back:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        AccessibleLabel: =fxTranslate("BackToServiceCatalog", "Zurück zum Servicekatalog")
+                        Appearance: =ButtonAppearance.Secondary
+                        Height: =40
+                        Icon: ="ChevronLeft"
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        OnSelect: =Navigate(service_catalog_screen, ScreenTransition.CoverRight)
+                        Text: =fxTranslate("Back", "Zurück")
+                        Width: =128
+                  - sws_header_title:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        AutoHeight: =true
+                        Color: =RGBA(17, 24, 39, 1)
+                        FillPortions: =1
+                        FontWeight: =FontWeight.Bold
+                        Height: =30
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =22
+                        Text: =fxTranslate("ServiceTeam", "Service Team")
+                        Wrap: =false
+                  - sws_language_selector:
+                      Control: ModernDropdown@1.0.2
+                      Properties:
+                        AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
+                        Default: |-
+                          =LookUp(Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"}), Code = Coalesce(varCurrentLanguage, "de"))
+                        Height: =34
+                        ItemDisplayText: =ThisItem.Label
+                        Items: |-
+                          =Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"})
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
+                        Width: =72
+                  - sws_header_cancel:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        AccessibleLabel: =fxTranslate("CancelServiceWizard", "Service-Erstellung abbrechen")
+                        Appearance: =ButtonAppearance.Secondary
+                        Height: =40
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        OnSelect: =Navigate(service_catalog_screen, ScreenTransition.CoverRight)
+                        Text: =fxTranslate("Cancel", "Abbrechen")
+                        Width: =110
+            - sws_agent_content:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =16
+                  LayoutMinHeight: =0
+                  LayoutMinWidth: =0
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =28
+                  PaddingLeft: =28
+                  PaddingRight: =28
+                  PaddingTop: =24
+                  Visible: =fxIsAgentExperience
+                  Width: =Parent.Width
+                Children:
+                  - sws_intro:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =54
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =2
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                      Children:
+                        - sws_intro_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Stretch
+                              AutoHeight: =true
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =28
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =24
+                              Text: =fxTranslate("CreateNewService", "Neuen Service erstellen")
+                              Wrap: =false
+                        - sws_intro_detail:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Stretch
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =20
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =13
+                              Text: =fxTranslate("ServiceWizardIntro", "Konfigurieren Sie einen neuen Service, seine Felder und Auswahlwerte.")
+                              Wrap: =false
+                  - sws_stepper:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =48
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =8
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingBottom: =8
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =8
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Width: =Parent.Width
+                      Children:
+                        - sws_step_1_indicator:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =If(varServiceWizardStep = 1, RGBA(255, 255, 255, 1), RGBA(87, 35, 129, 1))
+                              Fill: =If(varServiceWizardStep = 1, RGBA(87, 35, 129, 1), RGBA(246, 240, 252, 1))
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =6
+                              PaddingRight: =6
+                              PaddingTop: =0
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Size: =12
+                              Text: ="1  " & fxTranslate("ServiceWizardStepDetails", "Basisdaten")
+                              Wrap: =false
+                        - sws_step_2_indicator:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =If(varServiceWizardStep = 2, RGBA(255, 255, 255, 1), RGBA(87, 35, 129, 1))
+                              Fill: =If(varServiceWizardStep = 2, RGBA(87, 35, 129, 1), RGBA(246, 240, 252, 1))
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =6
+                              PaddingRight: =6
+                              PaddingTop: =0
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Size: =12
+                              Text: ="2  " & fxTranslate("ServiceWizardStepFields", "Felder")
+                              Wrap: =false
+                        - sws_step_3_indicator:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =If(varServiceWizardStep = 3, RGBA(255, 255, 255, 1), RGBA(87, 35, 129, 1))
+                              Fill: =If(varServiceWizardStep = 3, RGBA(87, 35, 129, 1), RGBA(246, 240, 252, 1))
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =6
+                              PaddingRight: =6
+                              PaddingTop: =0
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Size: =12
+                              Text: ="3  " & fxTranslate("ServiceWizardStepOptions", "Auswahlwerte")
+                              Wrap: =false
+                        - sws_step_4_indicator:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =If(varServiceWizardStep = 4, RGBA(255, 255, 255, 1), RGBA(87, 35, 129, 1))
+                              Fill: =If(varServiceWizardStep = 4, RGBA(87, 35, 129, 1), RGBA(246, 240, 252, 1))
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =6
+                              PaddingRight: =6
+                              PaddingTop: =0
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Size: =12
+                              Text: ="4  " & fxTranslate("ServiceWizardStepReview", "Prüfen & Speichern")
+                              Wrap: =false
+                  - sws_step_1:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.Semilight
+                        Fill: =RGBA(255, 255, 255, 1)
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingBottom: =22
+                        PaddingLeft: =22
+                        PaddingRight: =22
+                        PaddingTop: =22
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        Visible: =varServiceWizardStep = 1
+                        Width: =Parent.Width
+                      Children:
+                        - sws_step_1_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =28
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =18
+                              Text: =fxTranslate("ServiceDetails", "Service-Details")
+                              Wrap: =false
+                        - sws_title_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =42
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =16
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                            Children:
+                              - sws_title_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =13
+                                    Text: =fxTranslate("ServiceTitleRequired", "Service-Titel *")
+                                    Width: =210
+                                    Wrap: =false
+                              - sws_title:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ServiceTitleRequired", "Service-Titel *")
+                                    Appearance: =Appearance.Outline
+                                    FillPortions: =1
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("ServiceTitlePlaceholder", "Service-Titel eingeben...")
+                        - sws_code_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =42
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =16
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                            Children:
+                              - sws_code_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =13
+                                    Text: =fxTranslate("ServiceCodeRequired", "Service-Code *")
+                                    Width: =210
+                                    Wrap: =false
+                              - sws_code:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ServiceCodeRequired", "Service-Code *")
+                                    Appearance: =Appearance.Outline
+                                    FillPortions: =1
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("ServiceCodePlaceholder", "z. B. SOFTWARE_REQUEST")
+                        - sws_category_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =42
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =16
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                            Children:
+                              - sws_category_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =13
+                                    Text: =fxTranslate("ServiceCategory", "Kategorie")
+                                    Width: =210
+                                    Wrap: =false
+                              - sws_category:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ServiceCategory", "Kategorie")
+                                    Appearance: =Appearance.Outline
+                                    FillPortions: =1
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("ServiceCategoryPlaceholder", "Kategorie eingeben...")
+                        - sws_description_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =92
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =16
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                            Children:
+                              - sws_description_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =13
+                                    Text: =fxTranslate("ServiceDescription", "Beschreibung")
+                                    Width: =210
+                                    Wrap: =false
+                              - sws_description:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ServiceDescription", "Beschreibung")
+                                    Appearance: =Appearance.Outline
+                                    FillPortions: =1
+                                    Height: =84
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("ServiceDescriptionPlaceholder", "Service und Zielgruppe beschreiben...")
+                                    Type: =TextInputType.Multiline
+                        - sws_queue_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =42
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =16
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                            Children:
+                              - sws_queue_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =13
+                                    Text: =fxTranslate("FulfillmentQueueRequired", "Fulfillment-Queue *")
+                                    Width: =210
+                                    Wrap: =false
+                              - sws_queue:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("FulfillmentQueueRequired", "Fulfillment-Queue *")
+                                    Appearance: =Appearance.Outline
+                                    FillPortions: =1
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("FulfillmentQueuePlaceholder", "z. B. IT-SERVICE-DESK")
+                        - sws_priority_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =42
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =16
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                            Children:
+                              - sws_priority_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =13
+                                    Text: =fxTranslate("DefaultServicePriority", "Standardpriorität")
+                                    Width: =210
+                                    Wrap: =false
+                              - sws_priority:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("DefaultServicePriority", "Standardpriorität")
+                                    Default: |-
+                                      =LookUp(Table({Value: "Standard", Label: fxTranslate("PriorityStandard", "Standard")}, {Value: "Hoch", Label: fxTranslate("PriorityHigh", "Hoch")}, {Value: "Mittel", Label: fxTranslate("PriorityMedium", "Mittel")}, {Value: "Niedrig", Label: fxTranslate("PriorityLow", "Niedrig")}), Value = "Standard")
+                                    FillPortions: =1
+                                    Height: =38
+                                    ItemDisplayText: =ThisItem.Label
+                                    Items: |-
+                                      =Table({Value: "Standard", Label: fxTranslate("PriorityStandard", "Standard")}, {Value: "Hoch", Label: fxTranslate("PriorityHigh", "Hoch")}, {Value: "Mittel", Label: fxTranslate("PriorityMedium", "Mittel")}, {Value: "Niedrig", Label: fxTranslate("PriorityLow", "Niedrig")})
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                        - sws_template_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =42
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =16
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                            Children:
+                              - sws_template_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =13
+                                    Text: =fxTranslate("ServiceTemplate", "Vorlage")
+                                    Width: =210
+                                    Wrap: =false
+                              - sws_template:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ServiceTemplate", "Vorlage")
+                                    Default: |-
+                                      =LookUp(Table({Value: "General", Label: fxTranslate("TemplateGeneral", "General")}, {Value: "Access", Label: fxTranslate("TemplateAccess", "Access")}, {Value: "Hardware", Label: fxTranslate("TemplateHardware", "Hardware")}, {Value: "Software", Label: fxTranslate("TemplateSoftware", "Software")}), Value = varWizardTemplate)
+                                    FillPortions: =1
+                                    Height: =38
+                                    ItemDisplayText: =ThisItem.Label
+                                    Items: |-
+                                      =Table({Value: "General", Label: fxTranslate("TemplateGeneral", "General")}, {Value: "Access", Label: fxTranslate("TemplateAccess", "Access")}, {Value: "Hardware", Label: fxTranslate("TemplateHardware", "Hardware")}, {Value: "Software", Label: fxTranslate("TemplateSoftware", "Software")})
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: =Set(varWizardTemplate, Self.Selected.Value)
+                        - sws_apply_template_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =44
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =12
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingLeft: =226
+                              Width: =Parent.Width
+                            Children:
+                              - sws_apply_template:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ApplyServiceTemplate", "Vorlage anwenden")
+                                    BasePaletteColor: =RGBA(87, 35, 129, 1)
+                                    Height: =40
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =Set(varWizardTemplate, Coalesce(sws_template.Selected.Value, varWizardTemplate));
+                                      Clear(colServiceWizardFields);
+                                      Clear(colServiceWizardOptions);
+                                      Set(varServiceWizardChoiceFieldKey, Blank());
+                                      Switch(
+                                          varWizardTemplate,
+                                          "Access",
+                                          Collect(colServiceWizardFields, {Title: fxTranslate("ServiceFieldEmployee", "Mitarbeiter"), FieldKey: "EMPLOYEE", FieldType: "Person"}, {Title: fxTranslate("ServiceFieldRequestType", "Anfrageart"), FieldKey: "REQUESTTYPE", FieldType: "Choice"}, {Title: fxTranslate("ServiceFieldDetails", "Details"), FieldKey: "DETAILS", FieldType: "LongText"});
+                                          Collect(colServiceWizardOptions, {Title: fxTranslate("RequestTypeNewAccount", "Neues Konto"), OptionKey: "NEWACCOUNT", ServiceCode: "", FieldKey: "REQUESTTYPE", Value: "NewAccount", Active: true}, {Title: fxTranslate("RequestTypeChangePermissions", "Berechtigungen ändern"), OptionKey: "CHANGEPERMISSIONS", ServiceCode: "", FieldKey: "REQUESTTYPE", Value: "ChangePermissions", Active: true}),
+                                          "Hardware",
+                                          Collect(colServiceWizardFields, {Title: fxTranslate("ServiceFieldHardwareType", "Hardwaretyp"), FieldKey: "HARDWARETYPE", FieldType: "Choice"}, {Title: fxTranslate("ServiceFieldDeliveryLocation", "Lieferort"), FieldKey: "DELIVERYLOCATION", FieldType: "Text"});
+                                          Collect(colServiceWizardOptions, {Title: fxTranslate("HardwareLaptop", "Laptop"), OptionKey: "LAPTOP", ServiceCode: "", FieldKey: "HARDWARETYPE", Value: "Laptop", Active: true}, {Title: fxTranslate("HardwareMonitor", "Monitor"), OptionKey: "MONITOR", ServiceCode: "", FieldKey: "HARDWARETYPE", Value: "Monitor", Active: true}),
+                                          "Software",
+                                          Collect(colServiceWizardFields, {Title: fxTranslate("ServiceFieldApplication", "Anwendung"), FieldKey: "APPLICATION", FieldType: "Choice"}, {Title: fxTranslate("ServiceFieldDevice", "Gerät"), FieldKey: "DEVICE", FieldType: "Text"});
+                                          Collect(colServiceWizardOptions, {Title: fxTranslate("SoftwareMicrosoftVisio", "Microsoft Visio"), OptionKey: "MICROSOFTVISIO", ServiceCode: "", FieldKey: "APPLICATION", Value: "MicrosoftVisio", Active: true}, {Title: fxTranslate("SoftwareAdobeAcrobatPro", "Adobe Acrobat Pro"), OptionKey: "ADOBEACROBATPRO", ServiceCode: "", FieldKey: "APPLICATION", Value: "AdobeAcrobatPro", Active: true}),
+                                          Collect(colServiceWizardFields, {Title: fxTranslate("ServiceFieldDescription", "Beschreibung"), FieldKey: "DESCRIPTION", FieldType: "LongText"})
+                                      )
+                                    Text: =fxTranslate("ApplyServiceTemplate", "Vorlage anwenden")
+                                    Width: =180
+                  - sws_step_2:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.Semilight
+                        Fill: =RGBA(255, 255, 255, 1)
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingBottom: =22
+                        PaddingLeft: =22
+                        PaddingRight: =22
+                        PaddingTop: =22
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        Visible: =varServiceWizardStep = 2
+                        Width: =Parent.Width
+                      Children:
+                        - sws_fields_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =28
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =18
+                              Text: =fxTranslate("ServiceFieldDefinitions", "Service-Felder")
+                              Wrap: =false
+                        - sws_fields_intro:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Stretch
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =20
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =13
+                              Text: =fxTranslate("ServiceFieldDefinitionsIntro", "Fügen Sie die Informationen hinzu, die beim Anfordern dieses Service abgefragt werden.")
+                        - sws_fields_gallery:
+                            Control: Gallery@2.15.0
+                            Variant: Vertical
+                            Properties:
+                              AccessibleLabel: =fxTranslate("ConfiguredServiceFields", "Konfigurierte Service-Felder")
+                              FillPortions: =0
+                              Height: =Max(80, CountRows(colServiceWizardFields) * 56)
+                              Items: =colServiceWizardFields
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              TemplatePadding: =4
+                              TemplateSize: =52
+                              Width: =Parent.Width
+                            Children:
+                              - sws_field_item:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    BorderColor: =RGBA(226, 232, 240, 1)
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(248, 250, 252, 1)
+                                    Height: =Parent.TemplateHeight - 8
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    PaddingBottom: =6
+                                    PaddingLeft: =12
+                                    PaddingRight: =8
+                                    PaddingTop: =6
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =4
+                                  Children:
+                                    - sws_field_item_text:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Color: =RGBA(17, 24, 39, 1)
+                                          FillPortions: =1
+                                          FontWeight: =FontWeight.Semibold
+                                          Height: =22
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =13
+                                          Text: =ThisItem.Title & "  |  " & ThisItem.FieldKey & "  |  " & Switch(ThisItem.FieldType, "Text", fxTranslate("ServiceFieldTypeText", "Text"), "LongText", fxTranslate("ServiceFieldTypeLongText", "Langer Text"), "Choice", fxTranslate("ServiceFieldTypeChoice", "Auswahl"), "Person", fxTranslate("ServiceFieldTypePerson", "Person"), ThisItem.FieldType)
+                                          Wrap: =false
+                                    - sws_field_remove:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          AccessibleLabel: =Substitute(fxTranslate("RemoveServiceFieldTemplate", "Feld {0} entfernen"), "{0}", ThisItem.Title)
+                                          Appearance: =ButtonAppearance.Secondary
+                                          Icon: ="Delete"
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          OnSelect: |-
+                                            =Remove(colServiceWizardFields, ThisItem);
+                                            RemoveIf(colServiceWizardOptions, FieldKey = ThisItem.FieldKey);
+                                            If(varServiceWizardChoiceFieldKey = ThisItem.FieldKey, Set(varServiceWizardChoiceFieldKey, Blank()))
+                                          Text: =fxTranslate("Remove", "Entfernen")
+                                          Width: =116
+                        - sws_fields_empty:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(100, 116, 139, 1)
+                              Fill: =RGBA(248, 250, 252, 1)
+                              Height: =56
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =12
+                              PaddingLeft: =12
+                              PaddingRight: =12
+                              PaddingTop: =12
+                              Size: =13
+                              Text: =fxTranslate("NoServiceFieldsConfigured", "Noch keine Service-Felder konfiguriert.")
+                              Visible: =IsEmpty(colServiceWizardFields)
+                              Width: =Parent.Width
+                        - sws_add_field_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =42
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                            Children:
+                              - sws_field_label_input:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ServiceFieldLabel", "Feldbezeichnung")
+                                    Appearance: =Appearance.Outline
+                                    FillPortions: =1
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("ServiceFieldLabel", "Feldbezeichnung")
+                              - sws_field_key_input:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ServiceFieldKey", "Feldschlüssel")
+                                    Appearance: =Appearance.Outline
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("ServiceFieldKeyPlaceholder", "FELDSCHLUESSEL")
+                                    Width: =190
+                              - sws_field_type_input:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ServiceFieldType", "Feldtyp")
+                                    Default: |-
+                                      =LookUp(Table({Value: "Text", Label: fxTranslate("ServiceFieldTypeText", "Text")}, {Value: "LongText", Label: fxTranslate("ServiceFieldTypeLongText", "Langer Text")}, {Value: "Choice", Label: fxTranslate("ServiceFieldTypeChoice", "Auswahl")}, {Value: "Person", Label: fxTranslate("ServiceFieldTypePerson", "Person")}), Value = "Text")
+                                    Height: =38
+                                    ItemDisplayText: =ThisItem.Label
+                                    Items: |-
+                                      =Table({Value: "Text", Label: fxTranslate("ServiceFieldTypeText", "Text")}, {Value: "LongText", Label: fxTranslate("ServiceFieldTypeLongText", "Langer Text")}, {Value: "Choice", Label: fxTranslate("ServiceFieldTypeChoice", "Auswahl")}, {Value: "Person", Label: fxTranslate("ServiceFieldTypePerson", "Person")})
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Width: =130
+                              - sws_add_field:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("AddServiceField", "Feld hinzufügen")
+                                    BasePaletteColor: =RGBA(87, 35, 129, 1)
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =With(
+                                          {fieldKey: Upper(Trim(sws_field_key_input.Text))},
+                                          If(
+                                              IsBlank(Trim(sws_field_label_input.Text)) || !IsMatch(fieldKey, "^[A-Z0-9_]+$") || !IsBlank(LookUp(colServiceWizardFields, FieldKey = fieldKey)),
+                                              Notify(fxTranslate("ServiceFieldKeyValidation", "Bitte Feldbezeichnung und einen eindeutigen Schlüssel mit Großbuchstaben, Zahlen oder Unterstrichen eingeben."), NotificationType.Error, 4000),
+                                              Collect(colServiceWizardFields, {Title: Trim(sws_field_label_input.Text), FieldKey: fieldKey, FieldType: Coalesce(sws_field_type_input.Selected.Value, "Text")})
+                                          )
+                                      )
+                                    Text: =fxTranslate("Add", "Hinzufügen")
+                                    Width: =120
+                  - sws_step_3:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.Semilight
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingBottom: =22
+                        PaddingLeft: =22
+                        PaddingRight: =22
+                        PaddingTop: =22
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        Visible: =varServiceWizardStep = 3
+                        Width: =Parent.Width
+                      Children:
+                        - sws_options_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =28
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =18
+                              Text: =fxTranslate("ChoiceFieldOptions", "Auswahlwerte")
+                              Wrap: =false
+                        - sws_options_intro:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =20
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =13
+                              Text: =fxTranslate("ChoiceFieldOptionsIntro", "Konfigurieren Sie die Werte für Choice-Felder.")
+                        - sws_choice_field:
+                            Control: ModernDropdown@1.0.2
+                            Properties:
+                              AccessibleLabel: =fxTranslate("SelectChoiceField", "Choice-Feld auswählen")
+                              Height: =38
+                              ItemDisplayText: =ThisItem.DisplayTitle
+                              Items: =AddColumns(Filter(colServiceWizardFields, FieldType = "Choice"), DisplayTitle, fxTranslate(Title, Title))
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnChange: =Set(varServiceWizardChoiceFieldKey, Self.Selected.FieldKey)
+                              Visible: =!IsEmpty(Filter(colServiceWizardFields, FieldType = "Choice"))
+                              Width: =Parent.Width
+                        - sws_no_choice_fields:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(100, 116, 139, 1)
+                              Fill: =RGBA(248, 250, 252, 1)
+                              Height: =64
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =14
+                              PaddingLeft: =14
+                              PaddingRight: =14
+                              PaddingTop: =14
+                              Size: =13
+                              Text: =fxTranslate("NoChoiceFieldsConfigured", "Es gibt noch keine Choice-Felder. Fügen Sie in Schritt 2 ein Feld vom Typ Choice hinzu.")
+                              Visible: =IsEmpty(Filter(colServiceWizardFields, FieldType = "Choice"))
+                              Width: =Parent.Width
+                        - sws_options_gallery:
+                            Control: Gallery@2.15.0
+                            Variant: Vertical
+                            Properties:
+                              AccessibleLabel: =fxTranslate("ConfiguredChoiceOptions", "Konfigurierte Auswahlwerte")
+                              FillPortions: =0
+                              Height: =Max(80, CountRows(Filter(colServiceWizardOptions, FieldKey = varServiceWizardChoiceFieldKey)) * 56)
+                              Items: =Filter(colServiceWizardOptions, FieldKey = varServiceWizardChoiceFieldKey)
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              TemplatePadding: =4
+                              TemplateSize: =52
+                              Visible: =!IsBlank(varServiceWizardChoiceFieldKey)
+                              Width: =Parent.Width
+                            Children:
+                              - sws_option_item:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    BorderColor: =RGBA(226, 232, 240, 1)
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(248, 250, 252, 1)
+                                    Height: =Parent.TemplateHeight - 8
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =10
+                                    PaddingBottom: =6
+                                    PaddingLeft: =12
+                                    PaddingRight: =8
+                                    PaddingTop: =6
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =4
+                                  Children:
+                                    - sws_option_item_text:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Color: =RGBA(17, 24, 39, 1)
+                                          FillPortions: =1
+                                          FontWeight: =FontWeight.Semibold
+                                          Height: =22
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =13
+                                          Text: =ThisItem.Title & "  |  " & ThisItem.Value
+                                          Wrap: =false
+                                    - sws_option_remove:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          AccessibleLabel: =Substitute(fxTranslate("RemoveOptionTemplate", "Auswahlwert {0} entfernen"), "{0}", ThisItem.Title)
+                                          Appearance: =ButtonAppearance.Secondary
+                                          Icon: ="Delete"
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          OnSelect: =Remove(colServiceWizardOptions, ThisItem)
+                                          Text: =fxTranslate("Remove", "Entfernen")
+                                          Width: =116
+                        - sws_add_option_row:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =42
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Visible: =!IsBlank(varServiceWizardChoiceFieldKey)
+                              Width: =Parent.Width
+                            Children:
+                              - sws_option_label_input:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("OptionLabel", "Bezeichnung")
+                                    Appearance: =Appearance.Outline
+                                    FillPortions: =1
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("OptionLabel", "Bezeichnung")
+                              - sws_option_value_input:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("OptionValue", "Wert")
+                                    Appearance: =Appearance.Outline
+                                    FillPortions: =1
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("OptionValue", "Wert")
+                              - sws_add_option:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("AddOption", "Auswahlwert hinzufügen")
+                                    BasePaletteColor: =RGBA(87, 35, 129, 1)
+                                    Height: =38
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =With(
+                                          {optionValue: Trim(sws_option_value_input.Text)},
+                                          If(
+                                              IsBlank(Trim(sws_option_label_input.Text)) || IsBlank(optionValue) || !IsBlank(LookUp(colServiceWizardOptions, FieldKey = varServiceWizardChoiceFieldKey && Value = optionValue)),
+                                              Notify(fxTranslate("OptionValidation", "Bitte Bezeichnung und einen eindeutigen Wert eingeben."), NotificationType.Error, 4000),
+                                              Collect(colServiceWizardOptions, {Title: Trim(sws_option_label_input.Text), OptionKey: Upper(Substitute(optionValue, " ", "_")), ServiceCode: "", FieldKey: varServiceWizardChoiceFieldKey, Value: optionValue, Active: true})
+                                          )
+                                      )
+                                    Text: =fxTranslate("Add", "Hinzufügen")
+                                    Width: =120
+                  - sws_step_4:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.Semilight
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingBottom: =22
+                        PaddingLeft: =22
+                        PaddingRight: =22
+                        PaddingTop: =22
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        Visible: =varServiceWizardStep = 4
+                        Width: =Parent.Width
+                      Children:
+                        - sws_review_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =28
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =18
+                              Text: =fxTranslate("ReviewNewService", "Neuen Service prüfen")
+                              Wrap: =false
+                        - sws_review_service:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =24
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =16
+                              Text: =Coalesce(Trim(sws_title.Text), fxTranslate("UntitledService", "Unbenannter Service"))
+                              Wrap: =false
+                        - sws_review_code:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =20
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =13
+                              Text: |-
+                                =fxTranslate("ServiceCode", "Service-Code") & ": " & Upper(Trim(sws_code.Text))
+                        - sws_review_routing:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =20
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =13
+                              Text: |-
+                                =fxTranslate("ServiceRouting", "Routing") & ": " & Coalesce(Trim(sws_queue.Text), fxTranslate("NoQueue", "Keine Queue"))
+                        - sws_review_fields:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =20
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =13
+                              Text: =Substitute(fxTranslate("ServiceFieldCount", "{0} Service-Felder"), "{0}", CountRows(colServiceWizardFields))
+                        - sws_review_options:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =20
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =13
+                              Text: =Substitute(fxTranslate("ServiceOptionCount", "{0} Auswahlwerte"), "{0}", CountRows(colServiceWizardOptions))
+                        - sws_review_status:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =If(varWizardPublished, RGBA(22, 101, 52, 1), RGBA(87, 35, 129, 1))
+                              Fill: =If(varWizardPublished, RGBA(240, 253, 244, 1), RGBA(246, 240, 252, 1))
+                              FontWeight: =FontWeight.Semibold
+                              Height: =30
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Size: =12
+                              Text: |-
+                                =If(varWizardPublished, fxTranslate("ServiceStatusPublished", "Status: Veröffentlicht"), fxTranslate("ServiceStatusDraft", "Status: Entwurf"))
+                              Width: =190
+                        - sws_save_actions:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =46
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =12
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                            Children:
+                              - sws_save_draft:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("SaveServiceAsDraft", "Service als Entwurf speichern")
+                                    Appearance: =ButtonAppearance.Secondary
+                                    DisplayMode: =If(varServiceWizardSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
+                                    Height: =42
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =Set(varServiceWizardSubmitting, true);
+                                      Set(varWizardPublished, false);
+                                      With(
+                                          {serviceTitle: Trim(sws_title.Text), serviceCode: Upper(Trim(sws_code.Text)), queueCode: Trim(sws_queue.Text), isPublished: false},
+                                          If(
+                                              IsBlank(serviceTitle) || IsBlank(serviceCode) || IsBlank(queueCode),
+                                              Notify(fxTranslate("ServiceRequiredValidation", "Bitte Service-Titel, Service-Code und Fulfillment-Queue ausfüllen."), NotificationType.Error, 4000),
+                                              !IsBlank(LookUp(ev_sp_list_service_catalog, ServiceCode = serviceCode)),
+                                              Notify(fxTranslate("ServiceCodeExists", "Dieser Service-Code ist bereits vorhanden."), NotificationType.Error, 4000),
+                                              IfError(
+                                                  Patch(ev_sp_list_service_catalog, Defaults(ev_sp_list_service_catalog), {Title: serviceTitle, ServiceCode: serviceCode, CategoryCode: Trim(sws_category.Text), Description: Trim(sws_description.Text), FullfillmentQueueCode: queueCode, DefaultPriority: Coalesce(sws_priority.Selected.Value, "Standard"), FormTemplate: Coalesce(sws_template.Selected.Value, varWizardTemplate), OwnerEmail: fxCurrentUser.Email, Active: isPublished});
+                                                  ForAll(colServiceWizardFields As wizardField, With({serviceFieldKey: serviceCode & "_" & wizardField.FieldKey}, If(IsBlank(LookUp(ev_sp_list_servicefield_definitions, ServiceFieldKey = serviceFieldKey)), Patch(ev_sp_list_servicefield_definitions, Defaults(ev_sp_list_servicefield_definitions), {Title: wizardField.Title, ServiceFieldKey: serviceFieldKey, ServiceCode: serviceCode, FieldKey: wizardField.FieldKey, FieldType: wizardField.FieldType}))));
+                                                  ForAll(colServiceWizardOptions As wizardOption, With({serviceOptionKey: serviceCode & "_" & wizardOption.FieldKey & "_" & Upper(Substitute(Trim(wizardOption.Value), " ", "_"))}, If(IsBlank(LookUp(ev_sp_list_servicefield_options, OptionKey = serviceOptionKey)), Patch(ev_sp_list_servicefield_options, Defaults(ev_sp_list_servicefield_options), {Title: wizardOption.Title, OptionKey: serviceOptionKey, ServiceCode: serviceCode, FieldKey: wizardOption.FieldKey, Value: wizardOption.Value, Active: true}))));
+                                                  Refresh(ev_sp_list_service_catalog);
+                                                  Refresh(ev_sp_list_servicefield_definitions);
+                                                  Refresh(ev_sp_list_servicefield_options);
+                                                  Notify(fxTranslate("ServiceDraftSaved", "Service wurde als Entwurf gespeichert."), NotificationType.Success, 3000);
+                                                   Navigate(service_catalog_screen, ScreenTransition.CoverRight),
+                                                   Notify(Substitute(fxTranslate("ServiceSaveFailed", "Service konnte nicht gespeichert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
+                                               )
+                                           )
+                                       );
+                                      Set(varServiceWizardSubmitting, false)
+                                    Text: =fxTranslate("SaveAsDraft", "Als Entwurf speichern")
+                                    Width: =190
+                              - sws_publish:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("PublishService", "Service veröffentlichen")
+                                    BasePaletteColor: =RGBA(87, 35, 129, 1)
+                                    DisplayMode: =If(varServiceWizardSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
+                                    Height: =42
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =Set(varServiceWizardSubmitting, true);
+                                      Set(varWizardPublished, true);
+                                      With(
+                                          {serviceTitle: Trim(sws_title.Text), serviceCode: Upper(Trim(sws_code.Text)), queueCode: Trim(sws_queue.Text), isPublished: true},
+                                          If(
+                                              IsBlank(serviceTitle) || IsBlank(serviceCode) || IsBlank(queueCode),
+                                              Notify(fxTranslate("ServiceRequiredValidation", "Bitte Service-Titel, Service-Code und Fulfillment-Queue ausfüllen."), NotificationType.Error, 4000),
+                                              !IsBlank(LookUp(ev_sp_list_service_catalog, ServiceCode = serviceCode)),
+                                              Notify(fxTranslate("ServiceCodeExists", "Dieser Service-Code ist bereits vorhanden."), NotificationType.Error, 4000),
+                                              IfError(
+                                                  Patch(ev_sp_list_service_catalog, Defaults(ev_sp_list_service_catalog), {Title: serviceTitle, ServiceCode: serviceCode, CategoryCode: Trim(sws_category.Text), Description: Trim(sws_description.Text), FullfillmentQueueCode: queueCode, DefaultPriority: Coalesce(sws_priority.Selected.Value, "Standard"), FormTemplate: Coalesce(sws_template.Selected.Value, varWizardTemplate), OwnerEmail: fxCurrentUser.Email, Active: isPublished});
+                                                  ForAll(colServiceWizardFields As wizardField, With({serviceFieldKey: serviceCode & "_" & wizardField.FieldKey}, If(IsBlank(LookUp(ev_sp_list_servicefield_definitions, ServiceFieldKey = serviceFieldKey)), Patch(ev_sp_list_servicefield_definitions, Defaults(ev_sp_list_servicefield_definitions), {Title: wizardField.Title, ServiceFieldKey: serviceFieldKey, ServiceCode: serviceCode, FieldKey: wizardField.FieldKey, FieldType: wizardField.FieldType}))));
+                                                  ForAll(colServiceWizardOptions As wizardOption, With({serviceOptionKey: serviceCode & "_" & wizardOption.FieldKey & "_" & Upper(Substitute(Trim(wizardOption.Value), " ", "_"))}, If(IsBlank(LookUp(ev_sp_list_servicefield_options, OptionKey = serviceOptionKey)), Patch(ev_sp_list_servicefield_options, Defaults(ev_sp_list_servicefield_options), {Title: wizardOption.Title, OptionKey: serviceOptionKey, ServiceCode: serviceCode, FieldKey: wizardOption.FieldKey, Value: wizardOption.Value, Active: true}))));
+                                                  Refresh(ev_sp_list_service_catalog);
+                                                  Refresh(ev_sp_list_servicefield_definitions);
+                                                  Refresh(ev_sp_list_servicefield_options);
+                                                  Notify(fxTranslate("ServicePublished", "Service wurde veröffentlicht."), NotificationType.Success, 3000);
+                                                   Navigate(service_catalog_screen, ScreenTransition.CoverRight),
+                                                   Notify(Substitute(fxTranslate("ServiceSaveFailed", "Service konnte nicht gespeichert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
+                                               )
+                                           )
+                                       );
+                                      Set(varServiceWizardSubmitting, false)
+                                    Text: =fxTranslate("Publish", "Veröffentlichen")
+                                    Width: =150
+                  - sws_navigation:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =44
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =12
+                        LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                      Children:
+                        - sws_previous:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              AccessibleLabel: =fxTranslate("PreviousWizardStep", "Vorheriger Schritt")
+                              Appearance: =ButtonAppearance.Secondary
+                              Height: =40
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnSelect: =Set(varServiceWizardStep, Max(1, varServiceWizardStep - 1))
+                              Text: =fxTranslate("Back", "Zurück")
+                              Visible: =varServiceWizardStep > 1
+                              Width: =110
+                        - sws_next:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              AccessibleLabel: =fxTranslate("NextWizardStep", "Nächster Schritt")
+                              BasePaletteColor: =RGBA(87, 35, 129, 1)
+                              DisplayMode: =If(varServiceWizardStep = 1 && (IsBlank(Trim(sws_title.Text)) || IsBlank(Trim(sws_code.Text)) || IsBlank(Trim(sws_queue.Text))), DisplayMode.Disabled, DisplayMode.Edit)
+                              Height: =40
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnSelect: =Set(varServiceWizardStep, Min(4, varServiceWizardStep + 1))
+                              Text: =fxTranslate("Next", "Weiter")
+                              Visible: =varServiceWizardStep < 4
+                              Width: =110
+            - sws_access_denied:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutJustifyContent: =LayoutJustifyContent.Center
+                  LayoutMinHeight: =0
+                  LayoutMinWidth: =0
+                  PaddingBottom: =28
+                  PaddingLeft: =28
+                  PaddingRight: =28
+                  PaddingTop: =28
+                  Visible: =!fxIsAgentExperience
+                  Width: =Parent.Width
+                Children:
+                  - sws_access_denied_card:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.Semilight
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =160
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingBottom: =24
+                        PaddingLeft: =24
+                        PaddingRight: =24
+                        PaddingTop: =24
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        Width: =540
+                      Children:
+                        - sws_access_denied_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(87, 35, 129, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =28
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =20
+                              Text: =fxTranslate("ServiceTeamAccessDeniedTitle", "Kein Zugriff auf das Service Team")
+                              Wrap: =false
+                        - sws_access_denied_message:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =44
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =14
+                              Text: =fxTranslate("ServiceTeamAccessDeniedMessage", "Nur Admins und IT-Agents können Services erstellen und verwalten.")

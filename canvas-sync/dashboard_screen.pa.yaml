@@ -1,0 +1,2855 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  dashboard_screen:
+    Properties:
+      OnVisible: |-
+        =Set(
+            varShowNotifications,
+            false
+        );
+        If(
+            !IsBlank(varDeepLinkNotice),
+            Notify(varDeepLinkNotice, NotificationType.Warning, 5000);
+            Set(varDeepLinkNotice, Blank())
+        );
+        If(
+            IsBlank(varDbdSearchText),
+            Set(
+                varDbdSearchText,
+                ""
+            )
+        );
+        If(
+            IsBlank(varDbdRequesterFilter),
+            Set(varDbdRequesterFilter, Blank())
+        );
+        If(
+            IsBlank(varDbdStatusFilter),
+            Set(
+                varDbdStatusFilter,
+                {Value: "Alle"}
+            )
+        );
+        If(
+            IsBlank(varDbdPriorityFilter),
+            Set(
+                varDbdPriorityFilter,
+                {Value: "Alle"}
+            )
+        );
+        If(
+            IsBlank(varDbdScopeFilter),
+            Set(
+                varDbdScopeFilter,
+                {Value: "Alle"}
+            )
+        );
+        If(
+            IsBlank(varDbdTicketTypeFilter),
+            Set(
+                varDbdTicketTypeFilter,
+                {Value: "Alle"}
+            )
+        );
+        If(
+            IsBlank(varDbdCategoryFilter),
+            Set(
+                varDbdCategoryFilter,
+                {Value: "Alle"}
+            )
+        );
+        If(
+            IsBlank(varDbdDepartmentFilter),
+            Set(
+                varDbdDepartmentFilter,
+                {Value: "Alle"}
+            )
+        );
+        If(
+            IsBlank(varDbdRiskFilter),
+            Set(
+                varDbdRiskFilter,
+                {Value: "Alle"}
+            )
+        );
+        Set(
+            varDbdShowMoreFilters,
+            Coalesce(
+                varDbdShowMoreFilters,
+                false
+            )
+        );
+        Set(
+            varDbdShowSavedViewActions,
+            false
+        );
+        Set(
+            varDbdShowSaveView,
+            false
+        );
+          Set(
+              varDbdFiltersDirty,
+              false
+          );
+          Set(varDbdNotificationsLoading, false);
+          Set(varDbdIsCreatingView, false);
+          If(
+              IsBlank(varDbdLastRefresh) Or DateDiff(varDbdLastRefresh, Now(), TimeUnit.Seconds) > 30,
+              Set(varDbdRefreshing, true);
+              IfError(
+                  Refresh(ev_sp_list_tickets);
+              Refresh(ev_sp_list_comments);
+              Refresh(ev_sp_list_notifications);
+              Refresh(ev_sp_list_config_saved_views);
+              Set(varDbdLastRefresh, Now()),
+                  Notify(Substitute(fxTranslate("DashboardRefreshFailed", "Dashboard konnte nicht aktualisiert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
+              );
+              Set(varDbdRefreshing, false)
+          )
+    Children:
+      - dbd_root:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(248, 249, 252, 1)
+            Height: =Parent.Height
+            LayoutDirection: =LayoutDirection.Vertical
+            Width: =Parent.Width
+          Children:
+            - dbd_topbar:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =72
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =Parent.Width
+                Children:
+                  - dbd_brand_container:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Parent.Height
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =fxDbdControlGap
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =fxDbdSidebarWidth + (fxDbdPagePadding * 2)
+                        PaddingLeft: =fxDbdPagePadding
+                        PaddingRight: =fxDbdPagePadding
+                        Width: =fxDbdSidebarWidth + (fxDbdPagePadding * 2)
+                      Children:
+                        - dbd_logo:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(255, 255, 255, 1)
+                              Fill: =RGBA(87, 35, 129, 1)
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              RadiusBottomLeft: =5
+                              RadiusBottomRight: =5
+                              RadiusTopLeft: =5
+                              RadiusTopRight: =5
+                              Size: =8
+                              Text: ="KESSEL"
+                              Width: =32
+                        - dbd_topbar_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(18, 31, 52, 1)
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =16
+                              Text: =fxTranslate("ItServicePortal", "IT Service Portal")
+                              Wrap: =false
+                  - dbd_header_spacer:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                  - dbd_header_actions:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Parent.Height
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =fxDbdControlGap
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingRight: =fxDbdPagePadding
+                        Width: =364
+                      Children:
+                        - dbd_language_selector:
+                            Control: ModernDropdown@1.0.2
+                            Properties:
+                              AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
+                              Default: |-
+                                =LookUp(Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"}), Code = Coalesce(varCurrentLanguage, "de"))
+                              Height: =34
+                              ItemDisplayText: =ThisItem.Label
+                              Items: |-
+                                =Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"})
+                              OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
+                              Width: =72
+                        - dbd_notification_button_frame:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Center
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =36
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Width: =36
+                            Children:
+                              - dbd_notifications:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("ShowNotifications", "Benachrichtigungen anzeigen")
+                                    Appearance: =ButtonAppearance.Transparent
+                                    BorderThickness: =0
+                                    Height: =36
+                                    Icon: ="Alert"
+                                    Layout: =ButtonLayout.IconOnly
+                                    OnSelect: |-
+                                      =If(
+                                          varShowNotifications,
+                                          Set(varShowNotifications, false),
+                                          Set(varDbdNotificationsLoading, true);
+                                          Set(varShowNotifications, true);
+                                          Refresh(ev_sp_list_notifications);
+                                          Set(varDbdNotificationsLoading, false)
+                                      )
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                    Tooltip: =fxTranslate("ShowNewComments", "Neue Kommentare anzeigen")
+                                    Width: =36
+                              - dbd_notification_badge:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =RGBA(255, 255, 255, 1)
+                                    Fill: =RGBA(220, 38, 38, 1)
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =18
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    RadiusBottomLeft: =9
+                                    RadiusBottomRight: =9
+                                    RadiusTopLeft: =9
+                                    RadiusTopRight: =9
+                                    Size: =9
+                                    Text: =fxTranslate("Neu", "Neu")
+                                    Visible: =!IsEmpty(fxDbdNotifications)
+                                    Width: =20
+                                    X: =20
+                                    Y: =-2
+                        - dbd_user_menu:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =40
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =8
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingLeft: =4
+                              PaddingRight: =8
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Width: =132
+                            Children:
+                              - dbd_avatar:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =RGBA(87, 35, 129, 1)
+                                    Fill: =RGBA(246, 241, 249, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    RadiusBottomLeft: =16
+                                    RadiusBottomRight: =16
+                                    RadiusTopLeft: =16
+                                    RadiusTopRight: =16
+                                    Size: =12
+                                    Text: =Upper(Left(fxCurrentUser.FullName, 2))
+                                    Width: =32
+                              - dbd_user_name:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(35, 39, 47, 1)
+                                    FillPortions: =1
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =24
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =Left(fxCurrentUser.FullName, Find(" ", fxCurrentUser.FullName & " ") - 1)
+                                    Width: =58
+                                    Wrap: =false
+                        - dbd_refresh:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              AccessibleLabel: =fxTranslate("RefreshDashboard", "Dashboard aktualisieren")
+                              Appearance: =ButtonAppearance.Transparent
+                              BorderThickness: =0
+                              DisplayMode: =If(Coalesce(varDbdRefreshing, false), DisplayMode.Disabled, DisplayMode.Edit)
+                              Height: =36
+                              Icon: ="ArrowClockwise"
+                              Layout: =ButtonLayout.IconOnly
+                              OnSelect: |-
+                                =Set(varDbdRefreshing, true);
+                                IfError(
+                                    Refresh(ev_sp_list_tickets);
+                                    Refresh(ev_sp_list_comments);
+                                    Refresh(ev_sp_list_notifications);
+                                    Refresh(ev_sp_list_config_saved_views);
+                                    Set(varDbdLastRefresh, Now());
+                                    Notify(fxTranslate("DashboardRefreshed", "Dashboard aktualisiert."), NotificationType.Success, 2000),
+                                    Notify(Substitute(fxTranslate("DashboardRefreshFailed", "Dashboard konnte nicht aktualisiert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
+                                );
+                                Set(varDbdRefreshing, false)
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Tooltip: =fxTranslate("RefreshDashboard", "Dashboard aktualisieren")
+                              Width: =36
+            - dbd_header_divider:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(229, 230, 234, 1)
+                  FillPortions: =0
+                  Height: =1
+                  LayoutMinHeight: =0
+                  LayoutMinWidth: =0
+                  Width: =Parent.Width
+            - dbd_shell:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =fxDbdPageGap
+                  PaddingBottom: =fxDbdPagePadding
+                  PaddingLeft: =fxDbdPagePadding
+                  PaddingRight: =fxDbdPagePadding
+                  PaddingTop: =fxDbdPagePadding
+                  Width: =Parent.Width
+                Children:
+                  - dbd_sidebar:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(250, 250, 252, 1)
+                        FillPortions: =0
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =fxDbdSectionGap
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =fxDbdSidebarWidth
+                        LayoutOverflowY: =LayoutOverflow.Scroll
+                        Width: =fxDbdSidebarWidth
+                      Children:
+                        - dbd_nav_create:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Stretch
+                              BasePaletteColor: =RGBA(87, 35, 129, 1)
+                              Color: =Color.White
+                              Height: =52
+                              Icon: ="Add"
+                              OnSelect: =Navigate(request_type_screen, ScreenTransition.CoverRight)
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Size: =14
+                              Text: =fxTranslate("CreateTicket", "Ticket erstellen")
+                              Width: =Parent.Width
+                        - dbd_sidebar_nav_divider:
+                            Control: GroupContainer@1.5.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(225, 225, 230, 1)
+                              FillPortions: =0
+                              Height: =1
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Width: =Parent.Width
+                        - dbd_sidebar_panel:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =0
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =fxDbdControlGap
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              Visible: =false
+                              Width: =Parent.Width
+                            Children:
+                              - dbd_search_box:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    FillPortions: =0
+                                    Height: =30
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingLeft: =8
+                                    PaddingRight: =8
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                    Width: =Parent.Width
+                                  Children:
+                                    - dbd_search_icon:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          AlignInContainer: =AlignInContainer.Stretch
+                                          Appearance: =ButtonAppearance.Subtle
+                                          Height: =30
+                                          Icon: ="Search"
+                                          Layout: =ButtonLayout.IconOnly
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          Width: =32
+                                    - dbd_inp_search:
+                                        Control: ModernTextInput@1.1.1
+                                        Properties:
+                                          AlignInContainer: =AlignInContainer.Stretch
+                                          Appearance: =Appearance.FilledLighter
+                                          Default: =Coalesce(varDbdSearchText, "")
+                                          FillPortions: =1
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          OnChange: |-
+                                            =Set(varDbdFiltersDirty, true);
+                                            Set(varDbdShowSaveView, false)
+                                          Placeholder: =fxTranslate("SearchTicketPlaceholder", "Ticket suchen...")
+                                          Size: =12
+                                          TriggerOutput: =TriggerOutput.Delayed
+                              - dbd_filter_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(100, 100, 110, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =11
+                                    Text: =fxTranslate("Filter", "FILTER")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - dbd_status_filter_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Status", "Status")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - dbd_status_filter:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(
+                                              Table({Value: "Alle"}, {Value: "Offen"}, {Value: "Zugewiesen"}, {Value: "In Bearbeitung"}, {Value: "Warten auf Anforderer"}, {Value: "Gelöst"}, {Value: "Geschlossen"}),
+                                              DisplayValue,
+                                              fxTranslate(Value, Value)
+                                          ),
+                                          Value = Coalesce(varDbdStatusFilter.Value, "Alle")
+                                      )
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(
+                                          Table(
+                                          {Value: "Alle"},
+                                          {Value: "Offen"},
+                                          {Value: "Zugewiesen"},
+                                          {Value: "In Bearbeitung"},
+                                          {Value: "Warten auf Anforderer"},
+                                          {Value: "Gelöst"},
+                                          {Value: "Geschlossen"}
+                                          ),
+                                          DisplayValue,
+                                          fxTranslate(Value, Value)
+                                      )
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdFiltersDirty, true);
+                                      Set(varDbdShowSaveView, false)
+                                    Width: =Parent.Width
+                              - dbd_ticket_type_filter_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("TicketType", "Tickettyp")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - dbd_ticket_type_filter:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(
+                                              SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, TicketType.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending),
+                                              DisplayValue,
+                                              fxTranslate(Value, Value)
+                                          ),
+                                          Value = Coalesce(varDbdTicketTypeFilter.Value, "Alle")
+                                      )
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(
+                                          SortByColumns(
+                                              Ungroup(
+                                                  Table(
+                                                      {Rows: Table({Value: "Alle"})},
+                                                      {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, TicketType.Value), {Value: Value}), !IsBlank(Value))}
+                                                  ),
+                                                  Rows
+                                              ),
+                                              "Value",
+                                              SortOrder.Ascending
+                                          ),
+                                          DisplayValue,
+                                          fxTranslate(Value, Value)
+                                      )
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdFiltersDirty, true);
+                                      Set(varDbdShowSaveView, false)
+                                    Width: =Parent.Width
+                              - dbd_scope_filter_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Scope", "Umfang")
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - dbd_scope_filter:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(
+                                              Table({Value: "Alle"}, {Value: "Mir zugewiesen"}, {Value: "Von mir erstellt"}, {Value: "Von mir angefordert"}),
+                                              DisplayValue,
+                                              fxTranslate(Value, Value)
+                                          ),
+                                          Value = Coalesce(varDbdScopeFilter.Value, "Alle")
+                                      )
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(
+                                          Table(
+                                          {Value: "Alle"},
+                                          {Value: "Mir zugewiesen"},
+                                          {Value: "Von mir erstellt"},
+                                          {Value: "Von mir angefordert"}
+                                          ),
+                                          DisplayValue,
+                                          fxTranslate(Value, Value)
+                                      )
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdFiltersDirty, true);
+                                      Set(varDbdShowSaveView, false)
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                              - dbd_category_filter_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Kategorie", "Kategorie")
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - dbd_category_filter:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(
+                                              SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Category.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending),
+                                              DisplayValue,
+                                              fxTranslate(Value, Value)
+                                          ),
+                                          Value = Coalesce(varDbdCategoryFilter.Value, "Alle")
+                                      )
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(
+                                          SortByColumns(
+                                              Ungroup(
+                                                  Table(
+                                                      {Rows: Table({Value: "Alle"})},
+                                                      {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Category.Value), {Value: Value}), !IsBlank(Value))}
+                                                  ),
+                                                  Rows
+                                              ),
+                                              "Value",
+                                              SortOrder.Ascending
+                                          ),
+                                          DisplayValue,
+                                          fxTranslate(Value, Value)
+                                      )
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdFiltersDirty, true);
+                                      Set(varDbdShowSaveView, false)
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                              - dbd_department_filter_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Department", "Abteilung")
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - dbd_department_filter:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(
+                                              SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Department.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending),
+                                              DisplayValue,
+                                              fxTranslate(Value, Value)
+                                          ),
+                                          Value = Coalesce(varDbdDepartmentFilter.Value, "Alle")
+                                      )
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(
+                                          SortByColumns(
+                                              Ungroup(
+                                                  Table(
+                                                      {Rows: Table({Value: "Alle"})},
+                                                      {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Department.Value), {Value: Value}), !IsBlank(Value))}
+                                                  ),
+                                                  Rows
+                                              ),
+                                              "Value",
+                                              SortOrder.Ascending
+                                          ),
+                                          DisplayValue,
+                                          fxTranslate(Value, Value)
+                                      )
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdFiltersDirty, true);
+                                      Set(varDbdShowSaveView, false)
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                              - dbd_risk_filter_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Risk", "Risiko")
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - dbd_risk_filter:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(
+                                              SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Risk.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending),
+                                              DisplayValue,
+                                              fxTranslate(Value, Value)
+                                          ),
+                                          Value = Coalesce(varDbdRiskFilter.Value, "Alle")
+                                      )
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(
+                                          SortByColumns(
+                                              Ungroup(
+                                                  Table(
+                                                      {Rows: Table({Value: "Alle"})},
+                                                      {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Risk.Value), {Value: Value}), !IsBlank(Value))}
+                                                  ),
+                                                  Rows
+                                              ),
+                                              "Value",
+                                              SortOrder.Ascending
+                                          ),
+                                          DisplayValue,
+                                          fxTranslate(Value, Value)
+                                      )
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdFiltersDirty, true);
+                                      Set(varDbdShowSaveView, false)
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                              - dbd_saved_view_name:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("NewViewName", "Name für neue Ansicht")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Default: =Coalesce(dbd_saved_view_picker.Selected.Title, "")
+                                    Height: =30
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("NameNewViewPlaceholder", "Neue Ansicht benennen...")
+                                    Size: =12
+                                    Visible: =varDbdShowSaveView && varDbdFiltersDirty
+                                    Width: =Parent.Width
+                              - dbd_saved_view_scope:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("SelectViewVisibility", "Sichtbarkeit der Ansicht auswählen")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(Table({Value: fxSavedViewScopePersonal}, {Value: fxSavedViewScopeGlobal}), DisplayValue, fxTranslate(Value, Value)),
+                                          Value = Coalesce(dbd_saved_view_picker.Selected.Scope.Value, fxSavedViewScopePersonal)
+                                      )
+                                    Height: =30
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(
+                                          Table(
+                                          {Value: fxSavedViewScopePersonal},
+                                          {Value: fxSavedViewScopeGlobal}
+                                          ),
+                                          DisplayValue,
+                                          fxTranslate(Value, Value)
+                                      )
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Size: =12
+                                    Visible: =varDbdShowSaveView && varDbdFiltersDirty && fxCanManageGlobalSavedViews
+                                    Width: =Parent.Width
+                              - dbd_saved_view_save:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("SaveCurrentFiltersAsView", "Aktuelle Filter als Ansicht speichern")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =ButtonAppearance.Secondary
+                                    Height: =30
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =With(
+                                          {
+                                              selectedScope: If(
+                                                  fxCanManageGlobalSavedViews,
+                                                  Coalesce(dbd_saved_view_scope.Selected.Value, fxSavedViewScopePersonal),
+                                                  fxSavedViewScopePersonal
+                                              ),
+                                              viewTitle: Trim(dbd_saved_view_name.Text)
+                                          },
+                                          If(
+                                              IsBlank(viewTitle),
+                                              Notify(fxTranslate("EnterViewName", "Bitte einen Namen für die Ansicht eingeben."), NotificationType.Information, 2500),
+                                              IfError(
+                                                  Patch(
+                                                      ev_sp_list_config_saved_views,
+                                                      Coalesce(
+                                                          If(
+                                                              selectedScope = fxSavedViewScopeGlobal,
+                                                              LookUp(
+                                                                  ev_sp_list_config_saved_views,
+                                                                  TargetScreen = fxSavedViewTargetDashboard &&
+                                                                  Title = viewTitle &&
+                                                                  Active = true &&
+                                                                  Scope.Value = fxSavedViewScopeGlobal
+                                                              ),
+                                                              LookUp(
+                                                                  ev_sp_list_config_saved_views,
+                                                                  TargetScreen = fxSavedViewTargetDashboard &&
+                                                                  Title = viewTitle &&
+                                                                  Active = true &&
+                                                                  Scope.Value = fxSavedViewScopePersonal &&
+                                                                  OwnerEmail = fxCurrentUser.Email
+                                                              )
+                                                          ),
+                                                          Defaults(ev_sp_list_config_saved_views)
+                                                      ),
+                                                      {
+                                                          Title: viewTitle,
+                                                          OwnerEmail: If(selectedScope = fxSavedViewScopeGlobal, "", fxCurrentUser.Email),
+                                                          OwnerDisplayName: If(selectedScope = fxSavedViewScopeGlobal, "Global", fxCurrentUser.FullName),
+                                                          Scope: If(
+                                                              selectedScope = fxSavedViewScopeGlobal,
+                                                              {Value: fxSavedViewScopeGlobal},
+                                                              {Value: fxSavedViewScopePersonal}
+                                                          ),
+                                                          TargetScreen: fxSavedViewTargetDashboard,
+                                                          Active: true,
+                                                          IsDefault: false,
+                                                          FilterJson: JSON(
+                                                              {
+                                                                  searchText: Coalesce(dbd_inp_search.Text, ""),
+                                                                  status: Coalesce(dbd_status_filter.Selected.Value, "Alle"),
+                                                                  priority: Coalesce(dbd_priority_filter.Selected.Value, "Alle"),
+                                                                  scope: Coalesce(dbd_scope_filter.Selected.Value, "Alle"),
+                                                                  ticketType: Coalesce(dbd_ticket_type_filter.Selected.Value, "Alle"),
+                                                                  category: Coalesce(dbd_category_filter.Selected.Value, "Alle"),
+                                                                  department: Coalesce(dbd_department_filter.Selected.Value, "Alle"),
+                                                                  risk: Coalesce(dbd_risk_filter.Selected.Value, "Alle")
+                                                              },
+                                                              JSONFormat.Compact
+                                                          )
+                                                      }
+                                                  ),
+                                                  Notify(Substitute(fxTranslate("ViewSaveFailed", "Ansicht konnte nicht gespeichert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000),
+                                                  Refresh(ev_sp_list_config_saved_views);
+                                                  Reset(dbd_saved_view_name);
+                                                  Reset(dbd_saved_view_scope);
+                                                  Set(varDbdShowSaveView, false);
+                                                  Set(varDbdFiltersDirty, false);
+                                                  Notify(fxTranslate("ViewSaved", "Ansicht gespeichert."), NotificationType.Success, 2000)
+                                              )
+                                          )
+                                      )
+                                    Size: =12
+                                    Text: =fxTranslate("SaveView", "Ansicht speichern")
+                                    Visible: =varDbdShowSaveView && varDbdFiltersDirty
+                                    Width: =Parent.Width
+                              - dbd_saved_views_divider:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Color: =RGBA(100, 100, 110, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =11
+                                    Text: =fxTranslate("View", "ANSICHT")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - dbd_saved_view_picker_row:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =30
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Width: =Parent.Width
+                                  Children:
+                                    - dbd_saved_view_picker:
+                                        Control: ModernCombobox@1.1.1
+                                        Properties:
+                                          AccessibleLabel: =fxTranslate("SelectSavedView", "Gespeicherte Ansicht auswählen")
+                                          AlignInContainer: =AlignInContainer.Stretch
+                                          Appearance: =Appearance.FilledLighter
+                                          BorderColor: =RGBA(205, 205, 212, 1)
+                                          BorderThickness: =1
+                                          DefaultSelectedItems: =[]
+                                          FillPortions: =1
+                                          Height: =30
+                                          InputTextPlaceholder: =fxTranslate("SelectViewPlaceholder", "Ansicht auswählen...")
+                                          IsSearchable: =false
+                                          ItemDisplayText: =ThisItem.Title
+                                          Items: =fxDashboardSavedViews
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          OnChange: |-
+                                            =If(
+                                                !IsBlank(Self.Selected.ID),
+                                                Set(varSavedFilter, ParseJSON(Self.Selected.FilterJson));
+                                                Set(varDbdSearchText, Coalesce(Text(varSavedFilter.searchText), ""));
+                                                Set(varDbdStatusFilter, {Value: Coalesce(Text(varSavedFilter.status), "Alle")});
+                                                Set(varDbdPriorityFilter, {Value: Coalesce(Text(varSavedFilter.priority), "Alle")});
+                                                Set(varDbdScopeFilter, {Value: Coalesce(Text(varSavedFilter.scope), "Alle")});
+                                                Set(varDbdTicketTypeFilter, {Value: Coalesce(Text(varSavedFilter.ticketType), "Alle")});
+                                                Set(varDbdCategoryFilter, {Value: Coalesce(Text(varSavedFilter.category), "Alle")});
+                                                Set(varDbdDepartmentFilter, {Value: Coalesce(Text(varSavedFilter.department), "Alle")});
+                                                Set(varDbdRiskFilter, {Value: Coalesce(Text(varSavedFilter.risk), "Alle")});
+                                                Set(
+                                                    varDbdShowMoreFilters,
+                                                    Coalesce(Text(varSavedFilter.scope), "Alle") <> "Alle" Or
+                                                    Coalesce(Text(varSavedFilter.category), "Alle") <> "Alle" Or
+                                                    Coalesce(Text(varSavedFilter.department), "Alle") <> "Alle" Or
+                                                    Coalesce(Text(varSavedFilter.risk), "Alle") <> "Alle"
+                                                );
+                                                Set(varDbdShowSavedViewActions, false);
+                                                Set(varDbdShowSaveView, false);
+                                                Reset(dbd_inp_search);
+                                                Reset(dbd_status_filter);
+                                                Reset(dbd_priority_filter);
+                                                Reset(dbd_scope_filter);
+                                                Reset(dbd_ticket_type_filter);
+                                                Reset(dbd_category_filter);
+                                                Reset(dbd_department_filter);
+                                                Reset(dbd_risk_filter);
+                                                Set(varDbdFiltersDirty, false)
+                                            )
+                                          SelectMultiple: =false
+                                          Size: =12
+                                    - dbd_saved_view_actions_toggle:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          AccessibleLabel: =fxTranslate("OpenSavedViewActions", "Aktionen für gespeicherte Ansicht öffnen")
+                                          AlignInContainer: =AlignInContainer.Stretch
+                                          Appearance: =ButtonAppearance.Outline
+                                          BorderColor: =RGBA(215, 215, 220, 1)
+                                          BorderThickness: =1
+                                          DisplayMode: =If(IsBlank(dbd_saved_view_picker.Selected.ID), DisplayMode.Disabled, DisplayMode.Edit)
+                                          Height: =30
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          OnSelect: |-
+                                            =Set(varDbdShowSavedViewActions, !varDbdShowSavedViewActions);
+                                            Set(varDbdShowSaveView, false)
+                                          Text: ="..."
+                                          Tooltip: =fxTranslate("MoreActions", "Weitere Aktionen")
+                                          Width: =40
+                              - dbd_saved_view_delete:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("DeleteSavedView", "Gespeicherte Ansicht löschen")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =ButtonAppearance.Subtle
+                                    Height: =30
+                                    Icon: ="Delete"
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =If(
+                                          dbd_saved_view_picker.Selected.Scope.Value = fxSavedViewScopeGlobal && !fxCanManageGlobalSavedViews,
+                                          Notify(fxTranslate("GlobalViewsAdminOnly", "Globale Ansichten können nur von Admins gelöscht werden."), NotificationType.Error, 2500),
+                                          If(
+                                              dbd_saved_view_picker.Selected.Scope.Value = fxSavedViewScopePersonal && Lower(dbd_saved_view_picker.Selected.OwnerEmail) <> Lower(fxCurrentUser.Email),
+                                              Notify(fxTranslate("ViewBelongsToAnotherUser", "Diese Ansicht gehört einem anderen Benutzer."), NotificationType.Error, 2500),
+                                              IfError(
+                                                  Patch(
+                                                      ev_sp_list_config_saved_views,
+                                                      dbd_saved_view_picker.Selected,
+                                                      {Active: false}
+                                                  ),
+                                                  Notify(Substitute(fxTranslate("ViewDeleteFailed", "Ansicht konnte nicht gelöscht werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000),
+                                                  Refresh(ev_sp_list_config_saved_views);
+                                                  Reset(dbd_saved_view_picker);
+                                                  Set(varDbdShowSavedViewActions, false);
+                                                  Notify(fxTranslate("ViewDeleted", "Ansicht gelöscht."), NotificationType.Success, 2000)
+                                              )
+                                          )
+                                      )
+                                    Size: =12
+                                    Text: =fxTranslate("DeleteView", "Ansicht löschen")
+                                    Visible: =varDbdShowSavedViewActions && !IsBlank(dbd_saved_view_picker.Selected.ID)
+                                    Width: =Parent.Width
+                              - dbd_saved_view_action_row:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =30
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =8
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Visible: =varDbdFiltersDirty
+                                    Width: =Parent.Width
+                                  Children:
+                                    - dbd_saved_view_save_toggle:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          AccessibleLabel: =fxTranslate("SaveCurrentFiltersAsView", "Aktuelle Filter als Ansicht speichern")
+                                          Appearance: =ButtonAppearance.Secondary
+                                          FillPortions: =1
+                                          Height: =30
+                                          OnSelect: |-
+                                            =Set(varDbdShowSaveView, !varDbdShowSaveView);
+                                            Set(varDbdShowSavedViewActions, false);
+                                            Reset(dbd_saved_view_name);
+                                            Reset(dbd_saved_view_scope)
+                                          Size: =12
+                                          Text: =If(IsBlank(dbd_saved_view_picker.Selected.ID), fxTranslate("SaveView", "Ansicht speichern"), fxTranslate("SaveChanges", "Änderungen speichern"))
+                                          Visible: =varDbdFiltersDirty
+                              - dbd_saved_views_section_divider:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(225, 225, 230, 1)
+                                    FillPortions: =0
+                                    Height: =1
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Width: =Parent.Width
+                              - dbd_priority_filter_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Priorität", "Priorität")
+                                    Visible: =fxIsAgentExperience
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - dbd_priority_filter:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(Table({Value: "Alle"}, {Value: "Hoch"}, {Value: "Mittel"}, {Value: "Niedrig"}), DisplayValue, fxTranslate(Value, Value)),
+                                          Value = Coalesce(varDbdPriorityFilter.Value, "Alle")
+                                      )
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =30
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(
+                                          Table(
+                                          {Value: "Alle"},
+                                          {Value: "Hoch"},
+                                          {Value: "Mittel"},
+                                          {Value: "Niedrig"}
+                                          ),
+                                          DisplayValue,
+                                          fxTranslate(Value, Value)
+                                      )
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdFiltersDirty, true);
+                                      Set(varDbdShowSaveView, false)
+                                    Visible: =fxIsAgentExperience
+                                    Width: =Parent.Width
+                              - dbd_more_filters_toggle:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Appearance: =ButtonAppearance.Subtle
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: =Set(varDbdShowMoreFilters, !varDbdShowMoreFilters)
+                                    Size: =12
+                                    Text: =If(varDbdShowMoreFilters, fxTranslate("HideMoreFilters", "Weitere Filter ausblenden"), fxTranslate("MoreFilters", "Weitere Filter (4)"))
+                                    Visible: =fxIsAgentExperience
+                                    Width: =Parent.Width
+                              - dbd_filter_reset:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =ButtonAppearance.Subtle
+                                    Icon: ="Dismiss"
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =Set(
+                                          varSavedFilter,
+                                          If(IsBlank(dbd_saved_view_picker.Selected.ID), Blank(), ParseJSON(dbd_saved_view_picker.Selected.FilterJson))
+                                      );
+                                      Set(varDbdSearchText, If(IsBlank(varSavedFilter), "", Coalesce(Text(varSavedFilter.searchText), "")));
+                                      Set(varDbdStatusFilter, {Value: If(IsBlank(varSavedFilter), "Alle", Coalesce(Text(varSavedFilter.status), "Alle"))});
+                                      Set(varDbdPriorityFilter, {Value: If(IsBlank(varSavedFilter), "Alle", Coalesce(Text(varSavedFilter.priority), "Alle"))});
+                                      Set(varDbdScopeFilter, {Value: If(IsBlank(varSavedFilter), "Alle", Coalesce(Text(varSavedFilter.scope), "Alle"))});
+                                      Set(varDbdTicketTypeFilter, {Value: If(IsBlank(varSavedFilter), "Alle", Coalesce(Text(varSavedFilter.ticketType), "Alle"))});
+                                      Set(varDbdCategoryFilter, {Value: If(IsBlank(varSavedFilter), "Alle", Coalesce(Text(varSavedFilter.category), "Alle"))});
+                                      Set(varDbdDepartmentFilter, {Value: If(IsBlank(varSavedFilter), "Alle", Coalesce(Text(varSavedFilter.department), "Alle"))});
+                                      Set(varDbdRiskFilter, {Value: If(IsBlank(varSavedFilter), "Alle", Coalesce(Text(varSavedFilter.risk), "Alle"))});
+                                      Set(
+                                          varDbdShowMoreFilters,
+                                          !IsBlank(varSavedFilter) &&
+                                          (
+                                              Coalesce(Text(varSavedFilter.scope), "Alle") <> "Alle" Or
+                                              Coalesce(Text(varSavedFilter.category), "Alle") <> "Alle" Or
+                                              Coalesce(Text(varSavedFilter.department), "Alle") <> "Alle" Or
+                                              Coalesce(Text(varSavedFilter.risk), "Alle") <> "Alle"
+                                          )
+                                      );
+                                      Reset(dbd_status_filter);
+                                      Reset(dbd_priority_filter);
+                                      Reset(dbd_scope_filter);
+                                      Reset(dbd_ticket_type_filter);
+                                      Reset(dbd_category_filter);
+                                      Reset(dbd_department_filter);
+                                      Reset(dbd_risk_filter);
+                                      Reset(dbd_inp_search);
+                                      Set(varDbdShowSaveView, false);
+                                      Set(varDbdFiltersDirty, false)
+                                    Size: =12
+                                    Text: =If(IsBlank(dbd_saved_view_picker.Selected.ID), fxTranslate("ResetFilters", "Filter zurücksetzen"), fxTranslate("DiscardChanges", "Änderungen verwerfen"))
+                                    Visible: =varDbdFiltersDirty
+                                    Width: =Parent.Width
+                        - fh_filter_hub:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =8
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              LayoutOverflowY: =LayoutOverflow.Scroll
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              Width: =Parent.Width
+                            Children:
+                              - fh_view_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(100, 100, 110, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =11
+                                    Text: =fxTranslate("OpenView", "ANSICHT ÖFFNEN")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - fh_view_picker:
+                                  Control: ModernCombobox@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("OpenSavedFilterView", "Gespeicherte Filteransicht öffnen")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    DefaultSelectedItems: =[]
+                                    Height: =34
+                                    InputTextPlaceholder: =fxTranslate("SelectViewPlaceholder", "Ansicht auswählen...")
+                                    IsSearchable: =false
+                                    ItemDisplayText: =ThisItem.Title
+                                    Items: =fxDashboardSavedViews
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =If(
+                                          !IsBlank(Self.Selected.ID),
+                                          Set(varSavedFilter, ParseJSON(Self.Selected.FilterJson));
+                                          Set(varDbdSearchText, Coalesce(Text(varSavedFilter.searchText), ""));
+                                          Set(varDbdStatusFilter, {Value: Coalesce(Text(varSavedFilter.status), "Alle")});
+                                          Set(varDbdPriorityFilter, {Value: Coalesce(Text(varSavedFilter.priority), "Alle")});
+                                          Set(varDbdScopeFilter, {Value: Coalesce(Text(varSavedFilter.scope), "Alle")});
+                                          Set(varDbdTicketTypeFilter, {Value: Coalesce(Text(varSavedFilter.ticketType), "Alle")});
+                                          Set(varDbdCategoryFilter, {Value: Coalesce(Text(varSavedFilter.category), "Alle")});
+                                          Set(varDbdDepartmentFilter, {Value: Coalesce(Text(varSavedFilter.department), "Alle")});
+                                          Set(varDbdRiskFilter, {Value: Coalesce(Text(varSavedFilter.risk), "Alle")});
+                                          Set(varDbdIsCreatingView, false);
+                                          Set(
+                                              varDbdShowMoreFilters,
+                                              Coalesce(Text(varSavedFilter.scope), "Alle") <> "Alle" Or
+                                              Coalesce(Text(varSavedFilter.category), "Alle") <> "Alle" Or
+                                              Coalesce(Text(varSavedFilter.department), "Alle") <> "Alle" Or
+                                              Coalesce(Text(varSavedFilter.risk), "Alle") <> "Alle"
+                                          );
+                                          Reset(fh_status);
+                                          Reset(fh_ticket_type);
+                                          Reset(fh_priority);
+                                          Reset(fh_category);
+                                          Reset(fh_department);
+                                          Reset(fh_risk);
+                                          Set(varDbdFiltersDirty, false)
+                                      )
+                                    SelectMultiple: =false
+                                    Size: =12
+                                    Width: =Parent.Width
+                              - fh_new_view:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("CreateNewFilterView", "Neue Filteransicht erstellen")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =ButtonAppearance.Secondary
+                                    Height: =34
+                                    Icon: ="Add"
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =Set(varDbdIsCreatingView, true);
+                                      Set(varDbdFiltersDirty, false);
+                                      Set(varDbdShowMoreFilters, false);
+                                      Set(varDbdSearchText, "");
+                                      Set(varDbdStatusFilter, {Value: "Alle"});
+                                      Set(varDbdPriorityFilter, {Value: "Alle"});
+                                      Set(varDbdScopeFilter, {Value: "Alle"});
+                                      Set(varDbdTicketTypeFilter, {Value: "Alle"});
+                                      Set(varDbdCategoryFilter, {Value: "Alle"});
+                                      Set(varDbdDepartmentFilter, {Value: "Alle"});
+                                      Set(varDbdRiskFilter, {Value: "Alle"});
+                                      Reset(fh_view_picker);
+                                      Reset(fh_status);
+                                      Reset(fh_ticket_type);
+                                      Reset(fh_priority);
+                                      Reset(fh_category);
+                                      Reset(fh_department);
+                                      Reset(fh_risk);
+                                      Reset(fh_new_view_name);
+                                      Set(varDbdFiltersDirty, false)
+                                    Size: =12
+                                    Text: =fxTranslate("NewFilterView", "Neue Filteransicht")
+                                    Width: =Parent.Width
+                              - fh_new_view_name:
+                                  Control: ModernTextInput@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("NewFilterViewName", "Name für die neue Filteransicht")
+                                    Appearance: =Appearance.FilledLighter
+                                    BorderColor: =RGBA(205, 205, 212, 1)
+                                    BorderThickness: =1
+                                    Height: =34
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Placeholder: =fxTranslate("NameNewViewPlaceholder", "Neue Ansicht benennen...")
+                                    Size: =12
+                                    Visible: =varDbdIsCreatingView
+                                    Width: =Parent.Width
+                              - fh_create_view:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("SaveNewFilterView", "Neue Filteransicht speichern")
+                                    Height: =34
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =If(
+                                          IsBlank(Trim(fh_new_view_name.Text)),
+                                          Notify(fxTranslate("EnterNewViewName", "Bitte einen Namen für die neue Ansicht eingeben."), NotificationType.Information, 2500),
+                                          IfError(
+                                              Patch(
+                                                  ev_sp_list_config_saved_views,
+                                                  Defaults(ev_sp_list_config_saved_views),
+                                                  {
+                                                      Title: Trim(fh_new_view_name.Text),
+                                                      OwnerEmail: fxCurrentUser.Email,
+                                                      OwnerDisplayName: fxCurrentUser.FullName,
+                                                      Scope: {Value: fxSavedViewScopePersonal},
+                                                      TargetScreen: fxSavedViewTargetDashboard,
+                                                      Active: true,
+                                                      IsDefault: false,
+                                                      FilterJson: JSON(
+                                                          {
+                                                              searchText: varDbdSearchText,
+                                                              status: varDbdStatusFilter.Value,
+                                                              priority: varDbdPriorityFilter.Value,
+                                                              scope: varDbdScopeFilter.Value,
+                                                              ticketType: varDbdTicketTypeFilter.Value,
+                                                              category: varDbdCategoryFilter.Value,
+                                                              department: varDbdDepartmentFilter.Value,
+                                                              risk: varDbdRiskFilter.Value
+                                                          },
+                                                          JSONFormat.Compact
+                                                      )
+                                                  }
+                                              ),
+                                              Notify(Substitute(fxTranslate("ViewCreateFailed", "Ansicht konnte nicht erstellt werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000),
+                                              Refresh(ev_sp_list_config_saved_views);
+                                              Set(varDbdIsCreatingView, false);
+                                              Set(varDbdFiltersDirty, false);
+                                              Reset(fh_new_view_name);
+                                              Notify(fxTranslate("NewFilterViewCreated", "Neue Filteransicht erstellt."), NotificationType.Success, 2000)
+                                          )
+                                      )
+                                    Size: =12
+                                    Text: =fxTranslate("CreateView", "Ansicht erstellen")
+                                    Visible: =varDbdIsCreatingView
+                                    Width: =Parent.Width
+                              - fh_section_divider:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(225, 225, 230, 1)
+                                    FillPortions: =0
+                                    Height: =1
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Width: =Parent.Width
+                              - fh_requester_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Requester", "Anforderer")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - fh_requester:
+                                  Control: ModernCombobox@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("FilterRequester", "Nach Anforderer filtern")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    DefaultSelectedItems: =If(IsBlank(varDbdRequesterFilter), [], [varDbdRequesterFilter])
+                                    Height: =34
+                                    InputTextPlaceholder: =fxTranslate("SearchRequester", "Anforderer suchen...")
+                                    ItemDisplayText: =ThisItem.DisplayName
+                                    Items: |-
+                                      =SortByColumns(
+                                          ForAll(
+                                              Filter(
+                                                  'Office365-Benutzer'.SearchUser({searchTerm: Trim(Self.SearchText)}),
+                                                  AccountEnabled = true &&
+                                                  !IsBlank(DisplayName) &&
+                                                  !IsBlank(Coalesce(Mail, UserPrincipalName)) &&
+                                                  (EndsWith(Lower(Mail), "@kessel.de") Or EndsWith(Lower(UserPrincipalName), "@kessel.de")) &&
+                                                  CountRows(Split(Trim(DisplayName), " ")) >= 2 &&
+                                                  !StartsWith(Lower(DisplayName), "aaa") &&
+                                                  !StartsWith(Lower(UserPrincipalName), "aaa") &&
+                                                  !StartsWith(Lower(MailNickname), "aaa") &&
+                                                  !StartsWith(Lower(DisplayName), "admin") &&
+                                                  !StartsWith(Lower(UserPrincipalName), "admin") &&
+                                                  !StartsWith(Lower(MailNickname), "admin") &&
+                                                  !StartsWith(Lower(DisplayName), "adm ") &&
+                                                  !StartsWith(Lower(DisplayName), "abteilungsleiter") &&
+                                                  !StartsWith(Lower(DisplayName), "administrator") &&
+                                                  !StartsWith(Lower(DisplayName), "service") &&
+                                                  !StartsWith(Lower(DisplayName), "test")
+                                              ),
+                                              {
+                                                  Claims: "i:0#.f|membership|" & Lower(Coalesce(Mail, UserPrincipalName)),
+                                                  DisplayName: DisplayName,
+                                                  Email: Coalesce(Mail, UserPrincipalName),
+                                                  Department: Department,
+                                                  JobTitle: JobTitle,
+                                                  Picture: Blank()
+                                              }
+                                          ),
+                                          "DisplayName",
+                                          SortOrder.Ascending
+                                      )
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdRequesterFilter, If(IsBlank(Self.Selected), Blank(), Self.Selected));
+                                      Set(varDbdFiltersDirty, true)
+                                    SelectMultiple: =false
+                                    Width: =Parent.Width
+                              - fh_ticket_type_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("TicketType", "Tickettyp")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - fh_ticket_type:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("FilterTicketType", "Tickettyp filtern")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(Table({Value: "Alle"}, {Value: "Incident"}, {Value: "Change"}), DisplayValue, fxTranslate(Value, Value)),
+                                          Value = Coalesce(varDbdTicketTypeFilter.Value, "Alle")
+                                      )
+                                    Height: =34
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(Table({Value: "Alle"}, {Value: "Incident"}, {Value: "Change"}), DisplayValue, fxTranslate(Value, Value))
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdTicketTypeFilter, Self.Selected);
+                                      Set(varDbdFiltersDirty, true)
+                                    Width: =Parent.Width
+                              - fh_status_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Status", "Status")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - fh_status:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("FilterStatus", "Status filtern")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(Table({Value: "Alle"}, {Value: "Offen"}, {Value: "Zugewiesen"}, {Value: "In Bearbeitung"}, {Value: "Warten auf Anforderer"}, {Value: "Gelöst"}, {Value: "Geschlossen"}), DisplayValue, fxTranslate(Value, Value)),
+                                          Value = Coalesce(varDbdStatusFilter.Value, "Alle")
+                                      )
+                                    Height: =34
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(Table({Value: "Alle"}, {Value: "Offen"}, {Value: "Zugewiesen"}, {Value: "In Bearbeitung"}, {Value: "Warten auf Anforderer"}, {Value: "Gelöst"}, {Value: "Geschlossen"}), DisplayValue, fxTranslate(Value, Value))
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdStatusFilter, Self.Selected);
+                                      Set(varDbdFiltersDirty, true)
+                                    Width: =Parent.Width
+                              - fh_priority_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Priorität", "Priorität")
+                                    Visible: =fxIsAgentExperience
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - fh_priority:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("FilterPriority", "Priorität filtern")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(Table({Value: "Alle"}, {Value: "Hoch"}, {Value: "Mittel"}, {Value: "Niedrig"}), DisplayValue, fxTranslate(Value, Value)),
+                                          Value = Coalesce(varDbdPriorityFilter.Value, "Alle")
+                                      )
+                                    Height: =34
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(Table({Value: "Alle"}, {Value: "Hoch"}, {Value: "Mittel"}, {Value: "Niedrig"}), DisplayValue, fxTranslate(Value, Value))
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdPriorityFilter, Self.Selected);
+                                      Set(varDbdFiltersDirty, true)
+                                    Visible: =fxIsAgentExperience
+                                    Width: =Parent.Width
+                              - fh_more_toggle:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =ButtonAppearance.Subtle
+                                    Height: =34
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: =Set(varDbdShowMoreFilters, !varDbdShowMoreFilters)
+                                    Size: =12
+                                    Text: =If(varDbdShowMoreFilters, fxTranslate("CloseAdditionalFilters", "Zusätzliche Filter schließen"), fxTranslate("OpenAdditionalFilters", "Zusätzliche Filter öffnen"))
+                                    Visible: =fxIsAgentExperience
+                                    Width: =Parent.Width
+                              - fh_active_filter_chips:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(87, 35, 129, 1)
+                                    Fill: =RGBA(245, 240, 250, 1)
+                                    Height: =34
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =6
+                                    PaddingLeft: =8
+                                    PaddingRight: =8
+                                    PaddingTop: =6
+                                    RadiusBottomLeft: =6
+                                    RadiusBottomRight: =6
+                                    RadiusTopLeft: =6
+                                    RadiusTopRight: =6
+                                    Size: =11
+                                    Text: |-
+                                      =fxTranslate("ActiveFilters", "Aktiv: ") & Concatenate(If(varDbdScopeFilter.Value <> "Alle", varDbdScopeFilter.Value & "  ", ""), If(varDbdCategoryFilter.Value <> "Alle", varDbdCategoryFilter.Value & "  ", ""), If(varDbdDepartmentFilter.Value <> "Alle", varDbdDepartmentFilter.Value & "  ", ""), If(varDbdRiskFilter.Value <> "Alle", varDbdRiskFilter.Value, ""))
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters && (varDbdScopeFilter.Value <> "Alle" Or varDbdCategoryFilter.Value <> "Alle" Or varDbdDepartmentFilter.Value <> "Alle" Or varDbdRiskFilter.Value <> "Alle")
+                                    Width: =Parent.Width
+                              - fh_risk_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Risk", "Risiko")
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - fh_category:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("FilterRisk", "Risiko filtern")
+                                    Appearance: =Appearance.FilledLighter
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Risk.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value)),
+                                          Value = Coalesce(varDbdRiskFilter.Value, "Alle")
+                                      )
+                                    Height: =34
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Risk.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value))
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdRiskFilter, Self.Selected);
+                                      Set(varDbdFiltersDirty, true)
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                              - fh_department_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Department", "Abteilung")
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - fh_department:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("FilterDepartment", "Abteilung filtern")
+                                    Appearance: =Appearance.FilledLighter
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Department.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value)),
+                                          Value = Coalesce(varDbdDepartmentFilter.Value, "Alle")
+                                      )
+                                    Height: =34
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Department.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value))
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdDepartmentFilter, Self.Selected);
+                                      Set(varDbdFiltersDirty, true)
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                              - fh_category_label:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(70, 70, 80, 1)
+                                    Height: =18
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Kategorie", "Kategorie")
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - fh_risk:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("FilterCategory", "Kategorie filtern")
+                                    Appearance: =Appearance.FilledLighter
+                                    Default: |-
+                                      =LookUp(
+                                          AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Category.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value)),
+                                          Value = Coalesce(varDbdCategoryFilter.Value, "Alle")
+                                      )
+                                    Height: =34
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Category.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value))
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnChange: |-
+                                      =Set(varDbdCategoryFilter, Self.Selected);
+                                      Set(varDbdFiltersDirty, true)
+                                    Visible: =fxIsAgentExperience && varDbdShowMoreFilters
+                                    Width: =Parent.Width
+                              - fh_update_view:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Height: =34
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =IfError(
+                                          Patch(
+                                              ev_sp_list_config_saved_views,
+                                              fh_view_picker.Selected,
+                                              {
+                                                  FilterJson: JSON(
+                                                      {
+                                                          searchText: varDbdSearchText,
+                                                          status: varDbdStatusFilter.Value,
+                                                          priority: varDbdPriorityFilter.Value,
+                                                          scope: varDbdScopeFilter.Value,
+                                                          ticketType: varDbdTicketTypeFilter.Value,
+                                                          category: varDbdCategoryFilter.Value,
+                                                          department: varDbdDepartmentFilter.Value,
+                                                          risk: varDbdRiskFilter.Value
+                                                      },
+                                                      JSONFormat.Compact
+                                                  )
+                                              }
+                                          ),
+                                          Notify(Substitute(fxTranslate("ChangesSaveFailed", "Änderungen konnten nicht gespeichert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000),
+                                          Refresh(ev_sp_list_config_saved_views);
+                                          Set(varDbdFiltersDirty, false);
+                                          Notify(fxTranslate("FilterChangesSaved", "Filteränderungen gespeichert."), NotificationType.Success, 2000)
+                                      )
+                                    Size: =12
+                                    Text: =fxTranslate("SaveChanges", "Änderungen speichern")
+                                    Visible: =varDbdFiltersDirty && !varDbdIsCreatingView && !IsBlank(fh_view_picker.Selected.ID)
+                                    Width: =Parent.Width
+                              - fh_discard_changes:
+                                  Control: ModernButton@1.0.0
+                                  Properties:
+                                    Appearance: =ButtonAppearance.Subtle
+                                    Height: =34
+                                    Icon: ="Dismiss"
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =If(
+                                          varDbdIsCreatingView,
+                                          Set(varDbdIsCreatingView, false);
+                                          Reset(fh_new_view_name);
+                                          Set(varDbdSearchText, "");
+                                          Set(varDbdStatusFilter, {Value: "Alle"});
+                                          Set(varDbdPriorityFilter, {Value: "Alle"});
+                                          Set(varDbdScopeFilter, {Value: "Alle"});
+                                          Set(varDbdTicketTypeFilter, {Value: "Alle"});
+                                          Set(varDbdCategoryFilter, {Value: "Alle"});
+                                          Set(varDbdDepartmentFilter, {Value: "Alle"});
+                                          Set(varDbdRiskFilter, {Value: "Alle"});
+                                          Reset(fh_status);
+                                          Reset(fh_ticket_type);
+                                          Reset(fh_priority);
+                                          Reset(fh_category);
+                                          Reset(fh_department);
+                                          Reset(fh_risk),
+                                          Set(varDbdSearchText, Coalesce(Text(varSavedFilter.searchText), ""));
+                                          Set(varDbdStatusFilter, {Value: Coalesce(Text(varSavedFilter.status), "Alle")});
+                                          Set(varDbdPriorityFilter, {Value: Coalesce(Text(varSavedFilter.priority), "Alle")});
+                                          Set(varDbdScopeFilter, {Value: Coalesce(Text(varSavedFilter.scope), "Alle")});
+                                          Set(varDbdTicketTypeFilter, {Value: Coalesce(Text(varSavedFilter.ticketType), "Alle")});
+                                          Set(varDbdCategoryFilter, {Value: Coalesce(Text(varSavedFilter.category), "Alle")});
+                                          Set(varDbdDepartmentFilter, {Value: Coalesce(Text(varSavedFilter.department), "Alle")});
+                                          Set(varDbdRiskFilter, {Value: Coalesce(Text(varSavedFilter.risk), "Alle")});
+                                          Reset(fh_status);
+                                          Reset(fh_ticket_type);
+                                          Reset(fh_priority);
+                                          Reset(fh_category);
+                                          Reset(fh_department);
+                                          Reset(fh_risk)
+                                      );
+                                      Set(varDbdFiltersDirty, false)
+                                    Size: =12
+                                    Text: =If(varDbdIsCreatingView, fxTranslate("DiscardNewView", "Neue Ansicht verwerfen"), fxTranslate("DiscardChanges", "Änderungen verwerfen"))
+                                    Visible: =varDbdIsCreatingView Or (varDbdFiltersDirty && !IsBlank(fh_view_picker.Selected.ID))
+                                    Width: =Parent.Width
+                  - dbd_content:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =fxDbdPageGap
+                        LayoutMinHeight: =0
+                      Children:
+                        - dbd_notifications_panel:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              BorderColor: =RGBA(229, 231, 235, 1)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.Semilight
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FillPortions: =0
+                              Height: =0
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =fxDbdControlGap
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =fxDbdCardPadding
+                              PaddingLeft: =fxDbdCardPadding
+                              PaddingRight: =fxDbdCardPadding
+                              PaddingTop: =fxDbdCardPadding
+                              RadiusBottomLeft: =fxDbdCardRadius
+                              RadiusBottomRight: =fxDbdCardRadius
+                              RadiusTopLeft: =fxDbdCardRadius
+                              RadiusTopRight: =fxDbdCardRadius
+                              Visible: =false
+                              Width: =Parent.Width
+                            Children:
+                              - dbd_notifications_panel_header:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =40
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =12
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Width: =Parent.Width
+                                  Children:
+                                    - dbd_notifications_panel_title:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          AlignInContainer: =AlignInContainer.Stretch
+                                          Color: =RGBA(17, 24, 39, 1)
+                                          FillPortions: =1
+                                          FontWeight: =FontWeight.Semibold
+                                          Height: =34
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =16
+                                          Text: =fxTranslate("NewComments", "Neue Kommentare")
+                                          Wrap: =false
+                                    - dbd_notifications_mark_read:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          Appearance: =ButtonAppearance.Subtle
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          OnSelect: |-
+                                            =If(
+                                                IsBlank(fxCurrentMember),
+                                                Notify(fxTranslate("UserProfileNotFound", "Dein Benutzerprofil konnte nicht gefunden werden."), NotificationType.Error, 5000),
+                                                Set(varNotificationReadAt, Now());
+                                                IfError(
+                                                     UpdateIf(ev_sp_list_notifications, RecipientEmail = fxCurrentUser.Email && IsRead = false, {IsRead: true, ReadAt: Today()});
+                                                    Patch(ev_sp_list_config_members, fxCurrentMember, {LastNotificationRead: varNotificationReadAt});
+                                                    Set(varShowNotifications, false);
+                                                    Notify(fxTranslate("NotificationsMarkedAsRead", "Benachrichtigungen als gelesen markiert."), NotificationType.Success, 2500),
+                                                    Notify(Substitute(fxTranslate("NotificationsMarkReadFailed", "Benachrichtigungen konnten nicht als gelesen markiert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
+                                                )
+                                            )
+                                          Size: =12
+                                          Text: =fxTranslate("MarkAsRead", "Als gelesen markieren")
+                                          Width: =150
+                              - dbd_notifications_empty:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Align: =Align.Center
+                                    Color: =RGBA(100, 116, 139, 1)
+                                    FillPortions: =1
+                                    Height: =80
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =13
+                                    Text: =fxTranslate("NoNewCommentsSinceLastCheck", "Keine neuen Kommentare seit dem letzten Check.")
+                                    Visible: =IsEmpty(fxDbdNotifications)
+                              - dbd_notifications_gallery:
+                                  Control: Gallery@2.15.0
+                                  Variant: Vertical
+                                  Properties:
+                                    Height: =210
+                                    Items: =fxDbdNotifications
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    TemplatePadding: =6
+                                    TemplateSize: =86
+                                    Visible: =!IsEmpty(fxDbdNotifications)
+                                    Width: =Parent.Width
+                                  Children:
+                                    - dbd_notification_item:
+                                        Control: GroupContainer@1.5.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          BorderColor: =RGBA(229, 231, 235, 1)
+                                          BorderThickness: =1
+                                          DropShadow: =DropShadow.None
+                                          Fill: =RGBA(248, 250, 252, 1)
+                                          Height: =78
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutGap: =10
+                                          PaddingBottom: =10
+                                          PaddingLeft: =10
+                                          PaddingRight: =10
+                                          PaddingTop: =10
+                                          RadiusBottomLeft: =8
+                                          RadiusBottomRight: =8
+                                          RadiusTopLeft: =8
+                                          RadiusTopRight: =8
+                                          Width: =Parent.TemplateWidth - 8
+                                        Children:
+                                          - dbd_notification_initials:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                AlignInContainer: =AlignInContainer.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Bold
+                                                Height: =36
+                                                LayoutMinHeight: =0
+                                                LayoutMinWidth: =0
+                                                PaddingBottom: =0
+                                                PaddingLeft: =0
+                                                PaddingRight: =0
+                                                PaddingTop: =0
+                                                RadiusBottomLeft: =18
+                                                RadiusBottomRight: =18
+                                                RadiusTopLeft: =18
+                                                RadiusTopRight: =18
+                                                Size: =12
+                                                Text: ="!"
+                                                Width: =36
+                                          - dbd_notification_text_block:
+                                              Control: GroupContainer@1.5.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                Height: =58
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutGap: =3
+                                                LayoutMinHeight: =0
+                                                LayoutMinWidth: =0
+                                              Children:
+                                                - dbd_notification_meta:
+                                                    Control: ModernText@1.0.0
+                                                    Properties:
+                                                      AlignInContainer: =AlignInContainer.Stretch
+                                                      Color: =RGBA(55, 65, 81, 1)
+                                                      FontWeight: =FontWeight.Semibold
+                                                      Height: =18
+                                                      LayoutMinHeight: =0
+                                                      LayoutMinWidth: =0
+                                                      PaddingBottom: =0
+                                                      PaddingLeft: =0
+                                                      PaddingRight: =0
+                                                      PaddingTop: =0
+                                                      Size: =11
+                                                      Text: =Substitute(Substitute(fxTranslate("TicketNotificationTemplate", "Ticket {0} - {1}"), "{0}", Text(ThisItem.TicketId)), "{1}", Text(ThisItem.Created, "[$-de-DE]dd.mm. HH:mm"))
+                                                      Wrap: =false
+                                                - dbd_notification_comment:
+                                                    Control: ModernText@1.0.0
+                                                    Properties:
+                                                      AlignInContainer: =AlignInContainer.Stretch
+                                                      Color: =RGBA(15, 23, 42, 1)
+                                                      FillPortions: =1
+                                                      Height: =36
+                                                      LayoutMinHeight: =0
+                                                      LayoutMinWidth: =0
+                                                      PaddingBottom: =0
+                                                      PaddingLeft: =0
+                                                      PaddingRight: =0
+                                                      PaddingTop: =0
+                                                      Size: =12
+                                                      Text: =If(ThisItem.NotificationType = "Internal", fxTranslate("NewInternalNote", "Neue interne Notiz"), fxTranslate("NewTicketActivity", "Neue Ticketaktivität"))
+                                          - dbd_notification_open:
+                                              Control: ModernButton@1.0.0
+                                              Properties:
+                                                Appearance: =ButtonAppearance.Subtle
+                                                Height: =36
+                                                Icon: ="ArrowRight"
+                                                Layout: =ButtonLayout.IconOnly
+                                                LayoutMinHeight: =0
+                                                LayoutMinWidth: =0
+                                                OnSelect: |-
+                                                  =Set(
+                                                      varCurrentTicket,
+                                                      LookUp(
+                                                          ev_sp_list_tickets,
+                                                          ID = ThisItem.TicketId
+                                                      )
+                                                  );
+                                                  If(
+                                                      IsBlank(varCurrentTicket) Or !fxCanViewCurrentTicket,
+                                                      Set(varCurrentTicket, Blank());
+                                                      Notify(fxTranslate("RelatedTicketOpenFailed", "Das zugehörige Ticket konnte nicht geöffnet werden."), NotificationType.Warning, 3000),
+                                                      Set(varTicketLoadedModified, varCurrentTicket.Geändert);
+                                                      Set(varActivityFilter, "Alle");
+                                                      Set(varShowNotifications, false);
+                                                      Navigate(ticket_details_screen, ScreenTransition.CoverRight)
+                                                  )
+                                                Tooltip: =fxTranslate("OpenTicket", "Ticket öffnen")
+                                                Width: =36
+                        - dbd_ticket_card:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              BorderColor: =RGBA(225, 226, 230, 1)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              RadiusBottomLeft: =fxDbdCardRadius
+                              RadiusBottomRight: =fxDbdCardRadius
+                              RadiusTopLeft: =fxDbdCardRadius
+                              RadiusTopRight: =fxDbdCardRadius
+                              Width: =Parent.Width
+                            Children:
+                              - dbd_ticket_card_header:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =0
+                                    Height: =52
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =fxDbdPageGap
+                                    PaddingBottom: =8
+                                    PaddingLeft: =fxDbdCardPadding
+                                    PaddingRight: =fxDbdCardPadding
+                                    PaddingTop: =8
+                                    Width: =Parent.Width
+                                  Children:
+                                    - dbd_current_ticket_title:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          AutoHeight: =true
+                                          Color: =RGBA(17, 24, 39, 1)
+                                          FillPortions: =1
+                                          FontWeight: =FontWeight.Semibold
+                                          Height: =36
+                                          Size: =16
+                                          Text: =If(fxIsAgentExperience, fxTranslate("AktuelleTickets", "Aktuelle Tickets"), fxTranslate("MyTickets", "Meine Tickets"))
+                                    - dbd_current_ticket_count:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Align: =Align.Right
+                                          Color: =RGBA(90, 90, 100, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          Height: =28
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =13
+                                          Text: =Substitute(fxTranslate("TicketCountTemplate", "{0} Tickets"), "{0}", dbd_ticket_gallery.AllItemsCount)
+                                          Width: =120
+                              - dbd_table_header:
+                                  Control: GroupContainer@1.5.0
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Fill: =RGBA(249, 250, 251, 1)
+                                    FillPortions: =0
+                                    Height: =38
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                                    PaddingLeft: =fxDbdCardPadding
+                                    PaddingRight: =fxDbdCardPadding
+                                    Width: =Parent.Width
+                                  Children:
+                                    - dbd_hdr_id:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Color: =RGBA(90, 90, 100, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          LayoutMinWidth: =0
+                                          Size: =11
+                                          Text: =fxTranslate("TicketId", "TICKET ID")
+                                          Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.12, 0.13)
+                                    - dbd_hdr_title:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Color: =RGBA(90, 90, 100, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          LayoutMinWidth: =0
+                                          Size: =11
+                                          Text: =Upper(fxTranslate("Title", "TITEL"))
+                                          Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.16, 0.32)
+                                    - dbd_hdr_requester:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Color: =RGBA(90, 90, 100, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          LayoutMinWidth: =0
+                                          Size: =11
+                                          Text: =Upper(fxTranslate("Requester", "ANFORDERER"))
+                                          Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.12, 0.19)
+                                    - dbd_hdr_assigned_to:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Color: =RGBA(90, 90, 100, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          LayoutMinWidth: =0
+                                          Size: =11
+                                          Text: =Upper(fxTranslate("ZugewiesenAn", "ZUGEWIESEN AN"))
+                                          Visible: =fxIsAgentExperience && App.Width >= 1180
+                                          Width: =(Parent.Width - (fxDbdCardPadding * 2)) * 0.20
+                                    - dbd_hdr_status:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Color: =RGBA(90, 90, 100, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          LayoutMinWidth: =0
+                                          Size: =11
+                                          Text: =Upper(fxTranslate("Status", "STATUS"))
+                                          Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.14, 0.18)
+                                    - dbd_hdr_priority:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Color: =RGBA(90, 90, 100, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          LayoutMinWidth: =0
+                                          Size: =11
+                                          Text: =Upper(fxTranslate("Priorität", "PRIORITÄT"))
+                                          Visible: =fxIsAgentExperience && App.Width >= 1180
+                                          Width: =(Parent.Width - (fxDbdCardPadding * 2)) * 0.10
+                                    - dbd_hdr_updated:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          Color: =RGBA(90, 90, 100, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          LayoutMinWidth: =0
+                                          Size: =11
+                                          Text: =fxTranslate("Updated", "AKTUALISIERT")
+                                          Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.09, 0.11)
+                                    - dbd_hdr_action:
+                                        Control: ModernText@1.0.0
+                                        Properties:
+                                          LayoutMinWidth: =0
+                                          Text: =""
+                                          Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.05, 0.07)
+                              - dbd_ticket_gallery:
+                                  Control: Gallery@2.15.0
+                                  Variant: Vertical
+                                  Properties:
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Items: |-
+                                      =With(
+                                           {accessibleTickets: If(fxIsAgentExperience, ev_sp_list_tickets, Filter(ev_sp_list_tickets, RequestedBy.Email = fxCurrentUser.Email Or 'Zugewiesen an'.Email = fxCurrentUser.Email))},
+                                          With(
+                                              {scopeTickets: If(
+                                                  fxIsAgentExperience,
+                                                  Switch(
+                                                      Coalesce(varDbdScopeFilter.Value, "Alle"),
+                                                      "Mir zugewiesen", Filter(accessibleTickets, 'Zugewiesen an'.Email = fxCurrentUser.Email),
+                                                      "Von mir erstellt", Filter(accessibleTickets, RequestedBy.Email = fxCurrentUser.Email),
+                                                      "Von mir angefordert", Filter(accessibleTickets, RequestedBy.Email = fxCurrentUser.Email),
+                                                      accessibleTickets
+                                                  ),
+                                                  accessibleTickets
+                                              )},
+                                              With(
+                                          {searchTickets: If(IsBlank(varDbdSearchText), scopeTickets, Filter(scopeTickets, StartsWith(Titel, varDbdSearchText) Or StartsWith(TicketId, varDbdSearchText) Or StartsWith(RequestedBy.DisplayName, varDbdSearchText) Or StartsWith(RequestedBy.Email, varDbdSearchText)))},
+                                                  With(
+                                                      {requesterTickets: If(IsBlank(varDbdRequesterFilter), searchTickets, Filter(searchTickets, RequestedBy.Email = varDbdRequesterFilter.Email))},
+                                                      With(
+                                                          {statusTickets: If(IsBlank(varDbdStatusFilter.Value) Or varDbdStatusFilter.Value = "Alle", requesterTickets, Filter(requesterTickets, Status.Value = varDbdStatusFilter.Value))},
+                                                      With(
+                                                          {priorityTickets: If(!fxIsAgentExperience Or IsBlank(varDbdPriorityFilter.Value) Or varDbdPriorityFilter.Value = "Alle", statusTickets, Filter(statusTickets, Priority.Value = varDbdPriorityFilter.Value))},
+                                                          With(
+                                                              {typeTickets: If(IsBlank(varDbdTicketTypeFilter.Value) Or varDbdTicketTypeFilter.Value = "Alle", priorityTickets, Filter(priorityTickets, TicketType.Value = varDbdTicketTypeFilter.Value))},
+                                                              With(
+                                                                  {categoryTickets: If(!fxIsAgentExperience Or IsBlank(varDbdCategoryFilter.Value) Or varDbdCategoryFilter.Value = "Alle", typeTickets, Filter(typeTickets, Category.Value = varDbdCategoryFilter.Value))},
+                                                                  With(
+                                                                      {departmentTickets: If(!fxIsAgentExperience Or IsBlank(varDbdDepartmentFilter.Value) Or varDbdDepartmentFilter.Value = "Alle", categoryTickets, Filter(categoryTickets, Department.Value = varDbdDepartmentFilter.Value))},
+                                                                      With(
+                                                                          {riskTickets: If(!fxIsAgentExperience Or IsBlank(varDbdRiskFilter.Value) Or varDbdRiskFilter.Value = "Alle", departmentTickets, Filter(departmentTickets, Risk.Value = varDbdRiskFilter.Value))},
+                                                                           SortByColumns(riskTickets, "ID", SortOrder.Descending)
+                                                                       )
+                                                                   )
+                                                               )
+                                                           )
+                                                       )
+                                                   )
+                                                   )
+                                               )
+                                          )
+                                      )
+                                    OnSelect: |-
+                                      =Set(varCurrentTicket, ThisItem);
+                                      Set(varTicketLoadedModified, varCurrentTicket.Geändert);
+                                      Navigate(ticket_details_screen, ScreenTransition.None)
+                                    Selectable: =false
+                                    TemplatePadding: =0
+                                    TemplateSize: =If(App.Width < 1100, 36, 42)
+                                    Width: =Parent.Width
+                                  Children:
+                                    - dbd_ticket_row:
+                                        Control: GroupContainer@1.5.0
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          Fill: =If(ThisItem.ID = varLastViewedTicketId, RGBA(245, 240, 250, 1), If(Coalesce(ThisItem.SlaBreached, false), RGBA(254, 242, 242, 1), RGBA(255, 255, 255, 1)))
+                                          Height: =Parent.TemplateHeight - 1
+                                          LayoutAlignItems: =LayoutAlignItems.Center
+                                          LayoutDirection: =LayoutDirection.Horizontal
+                                          LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                                          PaddingLeft: =fxDbdCardPadding
+                                          PaddingRight: =fxDbdCardPadding
+                                          RadiusBottomLeft: =0
+                                          RadiusBottomRight: =0
+                                          RadiusTopLeft: =0
+                                          RadiusTopRight: =0
+                                          Width: =Parent.TemplateWidth
+                                        Children:
+                                          - dbd_row_id:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(55, 65, 81, 1)
+                                                FontWeight: =If(ThisItem.ID = varLastViewedTicketId || Coalesce(ThisItem.SlaBreached, false) || !IsBlank(LookUp(fxDbdNotifications, TicketId = ThisItem.ID)), FontWeight.Bold, FontWeight.Semibold)
+                                                Height: =Parent.Height
+                                                LayoutMinWidth: =0
+                                                Size: =If(App.Width < 1100, 11, 13)
+                                                Text: =Coalesce(ThisItem.TicketId, Text(ThisItem.ID))
+                                                Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.12, 0.13)
+                                                Wrap: =false
+                                          - dbd_row_title:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(17, 24, 39, 1)
+                                                FontWeight: =If(ThisItem.ID = varLastViewedTicketId || !IsBlank(LookUp(fxDbdNotifications, TicketId = ThisItem.ID)), FontWeight.Bold, FontWeight.Semibold)
+                                                Height: =Parent.Height
+                                                LayoutMinWidth: =0
+                                                Size: =If(App.Width < 1100, 11, 13)
+                                                Text: |-
+                                                  =Concatenate(If(!IsBlank(LookUp(fxDbdNotifications, TicketId = ThisItem.ID)), "★ ", ""), If(Coalesce(ThisItem.SlaBreached, false), "SLA: ", ""), Coalesce(ThisItem.TicketTitel, ThisItem.Titel, ThisItem.TicketId, fxTranslate("NoTitle", "Ohne Titel")))
+                                                Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.16, 0.32)
+                                                Wrap: =false
+                                          - dbd_row_requester:
+                                              Control: GroupContainer@1.5.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                Fill: =RGBA(255, 255, 255, 0)
+                                                FillPortions: =0
+                                                Height: =Parent.Height
+                                                LayoutAlignItems: =LayoutAlignItems.Center
+                                                LayoutDirection: =LayoutDirection.Horizontal
+                                                LayoutGap: =If(App.Width < 1100, 0, 8)
+                                                LayoutMinHeight: =0
+                                                LayoutMinWidth: =0
+                                                Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.12, 0.19)
+                                              Children:
+                                                - dbd_row_requester_photo:
+                                                    Control: Image@2.2.3
+                                                    Properties:
+                                                      AccessibleLabel: =Substitute(fxTranslate("ProfilePictureTemplate", "Profilbild {0}"), "{0}", Coalesce(ThisItem.RequestedBy.DisplayName, ThisItem.RequestedBy.Email, "-"))
+                                                      Height: =24
+                                                      Image: =IfError(ThisItem.RequestedBy.Picture, Blank())
+                                                      ImagePosition: =ImagePosition.Fill
+                                                      RadiusBottomLeft: =12
+                                                      RadiusBottomRight: =12
+                                                      RadiusTopLeft: =12
+                                                      RadiusTopRight: =12
+                                                      Visible: =App.Width >= 1100 && !IsBlank(ThisItem.RequestedBy.Picture)
+                                                      Width: =24
+                                                - dbd_row_requester_avatar:
+                                                    Control: Avatar@1.0.40
+                                                    Properties:
+                                                      AccessibleLabel: =Substitute(fxTranslate("AvatarTemplate", "Avatar {0}"), "{0}", Coalesce(ThisItem.RequestedBy.DisplayName, ThisItem.RequestedBy.Email, "-"))
+                                                      Height: =24
+                                                      Name: =Coalesce(ThisItem.RequestedBy.DisplayName, ThisItem.RequestedBy.Email, "?")
+                                                      Visible: =App.Width >= 1100 && IsBlank(ThisItem.RequestedBy.Picture)
+                                                      Width: =24
+                                                - dbd_row_requester_name:
+                                                    Control: ModernText@1.0.0
+                                                    Properties:
+                                                      Color: =RGBA(55, 65, 81, 1)
+                                                      Height: =Parent.Height
+                                                      LayoutMinWidth: =0
+                                                      Size: =If(App.Width < 1100, 11, 13)
+                                                      Text: =Coalesce(ThisItem.RequestedBy.DisplayName, ThisItem.RequestedBy.Email, "-")
+                                                      Width: =Parent.Width - If(App.Width < 1100, 0, 32)
+                                                      Wrap: =false
+                                          - dbd_row_assigned_to:
+                                              Control: GroupContainer@1.5.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                Fill: =RGBA(255, 255, 255, 0)
+                                                FillPortions: =0
+                                                Height: =Parent.Height
+                                                LayoutAlignItems: =LayoutAlignItems.Center
+                                                LayoutDirection: =LayoutDirection.Horizontal
+                                                LayoutMinHeight: =0
+                                                LayoutMinWidth: =0
+                                                Visible: =fxIsAgentExperience && App.Width >= 1180
+                                                Width: =(Parent.Width - (fxDbdCardPadding * 2)) * 0.20
+                                              Children:
+                                                - dbd_row_assigned_photo:
+                                                    Control: Image@2.2.3
+                                                    Properties:
+                                                      AccessibleLabel: =Substitute(fxTranslate("ProfilePictureTemplate", "Profilbild {0}"), "{0}", Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen")))
+                                                      Height: =24
+                                                      Image: =IfError(ThisItem.'Zugewiesen an'.Picture, Blank())
+                                                      ImagePosition: =ImagePosition.Fill
+                                                      RadiusBottomLeft: =12
+                                                      RadiusBottomRight: =12
+                                                      RadiusTopLeft: =12
+                                                      RadiusTopRight: =12
+                                                      Visible: =false
+                                                      Width: =24
+                                                - dbd_row_assigned_avatar:
+                                                    Control: Avatar@1.0.40
+                                                    Properties:
+                                                      AccessibleLabel: =Substitute(fxTranslate("AvatarTemplate", "Avatar {0}"), "{0}", Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen")))
+                                                      Height: =24
+                                                      Name: =Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, "?")
+                                                      Visible: =false
+                                                      Width: =24
+                                                - dbd_row_assigned_name:
+                                                    Control: ModernText@1.0.0
+                                                    Properties:
+                                                      Color: =RGBA(55, 65, 81, 1)
+                                                      Height: =Parent.Height
+                                                      LayoutMinWidth: =0
+                                                      Size: =If(App.Width < 1100, 11, 13)
+                                                      Text: =Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen"))
+                                                      Width: =Parent.Width
+                                                      Wrap: =false
+                                          - dbd_row_status:
+                                              Control: GroupContainer@1.5.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                FillPortions: =0
+                                                Height: =Parent.Height
+                                                LayoutAlignItems: =LayoutAlignItems.Center
+                                                LayoutDirection: =LayoutDirection.Horizontal
+                                                LayoutMinHeight: =0
+                                                LayoutMinWidth: =0
+                                                Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.14, 0.18)
+                                              Children:
+                                                - dbd_row_status_text:
+                                                    Control: ModernText@1.0.0
+                                                    Properties:
+                                                      Align: =Align.Center
+                                                      AlignInContainer: =AlignInContainer.Center
+                                                      Color: |-
+                                                        =Switch(
+                                                            Coalesce(ThisItem.Status.Value, ""),
+                                                            "Offen", RGBA(32, 91, 160, 1),
+                                                            "In Bearbeitung", RGBA(126, 85, 0, 1),
+                                                            "Zurück zur Überarbeitung", RGBA(153, 75, 0, 1),
+                                                            "Erledigt", RGBA(31, 105, 63, 1),
+                                                            "Gelöst", RGBA(31, 105, 63, 1),
+                                                            "Geschlossen", RGBA(31, 105, 63, 1),
+                                                            RGBA(70, 70, 75, 1)
+                                                        )
+                                                      Fill: |-
+                                                        =Switch(
+                                                            Coalesce(ThisItem.Status.Value, ""),
+                                                            "Offen", RGBA(224, 238, 255, 1),
+                                                            "In Bearbeitung", RGBA(255, 242, 204, 1),
+                                                            "Zurück zur Überarbeitung", RGBA(255, 235, 214, 1),
+                                                            "Erledigt", RGBA(224, 242, 232, 1),
+                                                            "Gelöst", RGBA(224, 242, 232, 1),
+                                                            "Geschlossen", RGBA(224, 242, 232, 1),
+                                                            RGBA(238, 238, 240, 1)
+                                                        )
+                                                      FontWeight: =FontWeight.Semibold
+                                                      Height: =24
+                                                      LayoutMinHeight: =0
+                                                      LayoutMinWidth: =0
+                                                      PaddingBottom: =0
+                                                      PaddingLeft: =8
+                                                      PaddingRight: =8
+                                                      PaddingTop: =0
+                                                      RadiusBottomLeft: =4
+                                                      RadiusBottomRight: =4
+                                                      RadiusTopLeft: =4
+                                                      RadiusTopRight: =4
+                                                      Size: =If(App.Width < 1100, 10, 11)
+                                                      Text: =Coalesce(ThisItem.Status.Value, fxTranslate("NotSet", "Nicht gesetzt"))
+                                                      Width: =Min(Parent.Width, Max(72, Len(Coalesce(ThisItem.Status.Value, fxTranslate("NotSet", "Nicht gesetzt"))) * 8 + 28))
+                                                      Wrap: =false
+                                          - dbd_row_priority:
+                                              Control: GroupContainer@1.5.0
+                                              Variant: AutoLayout
+                                              Properties:
+                                                DropShadow: =DropShadow.None
+                                                FillPortions: =0
+                                                Height: =Parent.Height
+                                                LayoutAlignItems: =LayoutAlignItems.Center
+                                                LayoutDirection: =LayoutDirection.Horizontal
+                                                LayoutMinHeight: =0
+                                                LayoutMinWidth: =0
+                                                Visible: =fxIsAgentExperience && App.Width >= 1180
+                                                Width: =(Parent.Width - (fxDbdCardPadding * 2)) * 0.10
+                                              Children:
+                                                - dbd_row_priority_text:
+                                                    Control: ModernText@1.0.0
+                                                    Properties:
+                                                      Align: =Align.Center
+                                                      AlignInContainer: =AlignInContainer.Center
+                                                      Color: |-
+                                                        =Switch(
+                                                            Coalesce(ThisItem.Priority.Value, ""),
+                                                            "Hoch", RGBA(139, 0, 0, 1),
+                                                            "Mittel", RGBA(126, 85, 0, 1),
+                                                            "Niedrig", RGBA(42, 89, 150, 1),
+                                                            RGBA(100, 100, 108, 1)
+                                                        )
+                                                      Fill: |-
+                                                        =Switch(
+                                                            Coalesce(ThisItem.Priority.Value, ""),
+                                                            "Hoch", RGBA(255, 232, 232, 1),
+                                                            "Mittel", RGBA(255, 242, 204, 1),
+                                                            "Niedrig", RGBA(226, 238, 255, 1),
+                                                            RGBA(238, 238, 240, 1)
+                                                        )
+                                                      Font: =Font.Arial
+                                                      FontWeight: =FontWeight.Semibold
+                                                      Height: =24
+                                                      LayoutMinHeight: =0
+                                                      LayoutMinWidth: =0
+                                                      PaddingBottom: =0
+                                                      PaddingLeft: =8
+                                                      PaddingRight: =8
+                                                      PaddingTop: =0
+                                                      RadiusBottomLeft: =4
+                                                      RadiusBottomRight: =4
+                                                      RadiusTopLeft: =4
+                                                      RadiusTopRight: =4
+                                                      Size: =If(App.Width < 1100, 10, 11)
+                                                      Text: =Coalesce(ThisItem.Priority.Value, fxTranslate("NotSet", "Nicht gesetzt"))
+                                                      Width: =Min(Parent.Width, Max(64, Len(Coalesce(ThisItem.Priority.Value, fxTranslate("NotSet", "Nicht gesetzt"))) * 7 + 24))
+                                          - dbd_row_updated:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(55, 65, 81, 1)
+                                                Height: =Parent.Height
+                                                LayoutMinWidth: =0
+                                                Size: =If(App.Width < 1100, 11, 13)
+                                                Text: =Text(ThisItem.Geändert, "[$-de-DE]dd.mm. HH:mm")
+                                                Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.09, 0.11)
+                                                Wrap: =false
+                                          - dbd_row_open:
+                                              Control: ModernButton@1.0.0
+                                              Properties:
+                                                Appearance: =ButtonAppearance.Transparent
+                                                BorderThickness: =0
+                                                Color: =RGBA(80, 80, 85, 1)
+                                                Icon: ="ArrowRight"
+                                                Layout: =ButtonLayout.IconOnly
+                                                LayoutMinWidth: =0
+                                                OnSelect: |-
+                                                  =Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = ThisItem.ID));
+                                                  Set(varLastViewedTicketId, ThisItem.ID);
+                                                  Set(varTicketLoadedModified, varCurrentTicket.Geändert);
+                                                  Navigate(ticket_details_screen, ScreenTransition.None)
+                                                RadiusBottomLeft: =4
+                                                RadiusBottomRight: =4
+                                                RadiusTopLeft: =4
+                                                RadiusTopRight: =4
+                                                Width: =(Parent.Width - (fxDbdCardPadding * 2)) * If(fxIsAgentExperience && App.Width >= 1180, 0.05, 0.07)
+                                    - dbd_row_divider:
+                                        Control: GroupContainer@1.5.0
+                                        Variant: ManualLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          Fill: =RGBA(231, 232, 235, 1)
+                                          Height: =1
+                                          Width: =Parent.TemplateWidth
+                                          Y: =Parent.TemplateHeight - 1
+                                    - dbd_row_click_target:
+                                        Control: ModernButton@1.0.0
+                                        Properties:
+                                          AccessibleLabel: =Substitute(fxTranslate("OpenTicketTemplate", "Ticket {0} öffnen"), "{0}", Coalesce(ThisItem.Titel, ThisItem.TicketId, Text(ThisItem.ID)))
+                                          Appearance: =ButtonAppearance.Transparent
+                                          BorderThickness: =0
+                                          Height: =Parent.TemplateHeight
+                                          OnSelect: |-
+                                            =Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = ThisItem.ID));
+                                            Set(varLastViewedTicketId, ThisItem.ID);
+                                            Set(varTicketLoadedModified, varCurrentTicket.Geändert);
+                                            Navigate(ticket_details_screen, ScreenTransition.None)
+                                          Text: =""
+                                          Width: =Parent.TemplateWidth
+      - dbd_notifications_overlay:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Visible: =varShowNotifications
+            Width: =Parent.Width
+          Children:
+            - dbd_notifications_dismiss:
+                Control: Button@0.0.45
+                Properties:
+                  AcceptsFocus: =false
+                  AccessibleLabel: =fxTranslate("CloseNotifications", "Benachrichtigungen schließen")
+                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  BorderThickness: =0
+                  Height: =Parent.Height
+                  OnSelect: =Set(varShowNotifications, false)
+                  Text: =""
+                  Width: =Parent.Width
+            - dbd_notifications_flyout:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  BorderColor: =RGBA(224, 226, 231, 1)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =300
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =8
+                  PaddingBottom: =12
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =10
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =Min(430, Parent.Width - 32)
+                  X: =Max(16, Parent.Width - Self.Width - 112)
+                  Y: =50
+                Children:
+                  - dbd_notifications_flyout_header:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =36
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =8
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        Width: =Parent.Width
+                      Children:
+                        - dbd_notifications_flyout_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Stretch
+                              Color: =RGBA(17, 24, 39, 1)
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Text: =fxTranslate("NewUpdates", "Neue Updates")
+                              Wrap: =false
+                        - dbd_notifications_flyout_count:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(87, 35, 129, 1)
+                              Fill: =RGBA(245, 240, 250, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =38
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =6
+                              PaddingRight: =6
+                              PaddingTop: =0
+                              RadiusBottomLeft: =12
+                              RadiusBottomRight: =12
+                              RadiusTopLeft: =12
+                              RadiusTopRight: =12
+                              Size: =11
+                              Text: =fxTranslate("Neu", "Neu")
+                              Width: =38
+                        - dbd_notifications_flyout_mark_read:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              AccessibleLabel: =fxTranslate("MarkAllNotificationsAsRead", "Alle Benachrichtigungen als gelesen markieren")
+                              Appearance: =ButtonAppearance.Secondary
+                              Icon: ="CheckmarkCircle"
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnSelect: |-
+                                =If(
+                                    IsBlank(fxCurrentMember),
+                                    Notify(fxTranslate("UserProfileNotFound", "Dein Benutzerprofil konnte nicht gefunden werden."), NotificationType.Error, 5000),
+                                    Set(varNotificationReadAt, Now());
+                                    IfError(
+                                         UpdateIf(ev_sp_list_notifications, RecipientEmail = fxCurrentUser.Email && IsRead = false, {IsRead: true, ReadAt: Today()});
+                                        Patch(ev_sp_list_config_members, fxCurrentMember, {LastNotificationRead: varNotificationReadAt});
+                                        Set(varShowNotifications, false);
+                                        Notify(fxTranslate("NotificationsMarkedAsRead", "Benachrichtigungen als gelesen markiert."), NotificationType.Success, 2500),
+                                        Notify(Substitute(fxTranslate("NotificationsMarkReadFailed", "Benachrichtigungen konnten nicht als gelesen markiert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
+                                    )
+                                )
+                              Size: =11
+                              Text: =fxTranslate("AllRead", "Alle gelesen")
+                              Width: =118
+                  - dbd_notifications_flyout_empty:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        AlignInContainer: =AlignInContainer.Stretch
+                        Color: =RGBA(100, 116, 139, 1)
+                        FillPortions: =1
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =12
+                        Text: =fxTranslate("NoNewComments", "Keine neuen Kommentare.")
+                        Visible: =!varDbdNotificationsLoading && IsEmpty(fxDbdNotifications)
+                  - dbd_notifications_flyout_gallery:
+                      Control: Gallery@2.15.0
+                      Variant: Vertical
+                      Properties:
+                        AccessibleLabel: =fxTranslate("NewUpdates", "Neue Updates")
+                        Items: =fxDbdNotifications
+                        LayoutMinHeight: =64
+                        LayoutMinWidth: =0
+                        TabIndex: =0
+                        TemplatePadding: =3
+                        TemplateSize: =61
+                        Visible: =!varDbdNotificationsLoading && !IsEmpty(fxDbdNotifications)
+                        Width: =Parent.Width
+                      Children:
+                        - dbd_notifications_flyout_item:
+                            Control: Button@0.0.45
+                            Properties:
+                              AccessibleLabel: =Substitute(fxTranslate("OpenTicketNotificationTemplate", "Benachrichtigung zu Ticket {0} öffnen"), "{0}", Text(ThisItem.TicketId))
+                              Align: =Align.Left
+                              Appearance: ='ButtonCanvas.Appearance'.Subtle
+                              BorderColor: =RGBA(229, 231, 235, 1)
+                              BorderRadius: =7
+                              BorderThickness: =1
+                              FontColor: =RGBA(31, 41, 55, 1)
+                              FontSize: =11
+                              Height: =55
+                              Icon: ="ArrowRight"
+                              Layout: ='ButtonCanvas.Layout'.IconAfter
+                              OnSelect: |-
+                                =IfError(
+                                    Patch(ev_sp_list_notifications, ThisItem, {IsRead: true, ReadAt: Today()});
+                                    If(!IsBlank(fxCurrentMember), Patch(ev_sp_list_config_members, fxCurrentMember, {LastNotificationRead: Now()})),
+                                    Notify(fxTranslate("NotificationMarkReadFailed", "Benachrichtigung konnte nicht als gelesen markiert werden."), NotificationType.Warning, 3000)
+                                );
+                                Set(
+                                    varCurrentTicket,
+                                    LookUp(
+                                        ev_sp_list_tickets,
+                                        ID = ThisItem.TicketId
+                                    )
+                                );
+                                If(
+                                    IsBlank(varCurrentTicket) Or !fxCanViewCurrentTicket,
+                                    Set(varCurrentTicket, Blank());
+                                    Notify(fxTranslate("RelatedTicketOpenFailed", "Das zugehörige Ticket konnte nicht geöffnet werden."), NotificationType.Warning, 3000),
+                                    Set(varTicketLoadedModified, varCurrentTicket.Geändert);
+                                    Set(varActivityFilter, "Alle");
+                                    Set(varShowNotifications, false);
+                                    Navigate(ticket_details_screen, ScreenTransition.CoverRight)
+                                )
+                              PaddingBottom: =7
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =7
+                              Text: =Substitute(Substitute(fxTranslate("TicketNotificationTemplate", "Ticket {0} - {1}"), "{0}", Text(ThisItem.TicketId)), "{1}", Text(ThisItem.Created, "[$-de-DE]dd.mm. HH:mm")) & Char(10) & If(ThisItem.NotificationType = "Internal", fxTranslate("NewInternalNote", "Neue interne Notiz"), fxTranslate("NewTicketActivity", "Neue Ticketaktivität"))
+                              VerticalAlign: =VerticalAlign.Middle
+                              Width: =Parent.TemplateWidth - 6
+                  - dbd_notifications_flyout_loading:
+                      Control: Spinner@1.4.6
+                      Properties:
+                        AccessibleLabel: =fxTranslate("CommentsBeingLoaded", "Kommentare werden geladen")
+                        AlignInContainer: =AlignInContainer.Stretch
+                        FillPortions: =1
+                        FontColor: =RGBA(55, 65, 81, 1)
+                        Label: =fxTranslate("CommentsBeingLoaded", "Kommentare werden geladen...")
+                        LabelPosition: ='Spinner.LabelPosition'.Below
+                        LayoutMinHeight: =64
+                        LayoutMinWidth: =0
+                        SpinnerColor: =RGBA(87, 35, 129, 1)
+                        Visible: =varDbdNotificationsLoading
+      - dbd_loading_overlay:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Height: =Parent.Height
+            Visible: =Coalesce(varDbdRefreshing, false)
+            Width: =Parent.Width
+          Children:
+            - dbd_loading_logo:
+                Control: Image@2.2.3
+                Properties:
+                  AccessibleLabel: ="Kessel"
+                  Height: =52
+                  Image: ='kessel-basics-logo-primaerlogo-violett'
+                  Visible: =false
+                  Width: =160
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =(Parent.Height - 130) / 2
+            - dbd_loading_spinner:
+                Control: Spinner@1.4.6
+                Properties:
+                  AccessibleLabel: =fxTranslate("DashboardBeingRefreshed", "Dashboard wird aktualisiert")
+                  FontColor: =RGBA(55, 65, 81, 1)
+                  Height: =60
+                  Label: =fxTranslate("DashboardBeingRefreshed", "Dashboard wird aktualisiert...")
+                  LabelPosition: ='Spinner.LabelPosition'.Below
+                  SpinnerColor: =RGBA(87, 35, 129, 1)
+                  Visible: =false
+                  Width: =240
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =(Parent.Height - 18) / 2
+            - dbd_loading_card:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  BorderColor: =RGBA(225, 226, 230, 1)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.Regular
+                  Fill: =RGBA(255, 255, 255, 1)
+                  RadiusBottomLeft: =10
+                  RadiusBottomRight: =10
+                  RadiusTopLeft: =10
+                  RadiusTopRight: =10
+                  Width: =400
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =(Parent.Height - Self.Height) / 2
+                Children:
+                  - dbd_loading_card_spinner:
+                      Control: Spinner@1.4.6
+                      Properties:
+                        AccessibleLabel: =fxTranslate("DashboardBeingRefreshed", "Dashboard wird aktualisiert")
+                        FontColor: =RGBA(31, 41, 55, 1)
+                        Height: =62
+                        Label: =fxTranslate("DashboardBeingRefreshed", "Dashboard wird aktualisiert...")
+                        LabelPosition: ='Spinner.LabelPosition'.Below
+                        SpinnerColor: =RGBA(87, 35, 129, 1)
+                        Width: =260
+                        X: =70
+                        Y: =106
+                  - dbd_loading_card_logo:
+                      Control: Image@2.2.3
+                      Properties:
+                        AccessibleLabel: ="Kessel"
+                        Height: =92
+                        Image: ='kessel-basics-logo-primaerlogo-violett'
+                        Width: =180
+                        X: =110

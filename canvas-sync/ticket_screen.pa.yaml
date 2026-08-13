@@ -1,0 +1,1321 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ticket_screen:
+    Properties:
+      OnVisible: |-
+        =Set(varTicketSubmissionInProgress, false);
+        Set(varTicketSubmissionStatus, "")
+    Children:
+      - con_change_1:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(244, 246, 250, 1)
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Vertical
+            Width: =Parent.Width
+          Children:
+            - con_header_1:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =If(varEmbed, 64, 72)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingLeft: =
+                  PaddingRight: =
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                Children:
+                  - header_1:
+                      Control: Header@0.0.44
+                      Properties:
+                        AlignInContainer: =AlignInContainer.Stretch
+                        BasePaletteColor: =fxPrimaryColor
+                        Font: =Font.Arial
+                        Height: =If(varEmbed, 48, 56)
+                        IsLogoVisible: =false
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        LogoTooltip: =
+                        Style: ='Header.Style'.Primary
+                        Title: =fxTranslate("CreateNewTicket", "Neues Ticket erstellen")
+                        Width: =Parent.Width - tcs_language_selector.Width - Parent.PaddingLeft - Parent.PaddingRight
+                  - tcs_language_selector:
+                      Control: ModernDropdown@1.0.2
+                      Properties:
+                        AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
+                        Default: |-
+                          =LookUp(Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"}), Code = Coalesce(varCurrentLanguage, "de"))
+                        Height: =34
+                        ItemDisplayText: =ThisItem.Label
+                        Items: |-
+                          =Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"})
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
+                        Width: =72
+            - con_form_1:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(244, 246, 250, 1)
+                  Height: =Parent.Height
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =If(varEmbed, 10, 18)
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =If(varEmbed, 12, 20)
+                  PaddingLeft: =If(varEmbed, 12, 28)
+                  PaddingRight: =If(varEmbed, 12, 28)
+                  PaddingTop: =If(varEmbed, 12, 20)
+                  Width: =Parent.Width
+                Children:
+                  - frm_change_1:
+                      Control: Form@2.4.4
+                      Layout: Vertical
+                      Properties:
+                        BorderColor: =RGBA(220, 224, 230, 1)
+                        BorderThickness: =1
+                        DataSource: =ev_sp_list_tickets
+                        DefaultMode: =FormMode.New
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =Max(520, Parent.Height - If(varEmbed, 96, 112))
+                        LayoutMaxHeight: =Parent.Height
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =320
+                        NumberOfColumns: =1
+                        OnFailure: |-
+                          =Set(varTicketSubmissionInProgress, false);
+                          Set(varTicketSubmissionStatus, "");
+                          Notify(
+                              Substitute(fxTranslate("TicketCreateFailed", "Das Ticket konnte nicht erstellt werden: {0}"), "{0}", Coalesce(frm_change_1.Error, fxTranslate("UnknownError", "Unbekannter Fehler."))),
+                              NotificationType.Error,
+                              7000
+                          )
+                        OnSuccess: |-
+                          =Patch(ev_sp_list_tickets, frm_change_1.LastSubmit, {Beobachter: varTicketWatcherSelection});
+                          Set(
+                              varCurrentTicket,
+                              frm_change_1.LastSubmit
+                          );
+
+                          Set(varTicketDetailId, frm_change_1.LastSubmit.ID);
+
+                          Set(
+                              varTicketSubmissionStatus,
+                              If(
+                                  varSubmittedDescriptionHadInlineImages,
+                                  fxTranslate("ScreenshotsBeingProcessed", "Screenshots werden verarbeitet..."),
+                                  fxTranslate("TicketBeingFinalized", "Ticket wird finalisiert...")
+                              )
+                          );
+
+                          IfError(
+                              create_attach_description.Run(
+                                  {
+                                      ticketId: Text(varCurrentTicket.ID),
+                                      html: varSubmittedDescriptionPayload
+                                  }
+                              ),
+                              Notify(
+                                  fxTranslate("TicketCreatedScreenshotsFailed", "Ticket wurde erstellt, aber Screenshots konnten nicht verarbeitet werden."),
+                                  NotificationType.Warning,
+                                  5000
+                              )
+                          );
+
+                          Refresh(ev_sp_list_tickets);
+
+                          Set(
+                              varCurrentTicket,
+                              LookUp(
+                                  ev_sp_list_tickets,
+                                  ID = varTicketDetailId
+                              )
+                          );
+
+                          ResetForm(frm_change_1);
+
+                          Set(varTicketSubmissionInProgress, false);
+
+                          Navigate(
+                              ticket_details_screen,
+                              ScreenTransition.Fade
+                          )
+                        Width: =If(!varEmbed And App.Width >= 1100, Max(320, Min(Parent.Width - 340, 920)), Max(320, Min(Parent.Width - If(varEmbed, 0, 8), 920)))
+                      Children:
+                        - Name_DataCard1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: TextualEdit
+                            Properties:
+                              DataField: ="TicketTitel"
+                              Default: =ThisItem.Name
+                              DisplayName: =fxTranslate("Title", "Titel")
+                              MaxLength: =DataSourceInfo([@ev_sp_list_tickets], DataSourceInfo.MaxLength, Name)
+                              Required: =true
+                              Update: =DataCardValue3.Text
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =0
+                            Children:
+                              - DataCardKey3:
+                                  Control: ModernText@1.0.0
+                                  MetadataKey: FieldName
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("NameFieldLabel", "Feldbezeichnung Name")
+                                    Color: =RGBA(17, 24, 39, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    RadiusBottomLeft: =0
+                                    RadiusBottomRight: =0
+                                    RadiusTopLeft: =0
+                                    RadiusTopRight: =0
+                                    Size: =12
+                                    Text: =fxTranslate("TitleRequired", "Titel *")
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =8
+                              - DataCardValue3:
+                                  Control: ModernTextInput@1.1.1
+                                  MetadataKey: FieldValue
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("EnterTicketName", "Ticketname eingeben")
+                                    Default: =Parent.Default
+                                    DisplayMode: =Parent.DisplayMode
+                                    FontWeight: =""
+                                    Height: =42
+                                    MaxLength: =-1
+                                    Placeholder: =fxTranslate("EnterMeaningfulTicketName", "Gib einen aussagekräftigen Namen ein...")
+                                    Required: =Parent.Required
+                                    TriggerOutput: =TriggerOutput.FocusOut
+                                    ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                    Width: =Parent.Width - 50
+                                    X: =24
+                                    Y: =DataCardKey3.Y + DataCardKey3.Height + 4
+                              - ErrorMessage3:
+                                  Control: Text@0.0.51
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardValue3.Y + DataCardValue3.Height
+                              - StarVisible3:
+                                  Control: Text@0.0.51
+                                  MetadataKey: FieldRequired
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.Center
+                                    Height: =30
+                                    Text: ="*"
+                                    Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =30
+                                    Y: =DataCardKey3.Y
+                        - Description_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: TextualEdit
+                            Properties:
+                              BorderColor: =fxPrimaryColor
+                              DataField: ="Description"
+                              Default: =ThisItem.Description
+                              DisplayName: =fxTranslate("Beschreibung", "Beschreibung")
+                              Height: =400
+                              MaxLength: =DataSourceInfo([@ev_sp_list_tickets], DataSourceInfo.MaxLength, Description)
+                              Required: =true
+                              Update: =If(IsBlank(varSelectedService), "", "<p><strong>Service:</strong> " & varSelectedService & "</p>") & lbl_rich_editor_1.HtmlText
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =1
+                            Children:
+                              - ErrorMessage3_1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =lbl_rich_editor_1.Y + lbl_rich_editor_1.Height
+                              - StarVisible3_1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: FieldRequired
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.Center
+                                    Height: =30
+                                    Text: ="*"
+                                    Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =30
+                                    Y: =lbl_rich_editor_1.Y
+                              - lbl_rich_editor_1:
+                                  Control: RichTextEditor@2.7.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("DescriptionWithOptionalScreenshots", "Beschreibung mit optional eingefügten Screenshots")
+                                    BorderColor: =RGBA(87, 35, 129, 1)
+                                    Default: =""
+                                    Height: =Parent.Height - 96
+                                    Width: =Parent.Width - 50
+                                    X: =24
+                                    Y: =88
+                              - tcs_desc_title:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AutoHeight: =true
+                                    Color: =RGBA(87, 35, 129, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =30
+                                    Size: =16
+                                    Text: =fxTranslate("Beschreibung", "Beschreibung")
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =6
+                              - tcs_desc_subtitle:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AutoHeight: =true
+                                    Color: =RGBA(107, 114, 128, 1)
+                                    Height: =24
+                                    Size: =12
+                                    Text: =fxTranslate("ChangeDescriptionHint", "Was soll geändert werden, warum und welche Auswirkungen erwartest du? Screenshots können direkt eingefügt werden; Dateien bitte unten anhängen.")
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =40
+                        - RequestedBy_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ComboBoxEdit
+                            Properties:
+                              DataField: ="RequestedBy"
+                              Default: =ThisItem.RequestedBy
+                              DisplayName: =fxTranslate("Requester", "Anforderer")
+                              Required: =true
+                              Update: =DataCardValue9_1.Selected
+                              Visible: =false
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =2
+                            Children:
+                              - DataCardValue9_1:
+                                  Control: ModernCombobox@1.1.1
+                                  MetadataKey: FieldValue
+                                  Properties:
+                                    DefaultSelectedItems: |-
+                                      =With(
+                                          {profile: 'Office365-Benutzer'.MyProfile()},
+                                          Table(
+                                              {
+                                                   Claims: "i:0#.f|membership|" & Lower(Coalesce(profile.UserPrincipalName, profile.Mail)),
+                                                   DisplayName: profile.DisplayName,
+                                                   Email: Coalesce(profile.Mail, profile.UserPrincipalName),
+                                                   UserPrincipalName: profile.UserPrincipalName,
+                                                   Department: profile.Department,
+                                                   JobTitle: profile.JobTitle,
+                                                   Picture: Blank()
+                                              }
+                                          )
+                                      )
+                                    DisplayMode: =Parent.DisplayMode
+                                    ItemDisplayText: =ThisItem.DisplayName
+                                    Items: |-
+                                      =SortByColumns(
+                                          ForAll(
+                                              Filter(
+                                                  'Office365-Benutzer'.SearchUser({searchTerm: Trim(Self.SearchText)}),
+                                                  AccountEnabled = true &&
+                                                  !IsBlank(DisplayName) &&
+                                                  !IsBlank(Coalesce(Mail, UserPrincipalName)) &&
+                                                  (EndsWith(Lower(Mail), "@kessel.de") Or EndsWith(Lower(UserPrincipalName), "@kessel.de")) &&
+                                                  CountRows(Split(Trim(DisplayName), " ")) >= 2 &&
+                                                  !StartsWith(Lower(DisplayName), "aaa") &&
+                                                  !StartsWith(Lower(UserPrincipalName), "aaa") &&
+                                                  !StartsWith(Lower(MailNickname), "aaa") &&
+                                                  !StartsWith(Lower(DisplayName), "admin") &&
+                                                  !StartsWith(Lower(UserPrincipalName), "admin") &&
+                                                  !StartsWith(Lower(MailNickname), "admin") &&
+                                                  !StartsWith(Lower(DisplayName), "adm ") &&
+                                                  !StartsWith(Lower(DisplayName), "abteilungsleiter") &&
+                                                  !StartsWith(Lower(DisplayName), "administrator") &&
+                                                  !StartsWith(Lower(DisplayName), "service") &&
+                                                  !StartsWith(Lower(DisplayName), "test")
+                                              ),
+                                              {
+                                                   Claims: "i:0#.f|membership|" & Lower(Coalesce(UserPrincipalName, Mail)),
+                                                   DisplayName: DisplayName,
+                                                   Email: Coalesce(Mail, UserPrincipalName),
+                                                   UserPrincipalName: UserPrincipalName,
+                                                   Department: Department,
+                                                   JobTitle: JobTitle,
+                                                   Picture: Blank()
+                                              }
+                                          ),
+                                          "DisplayName",
+                                          SortOrder.Ascending
+                                      )
+                                    SelectMultiple: =false
+                                    X: =24
+                        - Category_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ComboBoxEdit
+                            IsLocked: true
+                            Properties:
+                              DataField: ="Category"
+                              Default: =ThisItem.Category
+                              DisplayName: =fxTranslate("Kategorie", "Kategorie")
+                              Required: =true
+                              Update: =DataCardValue5_1.Selected
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =3
+                            Children:
+                              - DataCardKey5_1:
+                                  Control: ModernText@1.0.0
+                                  MetadataKey: FieldName
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("CategoryFieldLabel", "Feldbezeichnung Kategorie")
+                                    AutoHeight: =true
+                                    Color: =RGBA(17, 24, 39, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    Size: =12
+                                    Text: =fxTranslate("CategoryRequired", "Kategorie *")
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =8
+                              - DataCardValue5_1:
+                                  Control: ModernCombobox@1.1.1
+                                  MetadataKey: FieldValue
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("SelectCategory", "Kategorie auswählen")
+                                    AllowExternalSelectedItems: =false
+                                    DefaultSelectedItems: =[Parent.Default]
+                                    DisplayMode: =Parent.DisplayMode
+                                    Height: =42
+                                    InputTextPlaceholder: =fxTranslate("SelectCategoryPlaceholder", "Kategorie auswählen...")
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: =AddColumns(Choices([@ev_sp_list_tickets].Category), DisplayValue, fxTranslate(Value, Value))
+                                    Required: =Parent.Required
+                                    SelectMultiple: =false
+                                    ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                    Width: =Parent.Width - 50
+                                    X: =24
+                                    Y: =DataCardKey5_1.Y + DataCardKey5_1.Height + 4
+                              - ErrorMessage5_1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    FontColor: =RGBA(255, 0, 0, 1)
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardValue5_1.Y + DataCardValue5_1.Height
+                        - Subcategory_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ComboBoxEdit
+                            Properties:
+                              DataField: ="Subcategory"
+                              Default: =ThisItem.Subcategory
+                              DisplayName: =fxTranslate("Subcategory", "Unterkategorie")
+                              Required: =true
+                              Update: =DataCardValue_Subcategory_1.Selected
+                              Width: =Parent.Width
+                              X: =0
+                              Y: =4
+                            Children:
+                              - DataCardKey_Subcategory_1:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("SubcategoryFieldLabel", "Feldbezeichnung Unterkategorie")
+                                    AutoHeight: =true
+                                    Color: =RGBA(17, 24, 39, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    Size: =12
+                                    Text: =fxTranslate("SubcategoryRequired", "Unterkategorie *")
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =8
+                              - DataCardValue_Subcategory_1:
+                                  Control: ModernCombobox@1.1.1
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("SelectSubcategory", "Unterkategorie auswählen")
+                                    AllowExternalSelectedItems: =false
+                                    DefaultSelectedItems: =[Parent.Default]
+                                    DisplayMode: =Parent.DisplayMode
+                                    Height: =42
+                                    InputTextPlaceholder: =fxTranslate("SelectSubcategoryPlaceholder", "Unterkategorie auswählen...")
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: =AddColumns(Choices([@ev_sp_list_tickets].Subcategory), DisplayValue, fxTranslate(Value, Value))
+                                    Required: =Parent.Required
+                                    SelectMultiple: =false
+                                    ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                    Width: =Parent.Width - 50
+                                    X: =24
+                                    Y: =DataCardKey_Subcategory_1.Y + DataCardKey_Subcategory_1.Height + 4
+                              - ErrorMessage_Subcategory_1:
+                                  Control: Text@0.0.51
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardValue_Subcategory_1.Y + DataCardValue_Subcategory_1.Height
+                        - Priority_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ComboBoxEdit
+                            Properties:
+                              DataField: ="Priority"
+                              Default: =ThisItem.Priority
+                              DisplayName: =fxTranslate("Priorität", "Priorität")
+                              Required: =true
+                              Update: =DataCardValue7_1.Selected
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =5
+                            Children:
+                              - DataCardKey7_1:
+                                  Control: ModernText@1.0.0
+                                  MetadataKey: FieldName
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("PriorityFieldLabel", "Feldbezeichnung Priorität")
+                                    AutoHeight: =true
+                                    Color: =RGBA(17, 24, 39, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    Size: =12
+                                    Text: =fxTranslate("PriorityRequired", "Priorität *")
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =8
+                              - DataCardValue7_1:
+                                  Control: ModernCombobox@1.1.1
+                                  MetadataKey: FieldValue
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("SelectPriority", "Priorität auswählen")
+                                    AllowExternalSelectedItems: =false
+                                    DefaultSelectedItems: =[Parent.Default]
+                                    DisplayMode: =Parent.DisplayMode
+                                    Height: =42
+                                    InputTextPlaceholder: =fxTranslate("SelectPriorityPlaceholder", "Priorität auswählen...")
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: =AddColumns(Choices([@ev_sp_list_tickets].Priority), DisplayValue, fxTranslate(Value, Value))
+                                    Required: =Parent.Required
+                                    SelectMultiple: =false
+                                    ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                    Width: =Parent.Width - 50
+                                    X: =24
+                                    Y: =DataCardKey7_1.Y + DataCardKey7_1.Height + 4
+                              - ErrorMessage7_1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardValue7_1.Y + DataCardValue7_1.Height
+                              - lbl_priority_hint:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(107, 114, 128, 1)
+                                    Size: =11
+                                    Text: =Switch(DataCardValue7_1.Selected.Value, "Kritisch", fxTranslate("CriticalPriorityHint", "Stillstand - sofortige Reaktion"), "Hoch", fxTranslate("HighPriorityHint", "Arbeit eingeschränkt - selben Tag"), "Mittel", fxTranslate("MediumPriorityHint", "Normaler Support - 1-3 Werktage"), "Niedrig", fxTranslate("LowPriorityHint", "Best effort"), "")
+                                    Width: =Parent.Width - 20
+                                    Y: =DataCardValue7_1.Y + DataCardValue7_1.Height + 2
+                        - Status_DataCard2:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ComboBoxEdit
+                            Properties:
+                              DataField: ="Status"
+                              Default: =ThisItem.Status
+                              DisplayName: =DataSourceInfo([@ev_sp_list_tickets],DataSourceInfo.DisplayName,Status)
+                              Required: =false
+                              Update: |-
+                                ={Value: "Offen"}
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =5
+                            Children:
+                              - DataCardKey2:
+                                  Control: Text@0.0.51
+                                  MetadataKey: FieldName
+                                  Properties:
+                                    Height: =22
+                                    Text: =Parent.DisplayName
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =10
+                              - DataCardValue2:
+                                  Control: ComboBox@0.0.51
+                                  MetadataKey: FieldValue
+                                  Properties:
+                                    AccessibleLabel: =Parent.DisplayName
+                                    DefaultSelectedItems: =[Parent.Default]
+                                    DisplayMode: =Parent.DisplayMode
+                                    Items: =AddColumns(Choices([@ev_sp_list_tickets].Status), DisplayValue, fxTranslate(Value, Value))
+                                    Required: =Parent.Required
+                                    ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardKey2.Y + DataCardKey2.Height + 4
+                              - ErrorMessage2:
+                                  Control: Text@0.0.51
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardValue2.Y + DataCardValue2.Height
+                              - StarVisible2:
+                                  Control: Text@0.0.51
+                                  MetadataKey: FieldRequired
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.Center
+                                    Height: =20
+                                    Text: ="*"
+                                    Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =30
+                                    Y: =DataCardKey2.Y
+                        - Reason_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: TextualEdit
+                            Properties:
+                              DataField: ="Reason"
+                              Default: =ThisItem.Reason
+                              DisplayName: =fxTranslate("WhoIsAffected", "Wer ist betroffen?")
+                              MaxLength: =DataSourceInfo([@ev_sp_list_tickets], DataSourceInfo.MaxLength, Reason)
+                              Required: =true
+                              Update: =dd_affected_change.Selected.Value
+                              Width: =Parent.Width
+                              X: =0
+                              Y: =6
+                            Children:
+                              - DataCardKey11_1:
+                                  Control: ModernText@1.0.0
+                                  MetadataKey: FieldName
+                                  Properties:
+                                    AutoHeight: =true
+                                    Color: =RGBA(17, 24, 39, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    Size: =12
+                                    Text: =fxTranslate("WhoIsAffectedRequired", "Wer ist betroffen? *")
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =10
+                              - dd_affected_change:
+                                  Control: ModernDropdown@1.0.2
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("SelectAffectedPeople", "Betroffene Personen auswählen")
+                                    DisplayMode: =Parent.DisplayMode
+                                    Height: =42
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: |-
+                                      =AddColumns(
+                                          Table(
+                                          {Value: "Nur ich"},
+                                          {Value: "Mehrere Personen"},
+                                          {Value: "Ein Team oder Bereich"},
+                                          {Value: "Ein Standort"},
+                                          {Value: "Unbekannt"}
+                                          ),
+                                          DisplayValue,
+                                          fxTranslate(Value, Value)
+                                      )
+                                    Width: =Parent.Width - 50
+                                    X: =24
+                                    Y: =DataCardKey11_1.Y + DataCardKey11_1.Height + 4
+                              - ErrorMessage11_1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =dd_affected_change.Y + dd_affected_change.Height
+                        - Beobachter_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ComboBoxEdit
+                            Properties:
+                              DataField: ="Beobachter"
+                              Default: =First(ThisItem.Beobachter)
+                              DisplayName: =fxTranslate("WatchList", "Beobachtungsliste")
+                              Required: =false
+                              Update: =First(varTicketWatcherSelection)
+                              Width: =Parent.Width
+                              X: =0
+                              Y: =7
+                            Children:
+                              - DataCardKey_Beobachter_1:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    AutoHeight: =true
+                                    Color: =RGBA(17, 24, 39, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    Size: =12
+                                    Text: =fxTranslate("WatchList", "Beobachtungsliste")
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =8
+                              - DataCardValue_Beobachter_1:
+                                  Control: ModernCombobox@1.1.1
+                                  Properties:
+                                    DefaultSelectedItems: =[Parent.Default]
+                                    DisplayMode: =Parent.DisplayMode
+                                    Height: =42
+                                    InputTextPlaceholder: =fxTranslate("AddWatcherPlaceholder", "CC / Beobachter hinzufügen...")
+                                    ItemDisplayText: =ThisItem.DisplayName
+                                    Items: |-
+                                      =SortByColumns(
+                                          ForAll(
+                                              Filter(
+                                                  'Office365-Benutzer'.SearchUser({searchTerm: Trim(Self.SearchText)}),
+                                                  AccountEnabled = true &&
+                                                  !IsBlank(DisplayName) &&
+                                                  !IsBlank(Coalesce(Mail, UserPrincipalName)) &&
+                                                  (EndsWith(Lower(Mail), "@kessel.de") Or EndsWith(Lower(UserPrincipalName), "@kessel.de")) &&
+                                                  CountRows(Split(Trim(DisplayName), " ")) >= 2 &&
+                                                  !StartsWith(Lower(DisplayName), "aaa") &&
+                                                  !StartsWith(Lower(UserPrincipalName), "aaa") &&
+                                                  !StartsWith(Lower(MailNickname), "aaa") &&
+                                                  !StartsWith(Lower(DisplayName), "admin") &&
+                                                  !StartsWith(Lower(UserPrincipalName), "admin") &&
+                                                  !StartsWith(Lower(MailNickname), "admin") &&
+                                                  !StartsWith(Lower(DisplayName), "adm ") &&
+                                                  !StartsWith(Lower(DisplayName), "abteilungsleiter") &&
+                                                  !StartsWith(Lower(DisplayName), "administrator") &&
+                                                  !StartsWith(Lower(DisplayName), "service") &&
+                                                  !StartsWith(Lower(DisplayName), "test")
+                                              ),
+                                              {
+                                                   Claims: "i:0#.f|membership|" & Lower(Coalesce(UserPrincipalName, Mail)),
+                                                   DisplayName: DisplayName,
+                                                   Email: Coalesce(Mail, UserPrincipalName),
+                                                   UserPrincipalName: UserPrincipalName,
+                                                   Department: Department,
+                                                   JobTitle: JobTitle,
+                                                   Picture: Blank()
+                                              }
+                                          ),
+                                          "DisplayName",
+                                          SortOrder.Ascending
+                                      )
+                                    Width: =Parent.Width - 50
+                                    X: =24
+                                    Y: =DataCardKey_Beobachter_1.Y + DataCardKey_Beobachter_1.Height + 4
+                        - Attachments_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ClassicAttachmentsEdit
+                            Properties:
+                              BorderColor: =fxPrimaryColor
+                              DataField: ="{Attachments}"
+                              Default: =ThisItem.Anlagen
+                              DisplayName: =fxTranslate("Anlagen", "Anhänge")
+                              Height: =190
+                              Required: =false
+                              Update: =DataCardValue12_1.Attachments
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =8
+                            Children:
+                              - DataCardKey12_1:
+                                  Control: Label@2.5.1
+                                  MetadataKey: FieldName
+                                  Properties:
+                                    AutoHeight: =true
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Color: =RGBA(87, 35, 129, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =24
+                                    Text: =fxTranslate("Anlagen", "Anhänge")
+                                    Width: =Parent.Width - 60
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =6
+                              - DataCardValue12_1:
+                                  Control: Attachments@2.3.0
+                                  MetadataKey: FieldValue
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("AddOptionalTicketAttachments", "Optionale Anhänge zum Ticket hinzufügen")
+                                    AddAttachmentText: =fxTranslate("ChooseFile", "Datei auswählen")
+                                    BorderColor: =If(IsBlank(Parent.Error), RGBA(209, 213, 219, 1), Color.Red)
+                                    BorderThickness: =1
+                                    DisplayMode: =Parent.DisplayMode
+                                    Height: =140
+                                    Items: =Parent.Default
+                                    MaxAttachmentsText: =fxTranslate("MaxAttachmentsReached", "Max. Anzahl von Anhängen erreicht.")
+                                    NoAttachmentsText: =fxTranslate("NoFileSelected", "Keine Datei ausgewählt")
+                                    PaddingBottom: =5
+                                    PaddingLeft: =If(Self.DisplayMode = DisplayMode.Edit, 5, 0)
+                                    PaddingRight: =5
+                                    PaddingTop: =5
+                                    Tooltip: =Parent.DisplayName
+                                    Width: =Parent.Width - 50
+                                    X: =24
+                                    Y: =DataCardKey12_1.Y + DataCardKey12_1.Height + 5
+                              - ErrorMessage12_1:
+                                  Control: Label@2.5.1
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    AutoHeight: =true
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Color: =RGBA(168, 0, 0, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =10
+                                    Live: =Live.Assertive
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =14
+                                    Text: =Parent.Error
+                                    Visible: =Parent.DisplayMode=DisplayMode.Edit
+                                    Width: =Parent.Width - 60
+                                    X: =30
+                                    Y: =DataCardValue12_1.Y + DataCardValue12_1.Height
+                        - TicketType_DataCard1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ComboBoxEdit
+                            Properties:
+                              DataField: ="TicketType"
+                              Default: =ThisItem.TicketType
+                              DisplayName: =DataSourceInfo([@ev_sp_list_tickets],DataSourceInfo.DisplayName,TicketType)
+                              Required: =false
+                              Update: |-
+                                ={Value: Coalesce(varRequestType, "Change")}
+                              Visible: =false
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =9
+                            Children:
+                              - DataCardKey1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: FieldName
+                                  Properties:
+                                    Height: =22
+                                    Text: =Parent.DisplayName
+                                    Weight: ='TextCanvas.Weight'.Semibold
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =10
+                              - DataCardValue1:
+                                  Control: ComboBox@0.0.51
+                                  MetadataKey: FieldValue
+                                  Properties:
+                                    AccessibleLabel: =Parent.DisplayName
+                                    DefaultSelectedItems: =[Parent.Default]
+                                    DisplayMode: =Parent.DisplayMode
+                                    Items: =AddColumns(Choices([@ev_sp_list_tickets].TicketType), DisplayValue, fxTranslate(Value, Value))
+                                    Required: =Parent.Required
+                                    ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardKey1.Y + DataCardKey1.Height + 4
+                              - ErrorMessage1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardValue1.Y + DataCardValue1.Height
+                              - StarVisible1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: FieldRequired
+                                  Properties:
+                                    Align: ='TextCanvas.Align'.Center
+                                    Height: =20
+                                    Text: ="*"
+                                    Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =30
+                                    Y: =DataCardKey1.Y
+                        - Department_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ComboBoxEdit
+                            IsLocked: true
+                            Properties:
+                              DataField: ="Department"
+                              Default: =ThisItem.Department
+                              DisplayName: =fxTranslate("Department", "Fachbereich")
+                              Required: =false
+                              Update: =DataCardValue6_1.Selected
+                              Visible: =false
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =10
+                            Children:
+                              - DataCardKey6_1:
+                                  Control: ModernText@1.0.0
+                                  MetadataKey: FieldName
+                                  Properties:
+                                    AutoHeight: =true
+                                    Color: =RGBA(17, 24, 39, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    Size: =12
+                                    Text: =fxTranslate("Department", "Fachbereich")
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    X: =24
+                                    Y: =8
+                              - DataCardValue6_1:
+                                  Control: ModernCombobox@1.1.1
+                                  MetadataKey: FieldValue
+                                  Properties:
+                                    AccessibleLabel: =Parent.DisplayName
+                                    AllowExternalSelectedItems: =false
+                                    DefaultSelectedItems: =[Parent.Default]
+                                    DisplayMode: =Parent.DisplayMode
+                                    Height: =42
+                                    InputTextPlaceholder: =fxTranslate("SelectDepartmentPlaceholder", "Fachbereich auswählen...")
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: =AddColumns(Choices([@ev_sp_list_tickets].Department), DisplayValue, fxTranslate(Value, Value))
+                                    Required: =Parent.Required
+                                    SelectMultiple: =false
+                                    ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                    Width: =Parent.Width - 50
+                                    X: =24
+                                    Y: =DataCardKey6_1.Y + DataCardKey6_1.Height + 4
+                              - ErrorMessage6_1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardValue6_1.Y + DataCardValue6_1.Height
+                        - Risk_DataCard1_1:
+                            Control: TypedDataCard@1.0.7
+                            Variant: ComboBoxEdit
+                            IsLocked: true
+                            Properties:
+                              DataField: ="Risk"
+                              Default: =ThisItem.Risk
+                              DisplayName: =fxTranslate("Risk", "Risiko")
+                              Required: =false
+                              Update: =DataCardValue8_1.Selected
+                              Visible: =false
+                              Width: =If(frm_change_1.NumberOfColumns = 1, Parent.Width, Parent.Width / 2)
+                              X: =0
+                              Y: =11
+                            Children:
+                              - DataCardKey8_1:
+                                  Control: ModernText@1.0.0
+                                  MetadataKey: FieldName
+                                  Properties:
+                                    AutoHeight: =true
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    Size: =14
+                                    Text: =fxTranslate("Risk", "Risiko")
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.Width - 48
+                                    Wrap: =false
+                                    Y: =10
+                              - DataCardValue8_1:
+                                  Control: ModernCombobox@1.1.1
+                                  MetadataKey: FieldValue
+                                  Properties:
+                                    AccessibleLabel: =Parent.DisplayName
+                                    AllowExternalSelectedItems: =false
+                                    DefaultSelectedItems: =[Parent.Default]
+                                    DisplayMode: =Parent.DisplayMode
+                                    InputTextPlaceholder: =fxTranslate("PleaseSelect", "- Bitte wählen -")
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: =AddColumns(Choices([@ev_sp_list_tickets].Risk), DisplayValue, fxTranslate(Value, Value))
+                                    SelectMultiple: =false
+                                    Width: '=Parent.Width '
+                                    Y: =DataCardKey8_1.Y + DataCardKey8_1.Height + 4
+                              - ErrorMessage8_1:
+                                  Control: Text@0.0.51
+                                  MetadataKey: ErrorMessage
+                                  Properties:
+                                    Height: =30
+                                    Text: =Parent.Error
+                                    Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                    Width: =Parent.Width - 48
+                                    X: =24
+                                    Y: =DataCardValue8_1.Y + DataCardValue8_1.Height
+                  - con_required_change:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.Semilight
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =Min(520, Parent.Height - Parent.PaddingTop - Parent.PaddingBottom)
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        PaddingBottom: =18
+                        PaddingLeft: =18
+                        PaddingRight: =18
+                        PaddingTop: =18
+                        RadiusBottomLeft: =14
+                        RadiusBottomRight: =14
+                        RadiusTopLeft: =14
+                        RadiusTopRight: =14
+                        Visible: =!varEmbed And App.Width >= 1100
+                        Width: =280
+                      Children:
+                        - txt_required_change_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              AutoHeight: =true
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =30
+                              Size: =16
+                              Text: =fxTranslate("RequiredInformation", "Erforderliche Informationen")
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                        - txt_required_change_intro:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =54
+                              Size: =11
+                              Text: =fxTranslate("RequiredFieldsChecklistHint", "Pflichtfelder werden automatisch abgehakt, sobald sie ausgefüllt sind.")
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                        - txt_req_title_change:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =If(IsBlank(Trim(DataCardValue3.Text)), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                              Height: =28
+                              Size: =12
+                              Text: =If(IsBlank(Trim(DataCardValue3.Text)), fxTranslate("Title", "Titel"), fxTranslate("TitleComplete", "Titel ✓"))
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                        - txt_req_description_change:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =If(IsBlank(Trim(PlainText(lbl_rich_editor_1.HtmlText))), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                              Height: =28
+                              Size: =12
+                              Text: =If(IsBlank(Trim(PlainText(lbl_rich_editor_1.HtmlText))), fxTranslate("Beschreibung", "Beschreibung"), fxTranslate("DescriptionComplete", "Beschreibung ✓"))
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                        - txt_req_category_change:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =If(IsBlank(DataCardValue5_1.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                              Height: =28
+                              Size: =12
+                              Text: =If(IsBlank(DataCardValue5_1.Selected), fxTranslate("Kategorie", "Kategorie"), fxTranslate("CategoryComplete", "Kategorie ✓"))
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                        - txt_req_subcategory_change:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =If(IsBlank(DataCardValue_Subcategory_1.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                              Height: =28
+                              Size: =12
+                              Text: =If(IsBlank(DataCardValue_Subcategory_1.Selected), fxTranslate("Subcategory", "Unterkategorie"), fxTranslate("SubcategoryComplete", "Unterkategorie ✓"))
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                        - txt_req_priority_change:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =If(IsBlank(DataCardValue7_1.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                              Height: =28
+                              Size: =12
+                              Text: =If(IsBlank(DataCardValue7_1.Selected), fxTranslate("Priorität", "Priorität"), fxTranslate("PriorityComplete", "Priorität ✓"))
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                        - txt_req_affected_change:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =If(IsBlank(dd_affected_change.Selected.Value), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                              Height: =28
+                              Size: =12
+                              Text: =If(IsBlank(dd_affected_change.Selected.Value), fxTranslate("WhoIsAffected", "Wer ist betroffen?"), fxTranslate("WhoIsAffectedComplete", "Wer ist betroffen? ✓"))
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                        - txt_required_change_tip:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =70
+                              Size: =11
+                              Text: =fxTranslate("NextCreatesTicketHint", "Über Weiter wird das Ticket erstellt und anschließend die Detailseite geöffnet.")
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+            - con_footer_1:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =If(varEmbed, 58, 68)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =10
+                  PaddingLeft: =24
+                  PaddingRight: =24
+                  PaddingTop: =10
+                Children:
+                  - btn_back_4:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        AccessibleLabel: =fxTranslate("CancelTicketCreation", "Ticketerstellung abbrechen")
+                        Align: =Align.Center
+                        Appearance: =ButtonAppearance.Secondary
+                        DisplayMode: =If(varTicketSubmissionInProgress, DisplayMode.Disabled, DisplayMode.Edit)
+                        Height: =42
+                        Icon: ="Dismiss"
+                        IconStyle: =IconStyle.Filled
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =If(
+                              frm_change_1.Unsaved,
+                              If(
+                                  Confirm(
+                                      fxTranslate("CannotUndoAction", "Dieser Vorgang kann nicht rückgängig gemacht werden."),
+                                      {
+                                      Subtitle: fxTranslate("DiscardTicket", "Ticket verwerfen?"),
+                                          ConfirmButton: fxTranslate("Discard", "Verwerfen"),
+                                          CancelButton: fxTranslate("Cancel", "Abbrechen")
+                                      }
+                                  ),
+                                  ResetForm(frm_change_1);
+                                  Navigate(request_type_screen, ScreenTransition.CoverRight)
+                              ),
+                              ResetForm(frm_change_1);
+                              Navigate(request_type_screen, ScreenTransition.CoverRight)
+                          )
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        Size: =13
+                        Text: =fxTranslate("Zurück", "Zurück")
+                        Width: =132
+                  - btn_submit_1:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        AccessibleLabel: =fxTranslate("CreateAndSubmitTicket", "Ticket erstellen und absenden")
+                        Align: =Align.Center
+                        DisplayMode: =If(varTicketSubmissionInProgress Or !frm_change_1.Valid Or IsBlank(Trim(PlainText(lbl_rich_editor_1.HtmlText))), DisplayMode.Disabled, DisplayMode.Edit)
+                        Height: =42
+                        Icon: ="Checkmark"
+                        IconStyle: =IconStyle.Filled
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =If(
+                              Confirm(fxTranslate("ConfirmTicketSubmission", "Willst du das Ticket abschicken?")),
+                              Set(
+                                  varSubmittedDescriptionHtml,
+                              If(IsBlank(varSelectedService), "", "<p><strong>Service:</strong> " & varSelectedService & "</p>") & lbl_rich_editor_1.HtmlText
+                              );
+                              Set(
+                                  varSubmittedDescriptionHadInlineImages,
+                                  CountRows(
+                                      MatchAll(
+                                          varSubmittedDescriptionHtml,
+                                          "data:image/[A-Za-z0-9.+-]+;base64,[A-Za-z0-9+/=]+"
+                                      )
+                                  ) > 0
+                              );
+                              Set(
+                                  varSubmittedDescriptionPayload,
+                                  JSON(
+                                      {
+                                          schemaVersion: 1,
+                                          richTextHtml: varSubmittedDescriptionHtml,
+                                          screenshots: ForAll(
+                                              MatchAll(
+                                                  varSubmittedDescriptionHtml,
+                                                  "data:image/[A-Za-z0-9.+-]+;base64,[A-Za-z0-9+/=]+"
+                                              ),
+                                              {
+                                                  id: "inline-" & Text(StartMatch),
+                                                  dataUri: FullMatch
+                                              }
+                                          )
+                                      },
+                                      JSONFormat.Compact
+                                  )
+                           );
+                           Set(
+                                varTicketWatcherSelection,
+                                ForAll(
+                                    Filter(
+                                        DataCardValue_Beobachter_1.SelectedItems,
+                                        !IsBlank(Trim(Coalesce(UserPrincipalName, Email)))
+                                    ) As watcher,
+                                   {
+                                        Claims: "i:0#.f|membership|" & Lower(Trim(Coalesce(watcher.UserPrincipalName, watcher.Email))),
+                                        DisplayName: watcher.DisplayName,
+                                        Email: Trim(Coalesce(watcher.Email, watcher.UserPrincipalName)),
+                                       Department: watcher.Department,
+                                       JobTitle: watcher.JobTitle,
+                                       Picture: Blank()
+                                   }
+                               )
+                           );
+                              Set(varTicketSubmissionStatus, fxTranslate("TicketBeingCreated", "Ticket wird erstellt..."));
+                              Set(varTicketSubmissionInProgress, true);
+                              Set(varTicketSubmitError, Blank());
+                               If(
+                                   IsBlank(Trim(User().Email)),
+                                   Set(varTicketSubmitError, fxTranslate("CurrentUserEmailMissing", "Ihre Benutzer-E-Mail-Adresse konnte nicht ermittelt werden."))
+                               );
+                               If(
+                                   !IsBlank(varTicketSubmitError),
+                                   Set(varTicketSubmissionInProgress, false);
+                                   Set(varTicketSubmissionStatus, "");
+                                   Notify(
+                                       Substitute(fxTranslate("TicketCreateFailed", "Das Ticket konnte nicht erstellt werden: {0}"), "{0}", varTicketSubmitError),
+                                       NotificationType.Error,
+                                       7000
+                                   ),
+                                   SubmitForm(frm_change_1)
+                               )
+                           )
+                        RadiusBottomLeft: =8
+                        RadiusBottomRight: =8
+                        RadiusTopLeft: =8
+                        RadiusTopRight: =8
+                        Size: =13
+                        Text: =fxTranslate("Next", "Weiter")
+                        Width: =180
+      - con_ticket_submission_overlay:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(17, 24, 39, 0.58)
+            Height: =Parent.Height
+            Visible: =varTicketSubmissionInProgress
+            Width: =Parent.Width
+          Children:
+            - con_ticket_submission_dialog:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Semilight
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =232
+                  RadiusBottomLeft: =16
+                  RadiusBottomRight: =16
+                  RadiusTopLeft: =16
+                  RadiusTopRight: =16
+                  Width: =Min(420, Parent.Width - 48)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =(Parent.Height - Self.Height) / 2
+                Children:
+                  - spn_ticket_submission:
+                      Control: Spinner@1.4.6
+                      Properties:
+                        AccessibleLabel: =fxTranslate("TicketBeingProcessed", "Ticket wird verarbeitet")
+                        Appearance: ='Spinner.Appearance'.Primary
+                        Height: =56
+                        SpinnerColor: =RGBA(87, 35, 129, 1)
+                        SpinnerSize: ='Spinner.SpinnerSize'.Large
+                        Width: =56
+                        X: =(Parent.Width - Self.Width) / 2
+                        Y: =30
+                  - txt_ticket_submission_title:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(17, 24, 39, 1)
+                        FontWeight: =FontWeight.Semibold
+                        Height: =30
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =18
+                        Text: =fxTranslate("PleaseWait", "Bitte einen Moment")
+                        Width: =Parent.Width - 48
+                        Wrap: =false
+                        X: =24
+                        Y: =98
+                  - txt_ticket_submission_status:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(87, 35, 129, 1)
+                        FontWeight: =FontWeight.Semibold
+                        Height: =26
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =14
+                        Text: =varTicketSubmissionStatus
+                        Width: =Parent.Width - 48
+                        Wrap: =false
+                        X: =24
+                        Y: =132
+                  - txt_ticket_submission_note:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(82, 94, 115, 1)
+                        Height: =38
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: =fxTranslate("DoNotClosePageWhileSaving", "Bitte die Seite nicht schließen. Anhänge und Screenshots werden sicher gespeichert.")
+                        Width: =Parent.Width - 48
+                        X: =24
+                        Y: =166
+      - Text1:
+          Control: ModernText@1.0.0
+          Properties:
+            Text: =
+            X: =40
+            Y: =40

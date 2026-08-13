@@ -1,0 +1,520 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+App:
+  Properties:
+    Formulas: |-
+      =fxPrimaryColor = RGBA(
+          87,
+          35,
+          129,
+          0.8
+      );
+      fxPrimaryBackgroundColor = RGBA(
+          245,
+          246,
+          248,
+          1
+      );
+      fxSecondaryColor = RGBA(
+          200,
+          179,
+          221,
+          0.4
+      );
+      fxHighPriority = RGBA(
+          231,
+          111,
+          81,
+          0.7
+      );
+      fxMediumPriority = RGBA(
+          244,
+          162,
+          97,
+          0.7
+      );
+      fxLowPriority = RGBA(
+          42,
+          157,
+          143,
+          0.7
+      );
+      fxHighRisk = RGBA(
+          211,
+          47,
+          47,
+          1
+      );
+      fxMediumRisk = RGBA(
+          255,
+          152,
+          0,
+          1
+      );
+      fXLowRisk = RGBA(
+          255,
+          193,
+          7,
+          1
+      );
+      fxNoRisk = RGBA(
+          168,
+          168,
+          168,
+          1
+      );
+      fxCurrentUserRoles = ForAll(
+          Filter(
+              ev_sp_list_config_members,
+              Titel = User().Email
+          ),
+          Role.Value
+      );
+      fxChanges = ev_sp_list_tickets;
+      fxTranslations = colTranslations;
+      fxTranslate(translationKey: Text, fallback: Text): Text = With(
+          {
+              translation: LookUp(
+                  fxTranslations,
+                  Title = translationKey
+              )
+          },
+          Coalesce(
+              If(
+                  Lower(
+                      Coalesce(
+                          varCurrentLanguage,
+                          "de"
+                      )
+                  ) = "en",
+                  translation.en,
+                  translation.de
+              ),
+              If(
+                  Lower(
+                      Coalesce(
+                          varCurrentLanguage,
+                          "de"
+                      )
+                  ) = "en",
+                  Switch(
+                      translationKey,
+                      "Alle",
+                      "All",
+                      "Hoch",
+                      "High",
+                      "Mittel",
+                      "Medium",
+                      "Kritisch",
+                      "Critical",
+                      "Niedrig",
+                      "Low",
+                      "Neu",
+                      "New",
+                      "Offen",
+                      "Open",
+                      "Zugewiesen",
+                      "Assigned",
+                      "In Bearbeitung",
+                      "In progress",
+                      "Change Prüfung",
+                      "Change review",
+                      "Change-Prüfung",
+                      "Change review",
+                      "In Prüfung",
+                      "In review",
+                      "Warten auf Anforderer",
+                      "Waiting for requester",
+                      "Gelöst",
+                      "Resolved",
+                      "Geschlossen",
+                      "Closed",
+                      "Ausstehend",
+                      "Pending",
+                      "Genehmigt",
+                      "Approved",
+                      "Abgelehnt",
+                      "Rejected",
+                      "Abgebrochen",
+                      "Cancelled",
+                      "Zurückgestellt",
+                      "Deferred",
+                      "Erledigt",
+                      "Done",
+                      "Standard",
+                      "Standard",
+                      "Personal",
+                      "Personal",
+                      "Global",
+                      "Global",
+                      "Arbeitsplatz",
+                      "Workplace",
+                      "Netzwerk",
+                      "Network",
+                      "Anwendung",
+                      "Application",
+                      "Anwendungen",
+                      "Applications",
+                      "Hardware",
+                      "Hardware",
+                      "Software",
+                      "Software",
+                      "Telefonie",
+                      "Telephony",
+                      "Telefon",
+                      "Phone",
+                      "Drucker",
+                      "Printer",
+                      "Laptop",
+                      "Laptop",
+                      "Monitor",
+                      "Monitor",
+                      "Office",
+                      "Office",
+                      "Outlook",
+                      "Outlook",
+                      "Teams",
+                      "Teams",
+                      "SharePoint",
+                      "SharePoint",
+                      "OneDrive",
+                      "OneDrive",
+                      "VPN",
+                      "VPN",
+                      "WLAN",
+                      "Wi-Fi",
+                      "LAN",
+                      "LAN",
+                      "Internet",
+                      "Internet",
+                      "PowerPlatform",
+                      "Power Platform",
+                      "Power Platform",
+                      "Power Platform",
+                      "SAP",
+                      "SAP",
+                      "Berechtigung",
+                      "Permission",
+                      "Berechtigungen",
+                      "Permissions",
+                      "Zugriff",
+                      "Access",
+                      "Konto",
+                      "Account",
+                      "Benutzerkonto",
+                      "User account",
+                      "Passwort",
+                      "Password",
+                      "E-Mail",
+                      "Email",
+                      "Email",
+                      "Email",
+                      "Sonstiges",
+                      "Other",
+                      "Andere",
+                      "Other",
+                      "Allgemein",
+                      "General",
+                      "DescribeYourRequest",
+                      "Please describe your request",
+                      "DescriptionHint",
+                      "What is not working? Since when has it been happening? What error message appears? What have you already tried?",
+                      "IncidentDescriptionPlaceholder",
+                      "Describe the problem here.",
+                      "HelpfulDetails",
+                      "Helpful details:",
+                      "WhatDoesNotWork",
+                      "What is not working?",
+                      "WhenDidProblemStart",
+                      "When did the problem start?",
+                      "WhatErrorMessage",
+                      "What error message appears?",
+                      "WhatAlreadyTried",
+                      "What have you already tried?",
+                      "DescriptionHelp",
+                      "Describe what is not working, since when it has been happening, whether an error message appears, and what has already been tried.",
+                      "ChangeDescriptionHint",
+                      "What should be changed, why, and what impact do you expect? Screenshots can be inserted directly; please attach files below.",
+                      "DescriptionWithOptionalScreenshots",
+                      "Description with optional inserted screenshots",
+                      "PromoteTicketToChange",
+                      "Promote ticket to change",
+                      "PromoteToChange",
+                      "To change",
+                      "PromoteToChangeTitle",
+                      "Promote ticket to change?",
+                      "PromoteToChangeBody",
+                      "The ticket will be requested as a change. Please briefly document why this ticket should become a change.",
+                      "PromoteReason",
+                      "Reason for promotion",
+                      "PromoteReasonPlaceholder",
+                      "Why should this ticket continue as a change?",
+                      "PromoteToChangeConfirm",
+                      "Make change",
+                      "PromoteToChangeRequested",
+                      "Promotion to change has been requested.",
+                      "PromoteToChangeFailed",
+                      "Promotion to change could not be requested.",
+                      "EditDescription",
+                      "Edit description",
+                      "Edit",
+                      "Edit",
+                      "SaveDescription",
+                      "Save description",
+                      "DescriptionSaved",
+                      "Description saved.",
+                      "DescriptionSaveFailed",
+                      "Description could not be saved.",
+                      "CancelEditDescription",
+                      "Cancel editing description",
+                      "Service",
+                      "Service",
+                      "ServiceRequest",
+                      "Service request",
+                      "ServiceTicketCreated",
+                      "Service request created.",
+                      "ServiceTicketCreateFailed",
+                      "The service request could not be created: {0}",
+                      "ServiceRequestBeingCreated",
+                      "Creating service request...",
+                      "Nur ich",
+                      "Only me",
+                      "Mehrere Personen",
+                      "Multiple people",
+                      "Ein Team oder Bereich",
+                      "A team or department",
+                      "Ein Standort",
+                      "A location",
+                      "Unbekannt",
+                      "Unknown",
+                      fallback
+                  ),
+                  fallback
+              )
+          )
+      );
+      fxKPI = Table(
+          {
+              Label: fxTranslate(
+                  "Open",
+                  "Offen"
+              ),
+              StatusFilter: "Ausstehend",
+              Color: RGBA(
+                  255,
+                  193,
+                  7,
+                  1
+              )
+          },
+          {
+              Label: fxTranslate(
+                  "Approved",
+                  "Genehmigt"
+              ),
+              StatusFilter: "Genehmigt",
+              Color: RGBA(
+                  76,
+                  175,
+                  80,
+                  1
+              )
+          },
+          {
+              Label: fxTranslate(
+                  "Rejected",
+                  "Abgelehnt"
+              ),
+              StatusFilter: "Abgelehnt",
+              Color: RGBA(
+                  244,
+                  67,
+                  54,
+                  1
+              )
+          },
+          {
+              Label: fxTranslate(
+                  "Total",
+                  "Gesamt"
+              ),
+              StatusFilter: "Alle",
+              Color: fxPrimaryColor
+          }
+      );
+      fxCurrentUser = {
+          FullName: User().FullName,
+          Email: User().Email,
+          Claims: "i:0#.f|membership|" & Lower(User().Email)
+      };
+      fxCurrentMember = LookUp(
+          ev_sp_list_config_members,
+          Titel = fxCurrentUser.Email
+      );
+      fxIsAdmin = Coalesce(
+          fxCurrentMember.Role.Value,
+          ""
+      ) = "Admin";
+      fxIsAgent = Coalesce(
+          fxCurrentMember.Role.Value,
+          ""
+      ) = "Admin" Or Coalesce(
+          fxCurrentMember.Role.Value,
+          ""
+      ) = "IT-Agent";
+      fxIsCabMember = Coalesce(
+          fxCurrentMember.Role.Value,
+          ""
+      ) = "CAB-Member";
+      fxIsAgentExperience = Coalesce(
+          fxIsAdmin,
+          false
+      ) Or Coalesce(
+          fxIsAgent,
+          false
+      );
+      fxIsCurrentTicketRequester = !IsBlank(varCurrentTicket) && (varCurrentTicket.RequestedBy.Email = fxCurrentUser.Email Or varCurrentTicket.'Erstellt von'.Email = fxCurrentUser.Email);
+      fxIsCurrentTicketAssignee = !IsBlank(varCurrentTicket) && varCurrentTicket.'Zugewiesen an'.Email = fxCurrentUser.Email;
+      fxIsCurrentTicketObserver = !IsBlank(varCurrentTicket) && !IsBlank(
+          LookUp(
+              varCurrentTicket.Beobachter,
+              Email = fxCurrentUser.Email
+          )
+      );
+      fxCurrentTicketStatus = Coalesce(
+          varCurrentTicket.Status.Value,
+          varCurrentTicket.StatusINC.Value,
+          ""
+      );
+      fxIsCurrentTicketClosed = !IsBlank(varCurrentTicket) && !IsBlank(
+          LookUp(
+              ev_sp_list_config_dropdown,
+              FilterName = "ClosedStatus" && TargetList = "Ticket" && Active = true && FilterValue = fxCurrentTicketStatus
+          )
+      );
+      fxIsRequesterEditableStatus = !IsBlank(varCurrentTicket) && !IsBlank(
+          LookUp(
+              ev_sp_list_config_dropdown,
+              FilterName = "RequesterEditableStatus" && TargetList = "Ticket" && Active = true && FilterValue = fxCurrentTicketStatus
+          )
+      );
+      fxCanViewCurrentTicket = fxIsAgentExperience Or fxIsCurrentTicketAssignee Or fxIsCurrentTicketRequester Or fxIsCurrentTicketObserver;
+      fxCanEditAgentFields = fxIsAgentExperience && !fxIsCurrentTicketClosed;
+      fxCanEditAssigneeFields = (fxIsAgentExperience Or fxIsCurrentTicketAssignee) && !fxIsCurrentTicketClosed;
+      fxCanEditRequesterFields = fxIsCurrentTicketRequester && !fxIsCurrentTicketClosed && fxIsRequesterEditableStatus;
+      fxCanEditCurrentTicket = fxCanEditAssigneeFields Or fxCanEditRequesterFields;
+      fxCanSeeInternalNotes = fxIsAgentExperience;
+      fxCanCommentOnCurrentTicket = fxCanViewCurrentTicket && !fxIsCurrentTicketClosed;
+      fxSavedViewTargetDashboard = "dashboard";
+      fxSavedViewScopePersonal = "Personal";
+      fxSavedViewScopeGlobal = "Global";
+      fxDbdPagePadding = 16;
+      fxDbdPageGap = 16;
+      fxDbdSidebarWidth = 230;
+      fxDbdCardPadding = 16;
+      fxDbdCardRadius = 8;
+      fxDbdControlGap = 8;
+      fxDbdSectionGap = 14;
+      fxCanManageGlobalSavedViews = Coalesce(
+          fxIsAdmin,
+          false
+      );
+      fxDashboardSavedViews = SortByColumns(
+          Filter(
+              ev_sp_list_config_saved_views,
+              Active = true && TargetScreen = fxSavedViewTargetDashboard && ((Scope.Value = fxSavedViewScopeGlobal && fxIsAgentExperience) || OwnerEmail = fxCurrentUser.Email)
+          ),
+          "Title",
+          SortOrder.Ascending
+      );
+      fxDbdNotifications = SortByColumns(
+          Filter(
+              ev_sp_list_notifications,
+              RecipientEmail = fxCurrentUser.Email && Author.Email <> fxCurrentUser.Email && (IsRead = false Or Created > Coalesce(
+                  fxCurrentMember.LastNotificationRead,
+                  DateAdd(
+                      Today(),
+                      -365,
+                      TimeUnit.Days
+                  )
+              ))
+          ),
+          "ID",
+          SortOrder.Descending
+      );
+    OnStart: |-
+      =Set(varEmbed, Param("embed") = "1");
+      Set(varCurrentLanguage, If(IsBlank(varCurrentLanguage) Or varCurrentLanguage = "", "de", varCurrentLanguage));
+       ClearCollect(colTranslations, ev_sp_list_config_translations);
+       Refresh(ev_sp_list_config_members);
+      ClearCollect(colTransitionConfig, Filter(ev_sp_list_config_transitions, Active = true));
+      ClearCollect(
+          colMockReleaseChecks,
+           {CheckKey: "ENVIRONMENT_VARIABLES", Category: fxTranslate("Configuration", "Konfiguration"), Title: fxTranslate("EnvironmentVariablesProd", "Environment Variables zeigen auf PROD"), Detail: fxTranslate("EnvironmentVariablesProdDetail", "Site-URL, Listen-IDs und App-Link verwenden PROD-Werte."), CheckMode: "Automatisch", Required: true, Status: "Pending", LastChecked: Now(), SortOrder: 10},
+           {CheckKey: "CANVAS_DATASOURCE", Category: fxTranslate("CanvasApp", "Canvas App"), Title: fxTranslate("CanvasDataSourcesProd", "Canvas-Datenquellen sind auf PROD gebunden"), Detail: fxTranslate("CanvasDataSourcesProdDetail", "SharePoint-Datenquellen zeigen auf die PROD-Site und PROD-Listen."), CheckMode: "Automatisch", Required: true, Status: "Pending", LastChecked: Now(), SortOrder: 20},
+           {CheckKey: "CONNECTION_REFERENCES", Category: fxTranslate("Flows", "Flows"), Title: fxTranslate("ConnectionReferencesProd", "Connection References sind PROD-Connections"), Detail: fxTranslate("ConnectionReferencesProdDetail", "SharePoint-, Outlook- und Teams-Verbindungen sind gültig."), CheckMode: "Automatisch", Required: true, Status: "Pending", LastChecked: Now(), SortOrder: 30},
+           {CheckKey: "SHAREPOINT_SCHEMA", Category: fxTranslate("SharePoint", "SharePoint"), Title: fxTranslate("SharePointSchemaProd", "PROD-Schema entspricht der Release-Version"), Detail: fxTranslate("SharePointSchemaProdDetail", "Listen, Felder und erforderliche IDs sind vorhanden."), CheckMode: "Automatisch", Required: true, Status: "Pending", LastChecked: Now(), SortOrder: 40},
+           {CheckKey: "ENVIRONMENT_ACCESS", Category: fxTranslate("Authorization", "Berechtigung"), Title: fxTranslate("EnvironmentSecurityGroupChecked", "Environment Security Group geprüft"), Detail: fxTranslate("EnvironmentSecurityGroupCheckedDetail", "Requester, Agent und Admin sind direkt in der PROD-Sicherheitsgruppe."), CheckMode: "Manuell", Required: true, Status: "Pending", LastChecked: Now(), SortOrder: 50},
+           {CheckKey: "FIRST_LOAD", Category: fxTranslate("SmokeTest", "Smoke-Test"), Title: fxTranslate("FirstLoadSuccessful", "Erstaufruf ohne Refresh erfolgreich"), Detail: fxTranslate("FirstLoadSuccessfulDetail", "Test im InPrivate-Browser ohne Environment-Berechtigungsfehler."), CheckMode: "Manuell", Required: true, Status: "Pending", LastChecked: Now(), SortOrder: 60},
+           {CheckKey: "PEOPLE_LOOKUP", Category: fxTranslate("SmokeTest", "Smoke-Test"), Title: fxTranslate("PeopleDropdownsLoad", "People-Dropdowns laden ohne 403"), Detail: fxTranslate("PeopleDropdownsLoadDetail", "People- und Lookup-Spalten funktionieren mit einem Standardnutzer."), CheckMode: "Manuell", Required: true, Status: "Pending", LastChecked: Now(), SortOrder: 70},
+           {CheckKey: "TICKET_JOURNEY", Category: fxTranslate("SmokeTest", "Smoke-Test"), Title: fxTranslate("TicketJourneySuccessful", "Ticket-Journey erfolgreich"), Detail: fxTranslate("TicketJourneySuccessfulDetail", "Ticket erstellen, öffnen, kommentieren und Berechtigung prüfen."), CheckMode: "Manuell", Required: true, Status: "Pending", LastChecked: Now(), SortOrder: 80},
+           {CheckKey: "FLOW_RUN", Category: fxTranslate("SmokeTest", "Smoke-Test"), Title: fxTranslate("ProductionFlowSuccessful", "Produktionsflow erfolgreich"), Detail: fxTranslate("ProductionFlowSuccessfulDetail", "Ein kontrollierter Testdatensatz erzeugt einen erfolgreichen Flow-Run."), CheckMode: "Manuell", Required: true, Status: "Pending", LastChecked: Now(), SortOrder: 90}
+      );
+      If(
+          !IsBlank(Param("ticketId")),
+          Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = Value(Param("ticketId"))));
+          If(
+              IsBlank(varCurrentTicket),
+               Set(varDeepLinkNotice, fxTranslate("RequestedTicketNotFound", "Das angeforderte Ticket wurde nicht gefunden.")),
+              If(
+                  !fxCanViewCurrentTicket,
+                  Set(varCurrentTicket, Blank());
+                   Set(varDeepLinkNotice, fxTranslate("NoTicketAccess", "Du hast keinen Zugriff auf dieses Ticket."))
+              )
+          )
+      )
+    StartScreen: |-
+      =With(
+          {
+              deepLinkTicket: If(
+                  !IsBlank(Param("ticketId")),
+                  LookUp(
+                      ev_sp_list_tickets,
+                      ID = Value(Param("ticketId"))
+                  )
+              )
+          },
+          If(
+              !IsBlank(Param("ticketId")) && !IsBlank(deepLinkTicket) && (fxIsAgentExperience || deepLinkTicket.RequestedBy.Email = fxCurrentUser.Email || deepLinkTicket.'Erstellt von'.Email = fxCurrentUser.Email || deepLinkTicket.'Zugewiesen an'.Email = fxCurrentUser.Email || !IsBlank(
+                  LookUp(
+                      deepLinkTicket.Beobachter,
+                      Email = fxCurrentUser.Email
+                  )
+              )),
+              ticket_details_screen,
+              Switch(
+                  Param("screen"),
+                  "ticket",
+                  ticket_screen,
+                  "incident",
+                  incident_screen,
+                  "request-type",
+                  request_type_screen,
+                  "service-catalog",
+                  service_catalog_screen,
+                  "service-wizard",
+                  service_wizard_screen,
+                  "dashboard",
+                  dashboard_screen,
+                  "ai-handoff",
+                  dashboard_screen
+              )
+          )
+      )
+    Theme: =Kessel

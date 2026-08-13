@@ -1,0 +1,1391 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  incident_screen:
+    Properties:
+      Fill: =RGBA(248, 249, 252, 1)
+      LoadingSpinnerColor: =RGBA(87, 35, 129, 1)
+      OnVisible: |-
+        =NewForm(frm_incident);
+        Set(varIncidentHelpTitle, Blank());
+        Set(varIncidentHelpText, Blank());
+        Set(varIncidentDescriptionHintHidden, false);
+        Set(varIncidentSubmitting, false)
+    Children:
+      - inc_root:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(248, 249, 252, 1)
+            Height: =Parent.Height
+            LayoutDirection: =LayoutDirection.Vertical
+            Width: =Parent.Width
+          Children:
+            - dbd_topbar_2:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =72
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =Parent.Width
+                Children:
+                  - dbd_brand_container_2:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Parent.Height
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =fxDbdControlGap
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =fxDbdSidebarWidth + (fxDbdPagePadding * 2)
+                        PaddingLeft: =fxDbdPagePadding
+                        PaddingRight: =fxDbdPagePadding
+                        Width: =fxDbdSidebarWidth + (fxDbdPagePadding * 2)
+                      Children:
+                        - dbd_logo_2:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(255, 255, 255, 1)
+                              Fill: =RGBA(87, 35, 129, 1)
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              RadiusBottomLeft: =5
+                              RadiusBottomRight: =5
+                              RadiusTopLeft: =5
+                              RadiusTopRight: =5
+                              Size: =8
+                              Text: ="KESSEL"
+                              Width: =32
+                        - dbd_topbar_title_2:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(18, 31, 52, 1)
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =16
+                              Text: =fxTranslate("ItServicePortal", "IT Service Portal")
+                              Wrap: =false
+                  - dbd_header_spacer_2:
+                      Control: GroupContainer@1.5.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                  - inc_language_selector:
+                      Control: ModernDropdown@1.0.2
+                      Properties:
+                        AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
+                        Default: |-
+                          =LookUp(Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"}), Code = Coalesce(varCurrentLanguage, "de"))
+                        Height: =34
+                        ItemDisplayText: =ThisItem.Label
+                        Items: |-
+                          =Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"})
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
+                        Width: =72
+                  - dbd_user_menu_2:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =40
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =8
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingLeft: =4
+                        PaddingRight: =8
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        Width: =132
+                      Children:
+                        - dbd_avatar_2:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(87, 35, 129, 1)
+                              Fill: =RGBA(246, 241, 249, 1)
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              RadiusBottomLeft: =16
+                              RadiusBottomRight: =16
+                              RadiusTopLeft: =16
+                              RadiusTopRight: =16
+                              Size: =12
+                              Text: =Upper(Left(fxCurrentUser.FullName, 2))
+                              Width: =32
+                        - dbd_user_name_2:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(35, 39, 47, 1)
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              Height: =24
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: =Left(fxCurrentUser.FullName, Find(" ", fxCurrentUser.FullName & " ") - 1)
+                              Width: =58
+                              Wrap: =false
+            - inc_body:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(248, 249, 252, 1)
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =24
+                  PaddingLeft: =36
+                  PaddingRight: =36
+                  PaddingTop: =24
+                  Width: =Parent.Width
+                Children:
+                  - inc_title_block:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =86
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =6
+                        Width: =Min(Parent.Width - 72, 1120)
+                      Children:
+                        - inc_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              AutoHeight: =true
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =40
+                              Size: =28
+                              Text: =fxTranslate("ReportIncident", "Störung melden")
+                              Width: =Parent.Width
+                        - inc_subtitle:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(82, 94, 115, 1)
+                              Height: =34
+                              Size: =16
+                              Text: =fxTranslate("ReportIncidentIntro", "Beschreiben Sie das Problem so konkret wie möglich. Pflichtfelder sind markiert; Hinweise helfen beim Ausfüllen.")
+                              Width: =Parent.Width
+                  - inc_help_panel:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(200, 179, 221, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(250, 247, 253, 1)
+                        FillPortions: =0
+                        Height: =0
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =4
+                        PaddingBottom: =12
+                        PaddingLeft: =16
+                        PaddingRight: =16
+                        PaddingTop: =12
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        Visible: =false
+                        Width: =Min(Parent.Width - 72, 1120)
+                      Children:
+                        - inc_help_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(87, 35, 129, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =26
+                              Size: =16
+                              Text: =varIncidentHelpTitle
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                        - inc_help_text:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(49, 65, 88, 1)
+                              Height: =34
+                              Size: =14
+                              Text: =varIncidentHelpText
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                  - inc_content:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =1780
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =22
+                        Width: =Min(Parent.Width - 72, 1120)
+                      Children:
+                        - inc_form_card:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              BorderColor: =RGBA(226, 232, 240, 1)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.Semilight
+                              Fill: =RGBA(255, 255, 255, 1)
+                              LayoutDirection: =LayoutDirection.Vertical
+                              PaddingBottom: =20
+                              PaddingLeft: =20
+                              PaddingRight: =20
+                              PaddingTop: =20
+                              RadiusBottomLeft: =14
+                              RadiusBottomRight: =14
+                              RadiusTopLeft: =14
+                              RadiusTopRight: =14
+                            Children:
+                              - frm_incident:
+                                  Control: Form@2.4.4
+                                  Layout: Vertical
+                                  Properties:
+                                    DataSource: =ev_sp_list_tickets
+                                    DefaultMode: =FormMode.New
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =Parent.Height - 40
+                                    NumberOfColumns: =1
+                                    OnFailure: |-
+                                      =Set(varIncidentSubmitting, false);
+                                      Set(
+                                          varIncidentSubmitError,
+                                          Coalesce(
+                                              First(Errors(ev_sp_list_tickets)).Message,
+                                              frm_incident.Error,
+                                              fxTranslate("CheckRequiredFields", "Bitte prüfen Sie die Pflichtfelder.")
+                                          )
+                                      );
+                                      Notify(Substitute(fxTranslate("IncidentTicketCreateFailed", "Das Incident-Ticket konnte nicht erstellt werden: {0}"), "{0}", varIncidentSubmitError), NotificationType.Error, 7000)
+                                    OnSuccess: |-
+                                      =Patch(ev_sp_list_tickets, frm_incident.LastSubmit, {Beobachter: varIncidentWatcherSelection});
+                                      Set(varCurrentTicket, frm_incident.LastSubmit);
+                                      Set(varTicketDetailId, frm_incident.LastSubmit.ID);
+                                      IfError(
+                                          create_attach_description.Run({ticketId: Text(varTicketDetailId), html: varIncidentDescriptionPayload}),
+                                          Notify(fxTranslate("IncidentCreatedWithProcessingWarning", "Incident wurde erstellt, aber Beschreibung/Screenshots konnten nicht nachbearbeitet werden."), NotificationType.Warning, 5000),
+                                          Notify(
+                                              If(
+                                                  varIncidentDescriptionHasInlineImages,
+                                                  fxTranslate("IncidentCreatedImagesProcessing", "Incident wurde erstellt. Eingefügte Screenshots werden vorbereitet und erscheinen ggf. in Kürze."),
+                                                  fxTranslate("IncidentCreated", "Incident wurde erstellt.")
+                                              ),
+                                              NotificationType.Success,
+                                              5000
+                                          )
+                                      );
+                                      Refresh(ev_sp_list_tickets);
+                                      Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = varTicketDetailId));
+                                      Set(varIncidentSubmitting, false);
+                                      Navigate(ticket_details_screen, ScreenTransition.Fade)
+                                    Width: =Parent.Width - 40
+                                  Children:
+                                    - inc_requestedby_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: ComboBoxEdit
+                                        Properties:
+                                          DataField: ="RequestedBy"
+                                          Default: =ThisItem.RequestedBy
+                                          DisplayName: =fxTranslate("AffectedPerson", "Betroffene Person")
+                                          Height: =150
+                                          Required: =true
+                                          Update: =inc_requestedby.Selected
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =0
+                                        Children:
+                                          - inc_requestedby_label:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(17, 24, 39, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =34
+                                                Text: ="* " & fxTranslate("AffectedPerson", "Betroffene Person")
+                                                Width: =Parent.Width - 90
+                                                X: =60
+                                                Y: =6
+                                          - inc_requestedby_info:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =40
+                                                OnSelect: |-
+                                                  =Set(varIncidentHelpTitle, fxTranslate("AffectedPerson", "Betroffene Person"));
+                                                  Set(varIncidentHelpText, fxTranslate("AffectedPersonHelp", "Wählen Sie die Person aus, für die die Störung gemeldet wird. Wenn Sie selbst betroffen sind, lassen Sie Ihren Namen stehen."))
+                                                RadiusBottomLeft: =20
+                                                RadiusBottomRight: =20
+                                                RadiusTopLeft: =20
+                                                RadiusTopRight: =20
+                                                Size: =13
+                                                Text: ="i"
+                                                Width: =40
+                                                X: =4
+                                                Y: =6
+                                          - inc_requestedby_hint:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(100, 116, 139, 1)
+                                                Height: =44
+                                                Size: =13
+                                                Text: =fxTranslate("AffectedPersonHint", "Für wen soll die Störung gemeldet werden? Standardmäßig sind Sie vorausgewählt.")
+                                                Width: =Parent.Width - 16
+                                                X: =4
+                                                Y: =42
+                                          - inc_requestedby:
+                                              Control: ModernCombobox@1.1.1
+                                              Properties:
+                                                DefaultSelectedItems: |-
+                                                  =With(
+                                                      {profile: 'Office365-Benutzer'.MyProfile()},
+                                                      Table(
+                                                          {
+                                                               Claims: "i:0#.f|membership|" & Lower(Coalesce(profile.UserPrincipalName, profile.Mail)),
+                                                               DisplayName: profile.DisplayName,
+                                                               Email: Coalesce(profile.Mail, profile.UserPrincipalName),
+                                                               UserPrincipalName: profile.UserPrincipalName,
+                                                               Department: profile.Department,
+                                                               JobTitle: profile.JobTitle,
+                                                               Picture: Blank()
+                                                          }
+                                                      )
+                                                  )
+                                                DisplayMode: =Parent.DisplayMode
+                                                Height: =46
+                                                InputTextPlaceholder: =fxTranslate("SearchPersonPlaceholder", "Person suchen...")
+                                                ItemDisplayText: =ThisItem.DisplayName
+                                                Items: |-
+                                                  =SortByColumns(
+                                                      ForAll(
+                                                          Filter(
+                                                              'Office365-Benutzer'.SearchUser({searchTerm: Trim(Self.SearchText)}),
+                                                              AccountEnabled = true &&
+                                                              !IsBlank(DisplayName) &&
+                                                              !IsBlank(Coalesce(Mail, UserPrincipalName)) &&
+                                                              (EndsWith(Lower(Mail), "@kessel.de") Or EndsWith(Lower(UserPrincipalName), "@kessel.de")) &&
+                                                              CountRows(Split(Trim(DisplayName), " ")) >= 2 &&
+                                                              !StartsWith(Lower(DisplayName), "aaa") &&
+                                                              !StartsWith(Lower(UserPrincipalName), "aaa") &&
+                                                              !StartsWith(Lower(MailNickname), "aaa") &&
+                                                              !StartsWith(Lower(DisplayName), "admin") &&
+                                                              !StartsWith(Lower(UserPrincipalName), "admin") &&
+                                                              !StartsWith(Lower(MailNickname), "admin") &&
+                                                              !StartsWith(Lower(DisplayName), "adm ") &&
+                                                              !StartsWith(Lower(DisplayName), "abteilungsleiter") &&
+                                                              !StartsWith(Lower(DisplayName), "administrator") &&
+                                                              !StartsWith(Lower(DisplayName), "service") &&
+                                                              !StartsWith(Lower(DisplayName), "test")
+                                                          ),
+                                                          {
+                                                               Claims: "i:0#.f|membership|" & Lower(Coalesce(UserPrincipalName, Mail)),
+                                                               DisplayName: DisplayName,
+                                                               Email: Coalesce(Mail, UserPrincipalName),
+                                                               UserPrincipalName: UserPrincipalName,
+                                                               Department: Department,
+                                                               JobTitle: JobTitle,
+                                                               Picture: Blank()
+                                                          }
+                                                      ),
+                                                      "DisplayName",
+                                                      SortOrder.Ascending
+                                                  )
+                                                Required: =Parent.Required
+                                                SelectMultiple: =false
+                                                ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                                Width: =Parent.Width - 8
+                                                X: =4
+                                                Y: =92
+                                    - inc_watchers_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: ComboBoxEdit
+                                        Properties:
+                                          DataField: ="Beobachter"
+                                          Default: =First(ThisItem.Beobachter)
+                                          DisplayName: =fxTranslate("WatchList", "Beobachtungsliste")
+                                          Height: =150
+                                          Required: =false
+                                          Update: =First(varIncidentWatcherSelection)
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =1
+                                        Children:
+                                          - inc_watchers_label:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =34
+                                                Text: =fxTranslate("WatchList", "Beobachtungsliste")
+                                                Width: =Parent.Width - 90
+                                                X: =60
+                                                Y: =6
+                                          - inc_watchers_info:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =40
+                                                OnSelect: |-
+                                                  =Set(varIncidentHelpTitle, fxTranslate("WatchList", "Beobachtungsliste"));
+                                                  Set(varIncidentHelpText, fxTranslate("WatchListHelp", "Optional: Fügen Sie Personen hinzu, die Status-Updates zu diesem Incident erhalten sollen."))
+                                                RadiusBottomLeft: =20
+                                                RadiusBottomRight: =20
+                                                RadiusTopLeft: =20
+                                                RadiusTopRight: =20
+                                                Size: =13
+                                                Text: ="i"
+                                                Width: =40
+                                                X: =4
+                                                Y: =6
+                                          - inc_watchers_hint:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(100, 116, 139, 1)
+                                                Height: =44
+                                                Size: =13
+                                                Text: |-
+                                                  =fxTranslate("WatchListHint", "Optional: Personen, die Status-Updates zu diesem Incident erhalten sollen.")
+                                                Width: =Parent.Width - 16
+                                                X: =4
+                                                Y: =42
+                                          - inc_watchers:
+                                              Control: ModernCombobox@1.1.1
+                                              Properties:
+                                                DefaultSelectedItems: =[Parent.Default]
+                                                DisplayMode: =Parent.DisplayMode
+                                                Height: =46
+                                                InputTextPlaceholder: =fxTranslate("AddPersonPlaceholder", "Person hinzufügen...")
+                                                ItemDisplayText: =ThisItem.DisplayName
+                                                Items: |-
+                                                  =SortByColumns(
+                                                      ForAll(
+                                                          Filter(
+                                                              'Office365-Benutzer'.SearchUser({searchTerm: Trim(Self.SearchText)}),
+                                                              AccountEnabled = true &&
+                                                              !IsBlank(DisplayName) &&
+                                                              !IsBlank(Coalesce(Mail, UserPrincipalName)) &&
+                                                              (EndsWith(Lower(Mail), "@kessel.de") Or EndsWith(Lower(UserPrincipalName), "@kessel.de")) &&
+                                                              CountRows(Split(Trim(DisplayName), " ")) >= 2 &&
+                                                              !StartsWith(Lower(DisplayName), "aaa") &&
+                                                              !StartsWith(Lower(UserPrincipalName), "aaa") &&
+                                                              !StartsWith(Lower(MailNickname), "aaa") &&
+                                                              !StartsWith(Lower(DisplayName), "admin") &&
+                                                              !StartsWith(Lower(UserPrincipalName), "admin") &&
+                                                              !StartsWith(Lower(MailNickname), "admin") &&
+                                                              !StartsWith(Lower(DisplayName), "adm ") &&
+                                                              !StartsWith(Lower(DisplayName), "abteilungsleiter") &&
+                                                              !StartsWith(Lower(DisplayName), "administrator") &&
+                                                              !StartsWith(Lower(DisplayName), "service") &&
+                                                              !StartsWith(Lower(DisplayName), "test")
+                                                          ),
+                                                          {
+                                                               Claims: "i:0#.f|membership|" & Lower(Coalesce(UserPrincipalName, Mail)),
+                                                               DisplayName: DisplayName,
+                                                               Email: Coalesce(Mail, UserPrincipalName),
+                                                               UserPrincipalName: UserPrincipalName,
+                                                               Department: Department,
+                                                               JobTitle: JobTitle,
+                                                               Picture: Blank()
+                                                          }
+                                                      ),
+                                                      "DisplayName",
+                                                      SortOrder.Ascending
+                                                  )
+                                                Width: =Parent.Width - 8
+                                                X: =4
+                                                Y: =92
+                                    - inc_category_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: ComboBoxEdit
+                                        Properties:
+                                          DataField: ="CategoryINC"
+                                          Default: =ThisItem.CategoryINC
+                                          DisplayName: =fxTranslate("Kategorie", "Kategorie")
+                                          Height: =150
+                                          Required: =true
+                                          Update: =inc_category.Selected
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =2
+                                        Children:
+                                          - inc_category_label:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =34
+                                                Text: ="* " & fxTranslate("Kategorie", "Kategorie")
+                                                Width: =Parent.Width - 90
+                                                X: =60
+                                                Y: =6
+                                          - inc_category_info:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =40
+                                                OnSelect: |-
+                                                  =Set(varIncidentHelpTitle, fxTranslate("Kategorie", "Kategorie"));
+                                                  Set(varIncidentHelpText, fxTranslate("CategoryHelp", "Wählen Sie den groben Bereich der Störung aus, zum Beispiel Arbeitsplatz, Netzwerk, Telefonie oder eine Anwendung."))
+                                                RadiusBottomLeft: =20
+                                                RadiusBottomRight: =20
+                                                RadiusTopLeft: =20
+                                                RadiusTopRight: =20
+                                                Size: =13
+                                                Text: ="i"
+                                                Width: =40
+                                                X: =4
+                                                Y: =6
+                                          - inc_category_hint:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(100, 116, 139, 1)
+                                                Height: =44
+                                                Size: =13
+                                                Text: =fxTranslate("CategoryHint", "Ordnen Sie die Störung grob ein, zum Beispiel Arbeitsplatz, Netzwerk oder Anwendung.")
+                                                Width: =Parent.Width - 16
+                                                X: =4
+                                                Y: =42
+                                          - inc_category:
+                                              Control: ModernCombobox@1.1.1
+                                              Properties:
+                                                AllowExternalSelectedItems: =false
+                                                DefaultSelectedItems: =[Parent.Default]
+                                                DisplayMode: =Parent.DisplayMode
+                                                Height: =46
+                                                InputTextPlaceholder: =fxTranslate("SelectCategoryPlaceholder", "Kategorie auswählen...")
+                                                ItemDisplayText: =ThisItem.DisplayValue
+                                                Items: =AddColumns(Choices([@ev_sp_list_tickets].CategoryINC), DisplayValue, fxTranslate(Value, Value))
+                                                Required: =Parent.Required
+                                                SelectMultiple: =false
+                                                ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                                Width: =Parent.Width - 8
+                                                X: =4
+                                                Y: =92
+                                    - inc_subcategory_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: ComboBoxEdit
+                                        Properties:
+                                          DataField: ="SubcategoryINC"
+                                          Default: =ThisItem.SubcategoryINC
+                                          DisplayName: =fxTranslate("Subcategory", "Unterkategorie")
+                                          Height: =150
+                                          Required: =true
+                                          Update: =inc_subcategory.Selected
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =3
+                                        Children:
+                                          - inc_subcategory_label:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =34
+                                                Text: ="* " & fxTranslate("Subcategory", "Unterkategorie")
+                                                Width: =Parent.Width - 90
+                                                X: =60
+                                                Y: =6
+                                          - inc_subcategory_info:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =40
+                                                OnSelect: |-
+                                                  =Set(varIncidentHelpTitle, fxTranslate("Subcategory", "Unterkategorie"));
+                                                  Set(varIncidentHelpText, fxTranslate("SubcategoryHelp", "Wählen Sie die genauere Einordnung. Sie hilft dem Support, das Ticket direkt an die richtige Stelle zu geben."))
+                                                RadiusBottomLeft: =20
+                                                RadiusBottomRight: =20
+                                                RadiusTopLeft: =20
+                                                RadiusTopRight: =20
+                                                Size: =13
+                                                Text: ="i"
+                                                Width: =40
+                                                X: =4
+                                                Y: =6
+                                          - inc_subcategory_hint:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(100, 116, 139, 1)
+                                                Height: =44
+                                                Size: =13
+                                                Text: =fxTranslate("SubcategoryHint", "Wählen Sie die genauere Einordnung. Die Werte können später an Ihre Struktur angepasst werden.")
+                                                Width: =Parent.Width - 16
+                                                X: =4
+                                                Y: =42
+                                          - inc_subcategory:
+                                              Control: ModernCombobox@1.1.1
+                                              Properties:
+                                                AllowExternalSelectedItems: =false
+                                                DefaultSelectedItems: =[Parent.Default]
+                                                DisplayMode: =Parent.DisplayMode
+                                                Height: =46
+                                                InputTextPlaceholder: =fxTranslate("SelectSubcategoryPlaceholder", "Unterkategorie auswählen...")
+                                                ItemDisplayText: =ThisItem.DisplayValue
+                                                Items: =AddColumns(Choices([@ev_sp_list_tickets].SubcategoryINC), DisplayValue, fxTranslate(Value, Value))
+                                                Required: =Parent.Required
+                                                SelectMultiple: =false
+                                                ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                                Width: =Parent.Width - 8
+                                                X: =4
+                                                Y: =92
+                                    - inc_priority_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: ComboBoxEdit
+                                        Properties:
+                                          DataField: ="Priority"
+                                          Default: =ThisItem.Priority
+                                          DisplayName: =fxTranslate("Urgency", "Dringlichkeit")
+                                          Height: =150
+                                          Required: =true
+                                          Update: =inc_priority.Selected
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =4
+                                        Children:
+                                          - inc_priority_label:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =34
+                                                Text: ="* " & fxTranslate("EstimateUrgency", "Bitte schätzen Sie die Dringlichkeit ein")
+                                                Width: =Parent.Width - 90
+                                                X: =60
+                                                Y: =6
+                                          - inc_priority_info:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =40
+                                                OnSelect: |-
+                                                  =Set(varIncidentHelpTitle, fxTranslate("Urgency", "Dringlichkeit"));
+                                                  Set(varIncidentHelpText, fxTranslate("UrgencyHelp", "Schätzen Sie ein, wie stark die Störung Ihre Arbeit oder einen Prozess beeinträchtigt. Je kritischer die Auswirkung, desto höher die Dringlichkeit."))
+                                                RadiusBottomLeft: =20
+                                                RadiusBottomRight: =20
+                                                RadiusTopLeft: =20
+                                                RadiusTopRight: =20
+                                                Size: =13
+                                                Text: ="i"
+                                                Width: =40
+                                                X: =4
+                                                Y: =6
+                                          - inc_priority_hint:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(100, 116, 139, 1)
+                                                Height: =44
+                                                Size: =13
+                                                Text: =fxTranslate("UrgencyHint", "Wie stark beeinträchtigt die Störung Ihre Arbeit oder einen Prozess?")
+                                                Width: =Parent.Width - 16
+                                                X: =4
+                                                Y: =42
+                                          - inc_priority:
+                                              Control: ModernCombobox@1.1.1
+                                              Properties:
+                                                AllowExternalSelectedItems: =false
+                                                DefaultSelectedItems: =[Parent.Default]
+                                                DisplayMode: =Parent.DisplayMode
+                                                Height: =46
+                                                InputTextPlaceholder: =fxTranslate("SelectUrgencyPlaceholder", "Dringlichkeit auswählen...")
+                                                ItemDisplayText: =ThisItem.DisplayValue
+                                                Items: =AddColumns(Choices([@ev_sp_list_tickets].Priority), DisplayValue, fxTranslate(Value, Value))
+                                                Required: =Parent.Required
+                                                SelectMultiple: =false
+                                                ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                                Width: =Parent.Width - 8
+                                                X: =4
+                                                Y: =92
+                                    - inc_name_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: TextualEdit
+                                        Properties:
+                                          DataField: ="TicketTitel"
+                                          Default: =ThisItem.TicketTitel
+                                          DisplayName: =fxTranslate("ShortDescription", "Kurzbeschreibung")
+                                          Height: =150
+                                          MaxLength: =DataSourceInfo([@ev_sp_list_tickets], DataSourceInfo.MaxLength, Name)
+                                          Required: =true
+                                          Update: =inc_name.Text
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =5
+                                        Children:
+                                          - inc_name_label:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =34
+                                                Text: ="* " & fxTranslate("ShortDescription", "Kurzbeschreibung")
+                                                Width: =Parent.Width - 90
+                                                X: =60
+                                                Y: =6
+                                          - inc_name_info:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =40
+                                                OnSelect: |-
+                                                  =Set(varIncidentHelpTitle, fxTranslate("ShortDescription", "Kurzbeschreibung"));
+                                                  Set(varIncidentHelpText, fxTranslate("ShortDescriptionHelp", "Geben Sie einen kurzen, eindeutigen Titel ein. Beispiel: Outlook startet nicht oder Drucker im Versand druckt nicht."))
+                                                RadiusBottomLeft: =20
+                                                RadiusBottomRight: =20
+                                                RadiusTopLeft: =20
+                                                RadiusTopRight: =20
+                                                Size: =13
+                                                Text: ="i"
+                                                Width: =40
+                                                X: =4
+                                                Y: =6
+                                          - inc_name_hint:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(100, 116, 139, 1)
+                                                Height: =44
+                                                Size: =13
+                                                Text: |-
+                                                  =fxTranslate("ShortDescriptionHint", "Ein kurzer, eindeutiger Titel, zum Beispiel: Outlook startet nicht.")
+                                                Width: =Parent.Width - 16
+                                                X: =4
+                                                Y: =42
+                                          - inc_name:
+                                              Control: ModernTextInput@1.1.1
+                                              Properties:
+                                                Default: =Parent.Default
+                                                DisplayMode: =Parent.DisplayMode
+                                                Height: =46
+                                                MaxLength: =Parent.MaxLength
+                                                Placeholder: =fxTranslate("EnterShortDescriptionPlaceholder", "Kurzbeschreibung eingeben...")
+                                                Required: =Parent.Required
+                                                TriggerOutput: =TriggerOutput.FocusOut
+                                                ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                                Width: =Parent.Width - 8
+                                                X: =4
+                                                Y: =92
+                                    - inc_description_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: TextualEdit
+                                        Properties:
+                                          BorderColor: =fxPrimaryColor
+                                          DataField: ="Description"
+                                          Default: =ThisItem.Description
+                                          DisplayName: =fxTranslate("Beschreibung", "Beschreibung")
+                                          Height: =460
+                                          MaxLength: =DataSourceInfo([@ev_sp_list_tickets], DataSourceInfo.MaxLength, Description)
+                                          Required: =true
+                                          Update: =If(IsBlank(varSelectedService), "", "<p><strong>Service:</strong> " & varSelectedService & "</p>") & inc_description.HtmlText
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =6
+                                        Children:
+                                          - inc_description_label:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =34
+                                                Text: ="* " & fxTranslate("DescribeYourRequest", "Beschreiben Sie bitte Ihre Angelegenheit")
+                                                Width: =Parent.Width - 90
+                                                X: =60
+                                                Y: =6
+                                          - inc_description_info:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =40
+                                                OnSelect: |-
+                                                  =Set(varIncidentHelpTitle, fxTranslate("Beschreibung", "Beschreibung"));
+                                                  Set(varIncidentHelpText, fxTranslate("DescriptionHelp", "Beschreiben Sie, was nicht funktioniert, seit wann es auftritt, ob eine Fehlermeldung erscheint und was bereits versucht wurde."))
+                                                RadiusBottomLeft: =20
+                                                RadiusBottomRight: =20
+                                                RadiusTopLeft: =20
+                                                RadiusTopRight: =20
+                                                Size: =13
+                                                Text: ="i"
+                                                Width: =40
+                                                X: =4
+                                                Y: =6
+                                          - inc_description_hint:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(100, 116, 139, 1)
+                                                Height: =72
+                                                Size: =13
+                                                Text: =fxTranslate("DescriptionHint", "Was funktioniert nicht? Seit wann tritt es auf? Welche Fehlermeldung erscheint? Was wurde bereits versucht?")
+                                                Width: =Parent.Width - 16
+                                                X: =4
+                                                Y: =42
+                                          - inc_description:
+                                              Control: RichTextEditor@2.7.0
+                                              Properties:
+                                                AccessibleLabel: =Parent.DisplayName
+                                                BorderColor: =RGBA(129, 76, 169, 1)
+                                                Default: =""
+                                                DisplayMode: =Parent.DisplayMode
+                                                Height: =330
+                                                Width: =Parent.Width - 8
+                                                X: =4
+                                                Y: =118
+                                          - inc_description_placeholder:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(17, 24, 39, 1)
+                                                Height: =170
+                                                OnSelect: =Set(varIncidentDescriptionHintHidden, true)
+                                                Text: |-
+                                                  =fxTranslate("IncidentDescriptionPlaceholder", "Beschreiben Sie hier das Problem.") & Char(10) & Char(10) &
+                                                  fxTranslate("HelpfulDetails", "Hilfreiche Angaben:") & Char(10) & Char(10) &
+                                                  "- " & fxTranslate("WhatDoesNotWork", "Was funktioniert nicht?") & Char(10) &
+                                                  "- " & fxTranslate("WhenDidProblemStart", "Seit wann tritt das Problem auf?") & Char(10) &
+                                                  "- " & fxTranslate("WhatErrorMessage", "Welche Fehlermeldung erscheint?") & Char(10) &
+                                                  "- " & fxTranslate("WhatAlreadyTried", "Was haben Sie schon versucht?")
+                                                Visible: =!varIncidentDescriptionHintHidden && IsBlank(PlainText(inc_description.HtmlText))
+                                                Width: =Parent.Width - 56
+                                                X: =24
+                                                Y: =178
+                                    - inc_affected_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: TextualEdit
+                                        Properties:
+                                          DataField: ="Reason"
+                                          Default: =ThisItem.Reason
+                                          DisplayName: =fxTranslate("WhoIsAffected", "Wer ist betroffen?")
+                                          Height: =150
+                                          MaxLength: =DataSourceInfo([@ev_sp_list_tickets], DataSourceInfo.MaxLength, Reason)
+                                          Required: =true
+                                          Update: =inc_affected.Selected.Value
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =7
+                                        Children:
+                                          - inc_affected_label:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =34
+                                                Text: ="* " & fxTranslate("WhoIsAffected", "Wer ist betroffen?")
+                                                Width: =Parent.Width - 90
+                                                X: =60
+                                                Y: =6
+                                          - inc_affected_info:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =40
+                                                OnSelect: |-
+                                                  =Set(varIncidentHelpTitle, fxTranslate("WhoIsAffected", "Wer ist betroffen?"));
+                                                  Set(varIncidentHelpText, fxTranslate("WhoIsAffectedHelp", "Geben Sie an, ob nur Sie selbst, mehrere Personen, ein Team, ein Standort oder ein größerer Bereich betroffen ist."))
+                                                RadiusBottomLeft: =20
+                                                RadiusBottomRight: =20
+                                                RadiusTopLeft: =20
+                                                RadiusTopRight: =20
+                                                Size: =13
+                                                Text: ="i"
+                                                Width: =40
+                                                X: =4
+                                                Y: =6
+                                          - inc_affected_hint:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Color: =RGBA(100, 116, 139, 1)
+                                                Height: =44
+                                                Size: =13
+                                                Text: =fxTranslate("WhoIsAffectedHint", "Geben Sie an, ob nur Sie selbst, mehrere Personen oder ein ganzer Bereich betroffen sind.")
+                                                Width: =Parent.Width - 16
+                                                X: =4
+                                                Y: =42
+                                          - inc_affected:
+                                              Control: ModernDropdown@1.0.2
+                                              Properties:
+                                                DisplayMode: =Parent.DisplayMode
+                                                Height: =46
+                                                ItemDisplayText: =ThisItem.DisplayValue
+                                                Items: |-
+                                                  =AddColumns(
+                                                      Table(
+                                                      {Value: "Nur ich"},
+                                                      {Value: "Mehrere Personen"},
+                                                      {Value: "Ein Team oder Bereich"},
+                                                      {Value: "Ein Standort"},
+                                                      {Value: "Unbekannt"}
+                                                      ),
+                                                      DisplayValue,
+                                                      fxTranslate(Value, Value)
+                                                  )
+                                                Width: =Parent.Width - 8
+                                                X: =4
+                                                Y: =92
+                                    - inc_attachments_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: ClassicAttachmentsEdit
+                                        Properties:
+                                          DataField: ="{Attachments}"
+                                          Default: =ThisItem.Anlagen
+                                          DisplayName: =fxTranslate("Anlagen", "Anhänge")
+                                          Height: =190
+                                          Required: =false
+                                          Update: =inc_attachments.Attachments
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =8
+                                        Children:
+                                          - inc_attachments_label:
+                                              Control: Label@2.5.1
+                                              Properties:
+                                                Color: =RGBA(17, 24, 39, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =34
+                                                Size: =14
+                                                Text: =fxTranslate("Anlagen", "Anhänge")
+                                                Width: =Parent.Width - 90
+                                                X: =60
+                                                Y: =6
+                                          - inc_attachments_info:
+                                              Control: ModernText@1.0.0
+                                              Properties:
+                                                Align: =Align.Center
+                                                Color: =RGBA(87, 35, 129, 1)
+                                                Fill: =RGBA(245, 240, 250, 1)
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =40
+                                                OnSelect: |-
+                                                  =Set(varIncidentHelpTitle, fxTranslate("Anlagen", "Anhänge"));
+                                                  Set(varIncidentHelpText, fxTranslate("AttachmentsHelp", "Fügen Sie Screenshots, Fehlermeldungen, Logdateien oder andere Dateien hinzu, die das Problem nachvollziehbar machen."))
+                                                RadiusBottomLeft: =20
+                                                RadiusBottomRight: =20
+                                                RadiusTopLeft: =20
+                                                RadiusTopRight: =20
+                                                Size: =13
+                                                Text: ="i"
+                                                Width: =40
+                                                X: =4
+                                                Y: =6
+                                          - inc_attachments:
+                                              Control: Attachments@2.3.0
+                                              Properties:
+                                                AddAttachmentText: =fxTranslate("ChooseFile", "Datei auswählen")
+                                                BorderColor: =RGBA(226, 232, 240, 1)
+                                                DisplayMode: =Parent.DisplayMode
+                                                Height: =140
+                                                Items: =Parent.Default
+                                                NoAttachmentsText: =fxTranslate("NoFileSelected", "Keine Datei ausgewählt")
+                                                Width: =Parent.Width - 8
+                                                X: =4
+                                                Y: =60
+                                    - inc_tickettype_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: ComboBoxEdit
+                                        Properties:
+                                          DataField: ="TicketType"
+                                          Default: =ThisItem.TicketType
+                                          DisplayName: =fxTranslate("TicketType", "Tickettyp")
+                                          Height: =0
+                                          Required: =false
+                                          Update: |-
+                                            ={Value: "Incident"}
+                                          Visible: =false
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =9
+                                    - inc_status_card:
+                                        Control: TypedDataCard@1.0.7
+                                        Variant: ComboBoxEdit
+                                        Properties:
+                                          DataField: ="Status"
+                                          Default: =ThisItem.Status
+                                          DisplayName: =fxTranslate("Status", "Status")
+                                          Height: =0
+                                          Required: =false
+                                          Update: |-
+                                            ={Value: "Offen"}
+                                          Visible: =false
+                                          Width: =Parent.Width
+                                          X: =0
+                                          Y: =10
+                        - inc_sidebar:
+                            Control: GroupContainer@1.5.0
+                            Variant: AutoLayout
+                            Properties:
+                              BorderColor: =RGBA(226, 232, 240, 1)
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.Semilight
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FillPortions: =0
+                              Height: =340
+                              LayoutDirection: =LayoutDirection.Vertical
+                              LayoutGap: =8
+                              PaddingBottom: =16
+                              PaddingLeft: =16
+                              PaddingRight: =16
+                              PaddingTop: =16
+                              RadiusBottomLeft: =14
+                              RadiusBottomRight: =14
+                              RadiusTopLeft: =14
+                              RadiusTopRight: =14
+                              Width: =230
+                            Children:
+                              - inc_sidebar_title:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(17, 24, 39, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =60
+                                    Size: =16
+                                    Text: =fxTranslate("RequiredInformation", "Erforderliche Informationen")
+                                    Width: =Parent.Width - 32
+                              - inc_req_person:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =If(IsBlank(inc_requestedby.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                                    Height: =40
+                                    Size: =12
+                                    Text: =If(IsBlank(inc_requestedby.Selected), fxTranslate("AffectedPerson", "Betroffene Person"), fxTranslate("AffectedPersonComplete", "Betroffene Person ✓"))
+                                    Width: =Parent.Width - 32
+                              - inc_req_category:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =If(IsBlank(inc_category.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                                    Height: =40
+                                    Size: =12
+                                    Text: =If(IsBlank(inc_category.Selected), fxTranslate("Kategorie", "Kategorie"), fxTranslate("CategoryComplete", "Kategorie ✓"))
+                                    Width: =Parent.Width - 32
+                              - inc_req_subcategory:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =If(IsBlank(inc_subcategory.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                                    Height: =40
+                                    Size: =12
+                                    Text: =If(IsBlank(inc_subcategory.Selected), fxTranslate("Subcategory", "Unterkategorie"), fxTranslate("SubcategoryComplete", "Unterkategorie ✓"))
+                                    Width: =Parent.Width - 32
+                              - inc_req_priority:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =If(IsBlank(inc_priority.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                                    Height: =40
+                                    Size: =12
+                                    Text: =If(IsBlank(inc_priority.Selected), fxTranslate("Urgency", "Dringlichkeit"), fxTranslate("UrgencyComplete", "Dringlichkeit ✓"))
+                                    Width: =Parent.Width - 32
+                              - inc_req_name:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =If(IsBlank(Trim(inc_name.Text)), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                                    Height: =40
+                                    Size: =12
+                                    Text: =If(IsBlank(Trim(inc_name.Text)), fxTranslate("ShortDescription", "Kurzbeschreibung"), fxTranslate("ShortDescriptionComplete", "Kurzbeschreibung ✓"))
+                                    Width: =Parent.Width - 32
+                              - inc_req_description:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =If(IsBlank(Trim(PlainText(inc_description.HtmlText))), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                                    Height: =40
+                                    Size: =12
+                                    Text: =If(IsBlank(Trim(PlainText(inc_description.HtmlText))), fxTranslate("RequestDescription", "Beschreibung der Angelegenheit"), fxTranslate("RequestDescriptionComplete", "Beschreibung der Angelegenheit ✓"))
+                                    Width: =Parent.Width - 32
+                              - inc_req_affected:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =If(IsBlank(inc_affected.Selected.Value), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
+                                    Height: =40
+                                    Size: =12
+                                    Text: =If(IsBlank(inc_affected.Selected.Value), fxTranslate("WhoIsAffected", "Wer ist betroffen?"), fxTranslate("WhoIsAffectedComplete", "Wer ist betroffen? ✓"))
+                                    Width: =Parent.Width - 32
+                              - inc_sidebar_tip:
+                                  Control: ModernText@1.0.0
+                                  Properties:
+                                    Color: =RGBA(82, 94, 115, 1)
+                                    Height: =70
+                                    Size: =11
+                                    Text: |-
+                                      =fxTranslate("IncidentAttachmentTip", "Tipp: Screenshots oder Fehlermeldungen beschleunigen die Bearbeitung deutlich.")
+                                    Width: =Parent.Width - 32
+            - inc_footer:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  BorderColor: =RGBA(229, 231, 235, 1)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =72
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                  PaddingLeft: =28
+                  PaddingRight: =28
+                  Width: =Parent.Width
+                Children:
+                  - inc_cancel:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        Appearance: =ButtonAppearance.Secondary
+                        DisplayMode: =If(varIncidentSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
+                        Height: =44
+                        Icon: ="Dismiss"
+                        OnSelect: |-
+                          =If(
+                              frm_incident.Unsaved,
+                              If(
+                                  Confirm(
+                                      "Dieser Vorgang kann nicht rückgängig gemacht werden.",
+                                      {
+                                          Subtitle: "Incident verwerfen?",
+                                          ConfirmButton: "Verwerfen",
+                                          CancelButton: "Abbrechen"
+                                      }
+                                  ),
+                                  ResetForm(frm_incident);
+                                  Navigate(request_type_screen, ScreenTransition.CoverRight)
+                              ),
+                              ResetForm(frm_incident);
+                              Navigate(request_type_screen, ScreenTransition.CoverRight)
+                          )
+                        Text: =fxTranslate("Cancel", "Abbrechen")
+                        Width: =130
+                  - inc_submit:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        DisplayMode: =If(varIncidentSubmitting Or !frm_incident.Valid Or IsBlank(Trim(PlainText(inc_description.HtmlText))) Or CountRows(inc_requestedby.SelectedItems) = 0 Or IsBlank(inc_category.Selected) Or IsBlank(inc_subcategory.Selected) Or IsBlank(inc_priority.Selected) Or IsBlank(Trim(inc_name.Text)) Or IsBlank(inc_affected.Selected.Value), DisplayMode.Disabled, DisplayMode.Edit)
+                        Height: =44
+                        Icon: ="Checkmark"
+                        OnSelect: |-
+                          =Set(
+                              varIncidentDescriptionHtml,
+                              If(
+                                  IsBlank(varSelectedService),
+                                  "",
+                                  "<p><strong>Service:</strong> " & varSelectedService & "</p>"
+                              ) & inc_description.HtmlText
+                          );
+                          Set(
+                              varIncidentDescriptionHasInlineImages,
+                              CountRows(
+                                  MatchAll(
+                                      varIncidentDescriptionHtml,
+                                      "data:image/[A-Za-z0-9.+-]+;base64,[A-Za-z0-9+/=]+"
+                                  )
+                              ) > 0
+                          );
+                          Set(
+                              varIncidentDescriptionPayload,
+                              JSON(
+                                  {
+                                      schemaVersion: 1,
+                                      richTextHtml: varIncidentDescriptionHtml,
+                                      screenshots: ForAll(
+                                          MatchAll(
+                                              varIncidentDescriptionHtml,
+                                              "data:image/[A-Za-z0-9.+-]+;base64,[A-Za-z0-9+/=]+"
+                                          ),
+                                          {
+                                              id: "inline-" & Text(StartMatch),
+                                              dataUri: FullMatch
+                                          }
+                                      )
+                                  },
+                                  JSONFormat.Compact
+                              )
+                          );
+                           Set(
+                               varIncidentWatcherSelection,
+                               ForAll(
+                                   Filter(
+                                       inc_watchers.SelectedItems,
+                                       !IsBlank(Trim(Coalesce(UserPrincipalName, Email)))
+                                   ) As watcher,
+                                   {
+                                        Claims: "i:0#.f|membership|" & Lower(Trim(Coalesce(watcher.UserPrincipalName, watcher.Email))),
+                                        DisplayName: watcher.DisplayName,
+                                        Email: Trim(Coalesce(watcher.Email, watcher.UserPrincipalName)),
+                                       Department: watcher.Department,
+                                       JobTitle: watcher.JobTitle,
+                                       Picture: Blank()
+                                   }
+                               )
+                           );
+                          Set(
+                              varIncidentSubmitting,
+                              true
+                          );
+                          Set(varIncidentSubmitError, Blank());
+                           If(
+                               IsBlank(Trim(Coalesce(inc_requestedby.Selected.UserPrincipalName, inc_requestedby.Selected.Email))),
+                               Set(varIncidentSubmitError, fxTranslate("RequesterEmailMissing", "Für die betroffene Person konnte keine Benutzer-E-Mail-Adresse ermittelt werden."))
+                           );
+                           If(
+                               !IsBlank(varIncidentSubmitError),
+                               Set(varIncidentSubmitting, false);
+                               Notify(
+                                   Substitute(fxTranslate("IncidentTicketCreateFailed", "Das Incident-Ticket konnte nicht erstellt werden: {0}"), "{0}", varIncidentSubmitError),
+                                   NotificationType.Error,
+                                   7000
+                               ),
+                               SubmitForm(frm_incident)
+                           )
+                        Text: =If(varIncidentSubmitting, fxTranslate("IncidentBeingCreated", "Incident wird erstellt..."), fxTranslate("CreateIncident", "Incident erstellen"))
+                        Width: =170
+      - inc_help_overlay:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(17, 24, 39, 0.18)
+            Height: =Parent.Height
+            Visible: =!IsBlank(varIncidentHelpTitle)
+            Width: =Parent.Width
+          Children:
+            - inc_help_popup:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  BorderColor: =RGBA(200, 179, 221, 1)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.Semibold
+                  Fill: =RGBA(255, 255, 255, 1)
+                  Height: =260
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =10
+                  PaddingBottom: =22
+                  PaddingLeft: =24
+                  PaddingRight: =24
+                  PaddingTop: =20
+                  RadiusBottomLeft: =18
+                  RadiusBottomRight: =18
+                  RadiusTopLeft: =18
+                  RadiusTopRight: =18
+                  Width: =Min(520, Parent.Width - 80)
+                  X: =(Parent.Width - Self.Width) / 2
+                  Y: =Max(96, (Parent.Height - Self.Height) / 2)
+                Children:
+                  - inc_help_popup_header:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =42
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =12
+                        Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                      Children:
+                        - inc_help_popup_icon:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(87, 35, 129, 1)
+                              Fill: =RGBA(245, 240, 250, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =40
+                              RadiusBottomLeft: =20
+                              RadiusBottomRight: =20
+                              RadiusTopLeft: =20
+                              RadiusTopRight: =20
+                              Size: =16
+                              Text: ="i"
+                              Width: =40
+                        - inc_help_popup_title:
+                            Control: ModernText@1.0.0
+                            Properties:
+                              Color: =RGBA(17, 24, 39, 1)
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              Height: =38
+                              Size: =20
+                              Text: =varIncidentHelpTitle
+                        - inc_help_popup_close:
+                            Control: ModernButton@1.0.0
+                            Properties:
+                              Appearance: =ButtonAppearance.Subtle
+                              Height: =36
+                              Icon: ="Dismiss"
+                              Layout: =ButtonLayout.IconOnly
+                              OnSelect: |-
+                                =Set(varIncidentHelpTitle, Blank());
+                                Set(varIncidentHelpText, Blank())
+                              Width: =36
+                  - inc_help_popup_text:
+                      Control: ModernText@1.0.0
+                      Properties:
+                        Color: =RGBA(49, 65, 88, 1)
+                        Height: =128
+                        Size: =16
+                        Text: =varIncidentHelpText
+                        Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                  - inc_help_popup_ok:
+                      Control: ModernButton@1.0.0
+                      Properties:
+                        AlignInContainer: =AlignInContainer.End
+                        Appearance: =ButtonAppearance.Secondary
+                        Height: =42
+                        OnSelect: |-
+                          =Set(varIncidentHelpTitle, Blank());
+                          Set(varIncidentHelpText, Blank())
+                        Text: =fxTranslate("Close", "Schließen")
+                        Width: =120

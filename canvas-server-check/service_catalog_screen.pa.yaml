@@ -1,0 +1,719 @@
+Screens:
+  service_catalog_screen:
+    Properties:
+      Fill: =RGBA(242, 244, 248, 1)
+      LoadingSpinnerColor: =RGBA(87, 35, 129, 1)
+      OnVisible: |-
+        =Refresh(ev_sp_list_service_catalog);
+        Refresh(ev_sp_list_servicefield_definitions);
+        Refresh(ev_sp_list_servicefield_options);
+        Set(varServiceCatalogSearch, "");
+        If(
+            IsBlank(varSelectedCatalogService),
+            Set(varSelectedCatalogService, First(SortByColumns(Filter(ev_sp_list_service_catalog, Active), "ID", SortOrder.Ascending)))
+        );
+        Set(varServiceSubmitting, false);
+        Clear(colServiceDraftAnswers)
+    Children:
+      - src_root:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(242, 244, 248, 1)
+            Height: =Parent.Height
+            LayoutDirection: =LayoutDirection.Vertical
+            Width: =Parent.Width
+          Children:
+            - src_header:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  BorderColor: =RGBA(226, 232, 240, 1)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.Semilight
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =72
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =14
+                  LayoutMinHeight: =0
+                  LayoutMinWidth: =0
+                  PaddingBottom: =14
+                  PaddingLeft: =28
+                  PaddingRight: =28
+                  PaddingTop: =12
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =Parent.Width
+                Children:
+                  - src_back:
+                      Control: ModernButton
+                      Properties:
+                        AccessibleLabel: =fxTranslate("BackToSelection", "Zurück zur Auswahl")
+                        Appearance: =ButtonAppearance.Secondary
+                        Height: =40
+                        Icon: ="ChevronLeft"
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        OnSelect: =Select(src_nav_parent)
+                        Text: =fxTranslate("Zurück", "Zurück")
+                        Width: =110
+                  - src_header_text:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutJustifyContent: =LayoutJustifyContent.Center
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                      Children:
+                        - src_title:
+                            Control: ModernText
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Stretch
+                              AutoHeight: =true
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =28
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =22
+                              Text: =fxTranslate("RequestService", "Service anfordern")
+                              Wrap: =false
+                  - src_manage_services:
+                      Control: ModernButton
+                      Properties:
+                        AccessibleLabel: =fxTranslate("ManageServices", "Services verwalten")
+                        Appearance: =ButtonAppearance.Secondary
+                        Height: =40
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        OnSelect: |-
+                          =If(
+                              IsEmpty(colServiceDraftAnswers) || Confirm(
+                                  fxTranslate("DiscardServiceAnswers", "Ungespeicherte Serviceangaben verwerfen und Services verwalten?"),
+                                  {
+                                      Title: fxTranslate("ManageServices", "Services verwalten"),
+                                      ConfirmButton: fxTranslate("Discard", "Verwerfen"),
+                                      CancelButton: fxTranslate("Cancel", "Abbrechen")
+                                  }
+                              ),
+                              Clear(colServiceDraftAnswers);
+                              Navigate(service_wizard_screen, ScreenTransition.Cover)
+                          )
+                        Text: =fxTranslate("ManageServices", "Services verwalten")
+                        Visible: =fxIsAgentExperience
+                        Width: =170
+                  - src_language_selector:
+                      Control: ModernDropdown
+                      Properties:
+                        AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
+                        Default: |-
+                          =LookUp(Table({Code: "de", Label: "Deutsch"}, {Code: "en", Label: "English"}), Code = Coalesce(varCurrentLanguage, "de"))
+                        Height: =34
+                        ItemDisplayText: =ThisItem.Label
+                        Items: |-
+                          =Table({Code: "de", Label: "Deutsch"}, {Code: "en", Label: "English"})
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        OnChange: =Set(varCurrentLanguage, Self.Selected.Code)
+                        Width: =120
+            - src_navigation:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  BorderColor: =RGBA(226, 232, 240, 1)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(248, 250, 252, 1)
+                  FillPortions: =0
+                  Height: =42
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinHeight: =42
+                  LayoutMinWidth: =0
+                  PaddingLeft: =If(App.Width < 600, 12, 28)
+                  PaddingRight: =If(App.Width < 600, 12, 28)
+                  Width: =Parent.Width
+                Children:
+                  - src_home:
+                      Control: ModernButton
+                      Properties:
+                        AccessibleLabel: =fxTranslate("Home", "Zur Startseite")
+                        Appearance: =ButtonAppearance.Subtle
+                        DisplayMode: =If(varServiceSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
+                        Height: =32
+                        Icon: ="Home"
+                        OnSelect: |-
+                          =If(
+                              IsEmpty(colServiceDraftAnswers) || Confirm(
+                                  fxTranslate("DiscardUnsavedAndGoHome", "Ungespeicherte Angaben verwerfen und zur Startseite wechseln?"),
+                                  {
+                                      Title: fxTranslate("GoToHome", "Zur Startseite"),
+                                      ConfirmButton: fxTranslate("Discard", "Verwerfen"),
+                                      CancelButton: fxTranslate("Cancel", "Abbrechen")
+                                  }
+                              ),
+                              Clear(colServiceDraftAnswers);
+                              Navigate(dashboard_screen, ScreenTransition.CoverRight)
+                          )
+                        Text: =If(App.Width < 600, fxTranslate("HomeShort", "Start"), fxTranslate("Home", "Startseite"))
+                        Width: =If(App.Width < 600, 80, 120)
+                  - src_nav_separator_1:
+                      Control: ModernText
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(148, 163, 184, 1)
+                        Height: =24
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =13
+                        Text: =">"
+                        Width: =12
+                  - src_nav_parent:
+                      Control: ModernButton
+                      Properties:
+                        AccessibleLabel: =fxTranslate("CreateTicket", "Ticket erstellen")
+                        Appearance: =ButtonAppearance.Subtle
+                        DisplayMode: =If(varServiceSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
+                        Height: =32
+                        OnSelect: |-
+                          =If(
+                              IsEmpty(colServiceDraftAnswers) || Confirm(
+                                  fxTranslate("DiscardUnsavedAndGoBack", "Ungespeicherte Angaben verwerfen und zur Ticketauswahl zurückkehren?"),
+                                  {
+                                      Title: fxTranslate("BackToTicketSelection", "Zur Ticketauswahl"),
+                                      ConfirmButton: fxTranslate("Discard", "Verwerfen"),
+                                      CancelButton: fxTranslate("Cancel", "Abbrechen")
+                                  }
+                              ),
+                              Clear(colServiceDraftAnswers);
+                              Navigate(request_type_screen, ScreenTransition.CoverRight)
+                          )
+                        Text: =fxTranslate("CreateTicket", "Ticket erstellen")
+                        Visible: =App.Width >= 600
+                        Width: =130
+                  - src_nav_separator_2:
+                      Control: ModernText
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(148, 163, 184, 1)
+                        Height: =24
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =13
+                        Text: =">"
+                        Visible: =App.Width >= 600
+                        Width: =12
+                  - src_nav_current:
+                      Control: ModernText
+                      Properties:
+                        Color: =RGBA(51, 65, 85, 1)
+                        FillPortions: =1
+                        FontWeight: =FontWeight.Semibold
+                        Height: =24
+                        LayoutMinWidth: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =13
+                        Text: =fxTranslate("RequestService", "Service anfordern")
+                        Wrap: =false
+            - src_body:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =16
+                  LayoutMinHeight: =0
+                  LayoutMinWidth: =0
+                  PaddingBottom: =20
+                  PaddingLeft: =28
+                  PaddingRight: =28
+                  PaddingTop: =20
+                  Width: =Parent.Width
+                Children:
+                  - src_catalog_panel:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.Semilight
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =10
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =280
+                        PaddingBottom: =14
+                        PaddingLeft: =14
+                        PaddingRight: =14
+                        PaddingTop: =14
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                        Width: =360
+                      Children:
+                        - src_catalog_title:
+                            Control: ModernText
+                            Properties:
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =26
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =16
+                              Text: =fxTranslate("ServiceCatalog", "Servicekatalog")
+                              Wrap: =false
+                        - src_search:
+                            Control: ModernTextInput
+                            Properties:
+                              AccessibleLabel: =fxTranslate("SearchServices", "Services durchsuchen")
+                              AlignInContainer: =AlignInContainer.Stretch
+                              Appearance: =Appearance.Outline
+                              Default: =varServiceCatalogSearch
+                              Height: =38
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnChange: =Set(varServiceCatalogSearch, Self.Text)
+                              Placeholder: =fxTranslate("SearchServicePlaceholder", "Service suchen...")
+                              TriggerOutput: =TriggerOutput.Delayed
+                              Type: =TextInputType.Search
+                              Width: =Parent.Width
+                        - src_service_gallery:
+                            Control: Gallery
+                            Variant: Vertical
+                            Properties:
+                              AccessibleLabel: =fxTranslate("AvailableServices", "Verfügbare Services")
+                              Items: |-
+                                =SortByColumns(
+                                    Filter(
+                                        ev_sp_list_service_catalog,
+                                        Active && (
+                                            IsBlank(Trim(src_search.Text)) ||
+                                            StartsWith(Title, Trim(src_search.Text)) ||
+                                            StartsWith(CategoryCode, Trim(src_search.Text))
+                                        )
+                                    ),
+                                    "ID",
+                                    SortOrder.Ascending
+                                )
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnSelect: |-
+                                =Set(varSelectedCatalogService, ThisItem);
+                                Clear(colServiceDraftAnswers)
+                              TemplatePadding: =4
+                              TemplateSize: =96
+                              Width: =Parent.Width
+                            Children:
+                              - src_service_card:
+                                  Control: GroupContainer
+                                  Variant: AutoLayout
+                                  Properties:
+                                    BorderColor: =If(ThisItem.ServiceCode = varSelectedCatalogService.ServiceCode, RGBA(129, 76, 169, 1), RGBA(226, 232, 240, 1))
+                                    BorderThickness: =1
+                                    DropShadow: =DropShadow.None
+                                    Fill: =If(ThisItem.ServiceCode = varSelectedCatalogService.ServiceCode, RGBA(246, 240, 252, 1), RGBA(255, 255, 255, 1))
+                                    Height: =Parent.TemplateHeight - 8
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =3
+                                    PaddingBottom: =10
+                                    PaddingLeft: =12
+                                    PaddingRight: =12
+                                    PaddingTop: =10
+                                    RadiusBottomLeft: =8
+                                    RadiusBottomRight: =8
+                                    RadiusTopLeft: =8
+                                    RadiusTopRight: =8
+                                    Width: =Parent.TemplateWidth - 8
+                                  Children:
+                                    - src_service_card_title:
+                                        Control: ModernText
+                                        Properties:
+                                          Color: =RGBA(17, 24, 39, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          Height: =22
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =13
+                                          Text: =ThisItem.Title
+                                          Wrap: =false
+                                    - src_service_card_category:
+                                        Control: ModernText
+                                        Properties:
+                                          Color: =RGBA(87, 35, 129, 1)
+                                          Height: =18
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =11
+                                          Text: =Coalesce(ThisItem.CategoryCode, fxTranslate("NoCategory", "Ohne Kategorie")) & "  |  " & Coalesce(ThisItem.FullfillmentQueueCode, fxTranslate("NoQueue", "Keine Queue"))
+                                          Wrap: =false
+                                    - src_service_card_sla:
+                                        Control: ModernText
+                                        Properties:
+                                          Color: =RGBA(82, 94, 115, 1)
+                                          Height: =18
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =11
+                                          Text: |-
+                                            ="Vorlage: " & Coalesce(ThisItem.FormTemplate, "Generic") & "  |  Priorität: " & Coalesce(ThisItem.DefaultPriority, "Standard")
+                                          Wrap: =false
+                              - src_service_card_select:
+                                  Control: Button
+                                  Properties:
+                                    AccessibleLabel: =Substitute(fxTranslate("SelectServiceTemplate", "{0} auswählen"), "{0}", ThisItem.Title)
+                                    Appearance: ='ButtonCanvas.Appearance'.Transparent
+                                    BorderThickness: =0
+                                    Height: =Parent.TemplateHeight - 8
+                                    OnSelect: |-
+                                      =Set(varSelectedCatalogService, ThisItem);
+                                      Clear(colServiceDraftAnswers)
+                                    Text: =""
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =4
+                  - src_request_panel:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DropShadow: =DropShadow.Semilight
+                        Fill: =RGBA(255, 255, 255, 1)
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =12
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =420
+                        PaddingBottom: =18
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =18
+                        RadiusBottomLeft: =12
+                        RadiusBottomRight: =12
+                        RadiusTopLeft: =12
+                        RadiusTopRight: =12
+                      Children:
+                        - src_selected_title:
+                            Control: ModernText
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Stretch
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =30
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =20
+                              Text: =Coalesce(varSelectedCatalogService.Title, fxTranslate("SelectService", "Service auswählen"))
+                              Wrap: =false
+                        - src_fields_intro:
+                            Control: ModernText
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Stretch
+                              Color: =RGBA(51, 65, 85, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =24
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =14
+                              Text: =fxTranslate("ServiceSpecificDetails", "Servicespezifische Angaben")
+                              Wrap: =false
+                        - src_field_gallery:
+                            Control: Gallery
+                            Variant: Vertical
+                            Properties:
+                              AccessibleLabel: =fxTranslate("DynamicServiceQuestions", "Dynamische Servicefragen")
+                              Items: =SortByColumns(Filter(ev_sp_list_servicefield_definitions, ServiceCode = varSelectedCatalogService.ServiceCode), "ID", SortOrder.Ascending)
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              TemplatePadding: =4
+                              TemplateSize: =120
+                              Visible: =!IsEmpty(Filter(ev_sp_list_servicefield_definitions, ServiceCode = varSelectedCatalogService.ServiceCode))
+                              Width: =Parent.Width
+                            Children:
+                              - src_field_label:
+                                  Control: ModernText
+                                  Properties:
+                                    Color: =RGBA(17, 24, 39, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =22
+                                    PaddingBottom: =0
+                                    PaddingLeft: =4
+                                    PaddingRight: =4
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =ThisItem.Title
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =4
+                              - src_field_help:
+                                  Control: ModernText
+                                  Properties:
+                                    Color: =RGBA(100, 116, 139, 1)
+                                    Height: =20
+                                    PaddingBottom: =0
+                                    PaddingLeft: =4
+                                    PaddingRight: =4
+                                    PaddingTop: =0
+                                    Size: =11
+                                    Text: =Switch(ThisItem.FieldType, "Text", fxTranslate("EnterShortDetail", "Kurze Angabe eingeben."), "Choice", fxTranslate("SelectOption", "Option auswählen."), "Person", fxTranslate("SearchAndSelectPerson", "Person suchen und auswählen."), "LongText", fxTranslate("EnterDetailedDescription", "Ausführliche Beschreibung eingeben."), "")
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =27
+                              - src_field_text:
+                                  Control: ModernTextInput
+                                  Properties:
+                                    AccessibleLabel: =ThisItem.Title
+                                    Default: =Coalesce(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey).Value, "")
+                                    Height: =38
+                                    OnChange: |-
+                                      =If(
+                                          IsBlank(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey)),
+                                          Collect(colServiceDraftAnswers, {FieldKey: ThisItem.FieldKey, Value: Self.Text}),
+                                          Patch(colServiceDraftAnswers, LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey), {Value: Self.Text})
+                                      )
+                                    Placeholder: =fxTranslate("EnterShortAnswer", "Kurze Antwort eingeben...")
+                                    Visible: =ThisItem.FieldType = "Text"
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =56
+                              - src_field_longtext:
+                                  Control: ModernTextInput
+                                  Properties:
+                                    AccessibleLabel: =ThisItem.Title
+                                    Default: =Coalesce(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey).Value, "")
+                                    Height: =72
+                                    OnChange: |-
+                                      =If(
+                                          IsBlank(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey)),
+                                          Collect(colServiceDraftAnswers, {FieldKey: ThisItem.FieldKey, Value: Self.Text}),
+                                          Patch(colServiceDraftAnswers, LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey), {Value: Self.Text})
+                                      )
+                                    Placeholder: =fxTranslate("EnterDetailedDescriptionPlaceholder", "Ausführliche Beschreibung eingeben...")
+                                    Type: =TextInputType.Multiline
+                                    Visible: =ThisItem.FieldType = "LongText"
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =56
+                              - src_field_person:
+                                  Control: ModernCombobox
+                                  Properties:
+                                    AccessibleLabel: =ThisItem.Title
+                                    Appearance: =Appearance.Outline
+                                    DefaultSelectedItems: |-
+                                      =If(
+                                          IsBlank(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey).Value),
+                                          [],
+                                          [
+                                              With(
+                                                  {profile: 'Office365-Benutzer'.UserProfile(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey).Value)},
+                                                  {
+                                                      Claims: "i:0#.f|membership|" & Lower(Coalesce(profile.Mail, profile.UserPrincipalName)),
+                                                      DisplayName: profile.DisplayName,
+                                                      Email: Coalesce(profile.Mail, profile.UserPrincipalName),
+                                                      Department: profile.Department,
+                                                      JobTitle: profile.JobTitle,
+                                                      Picture: Blank()
+                                                  }
+                                              )
+                                          ]
+                                      )
+                                    Height: =38
+                                    InputTextPlaceholder: =fxTranslate("SearchPersonPlaceholder", "Person suchen...")
+                                    ItemDisplayText: =ThisItem.DisplayName
+                                    Items: |-
+                                      =SortByColumns(
+                                          ForAll(
+                                              Filter(
+                                                  'Office365-Benutzer'.SearchUser({searchTerm: Trim(Self.SearchText)}),
+                                                  AccountEnabled = true &&
+                                                  !IsBlank(DisplayName) &&
+                                                  !IsBlank(Coalesce(Mail, UserPrincipalName)) &&
+                                                  (EndsWith(Lower(Mail), "@kessel.de") Or EndsWith(Lower(UserPrincipalName), "@kessel.de")) &&
+                                                  !StartsWith(Lower(DisplayName), "aaa") &&
+                                                  !StartsWith(Lower(UserPrincipalName), "aaa") &&
+                                                  !StartsWith(Lower(MailNickname), "aaa")
+                                              ),
+                                              {
+                                                  Claims: "i:0#.f|membership|" & Lower(Coalesce(Mail, UserPrincipalName)),
+                                                  DisplayName: DisplayName,
+                                                  Email: Coalesce(Mail, UserPrincipalName),
+                                                  Department: Department,
+                                                  JobTitle: JobTitle,
+                                                  Picture: Blank()
+                                              }
+                                          ),
+                                          "DisplayName",
+                                          SortOrder.Ascending
+                                      )
+                                    OnChange: |-
+                                      =If(
+                                          IsBlank(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey)),
+                                          Collect(colServiceDraftAnswers, {FieldKey: ThisItem.FieldKey, Value: Self.Selected.Email}),
+                                          Patch(colServiceDraftAnswers, LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey), {Value: Self.Selected.Email})
+                                      )
+                                    SelectMultiple: =false
+                                    Visible: =ThisItem.FieldType = "Person"
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =56
+                              - src_field_choice:
+                                  Control: ModernDropdown
+                                  Properties:
+                                    AccessibleLabel: =ThisItem.Title
+                                    Height: =38
+                                    ItemDisplayText: =ThisItem.DisplayValue
+                                    Items: =AddColumns(SortByColumns(Filter(ev_sp_list_servicefield_options, ServiceCode = varSelectedCatalogService.ServiceCode && FieldKey = ThisItem.FieldKey && Active), "ID", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value))
+                                    OnChange: |-
+                                      =If(
+                                          IsBlank(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey)),
+                                          Collect(colServiceDraftAnswers, {FieldKey: ThisItem.FieldKey, Value: Self.Selected.Value}),
+                                          Patch(colServiceDraftAnswers, LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey), {Value: Self.Selected.Value})
+                                      )
+                                    Visible: =ThisItem.FieldType = "Choice"
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =56
+                        - src_fields_empty:
+                            Control: ModernText
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(100, 116, 139, 1)
+                              Fill: =RGBA(248, 250, 252, 1)
+                              FillPortions: =1
+                              Height: =80
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =16
+                              PaddingLeft: =16
+                              PaddingRight: =16
+                              PaddingTop: =16
+                              Size: =13
+                              Text: =fxTranslate("NoAdditionalServiceFields", "Für diesen Service sind noch keine zusätzlichen Felder konfiguriert.")
+                              Visible: =IsEmpty(Filter(ev_sp_list_servicefield_definitions, ServiceCode = varSelectedCatalogService.ServiceCode))
+                              Width: =Parent.Width
+                        - src_submit_mock:
+                            Control: ModernButton
+                            Properties:
+                              AccessibleLabel: =fxTranslate("ReviewServiceRequest", "Serviceanfrage prüfen")
+                              Align: =Align.Center
+                              BasePaletteColor: =RGBA(87, 35, 129, 1)
+                              DisplayMode: =If(varServiceSubmitting Or IsBlank(varSelectedCatalogService), DisplayMode.Disabled, DisplayMode.Edit)
+                              Height: =42
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnSelect: |-
+                                =Set(varServiceSubmitting, true);
+                                Set(varServiceSubmitError, Blank());
+                                Set(
+                                    varServiceDescriptionHtml,
+                                    "<p><strong>" & fxTranslate("Service", "Service") & ":</strong> " & Coalesce(varSelectedCatalogService.Title, "") & "</p>" &
+                                    "<p><strong>" & fxTranslate("Category", "Kategorie") & ":</strong> " & Coalesce(varSelectedCatalogService.CategoryCode, "") & "</p>" &
+                                    "<p><strong>" & fxTranslate("ServiceSpecificDetails", "Servicespezifische Angaben") & ":</strong></p><ul>" &
+                                    Concat(
+                                        colServiceDraftAnswers As answer,
+                                        "<li><strong>" & Coalesce(LookUp(ev_sp_list_servicefield_definitions, ServiceCode = varSelectedCatalogService.ServiceCode && FieldKey = answer.FieldKey).Title, answer.FieldKey) & ":</strong> " & Coalesce(answer.Value, "") & "</li>"
+                                    ) &
+                                    "</ul>"
+                                );
+                                 If(
+                                     IsBlank(Trim(User().Email)),
+                                     Set(varServiceSubmitError, fxTranslate("CurrentUserEmailMissing", "Ihre Benutzer-E-Mail-Adresse konnte nicht ermittelt werden.")),
+                                     IfError(
+                                         Set(
+                                             varCurrentTicket,
+                                             Patch(
+                                                 ev_sp_list_tickets,
+                                                 Defaults(ev_sp_list_tickets),
+                                                 {
+                                                     Titel: Coalesce(varSelectedCatalogService.Title, fxTranslate("ServiceRequest", "Serviceanfrage")),
+                                                     Description: varServiceDescriptionHtml,
+                                                     RequestedBy: {
+                                                         Claims: "i:0#.f|membership|" & Lower(Trim(User().Email)),
+                                                         DisplayName: User().FullName,
+                                                         Email: Trim(User().Email),
+                                                         Department: "",
+                                                         JobTitle: "",
+                                                         Picture: Blank()
+                                                     },
+                                                     Priority: {Value: Coalesce(varSelectedCatalogService.DefaultPriority, "Mittel")},
+                                                     TicketType: {Value: "Service Request"},
+                                                     Status: {Value: "Offen"},
+                                                     Reason: Coalesce(varSelectedCatalogService.ServiceCode, "Service Request")
+                                                 }
+                                             )
+                                         ),
+                                         Set(varServiceSubmitError, Coalesce(FirstError.Message, fxTranslate("UnknownError", "Unbekannter Fehler.")))
+                                     )
+                                 );
+                                 If(
+                                     !IsBlank(varServiceSubmitError),
+                                     Notify(Substitute(fxTranslate("ServiceTicketCreateFailed", "Die Serviceanfrage konnte nicht erstellt werden: {0}"), "{0}", varServiceSubmitError), NotificationType.Error, 7000),
+                                     Set(varTicketDetailId, varCurrentTicket.ID);
+                                      Set(varTicketRefreshError, Blank());
+                                      IfError(
+                                          Refresh(ev_sp_list_tickets);
+                                          With(
+                                              {refreshedTicket: LookUp(ev_sp_list_tickets, ID = varTicketDetailId)},
+                                              If(
+                                                  IsBlank(refreshedTicket),
+                                                  Set(varTicketRefreshError, fxTranslate("TicketDetailsRefreshFailed", "Die Serviceanfrage wurde erstellt, aber die Ticketdetails konnten noch nicht geladen werden.")),
+                                                  Set(varCurrentTicket, refreshedTicket)
+                                              )
+                                          ),
+                                          Set(varTicketRefreshError, Coalesce(FirstError.Message, fxTranslate("TicketDetailsRefreshFailed", "Die Serviceanfrage wurde erstellt, aber die Ticketdetails konnten noch nicht geladen werden.")))
+                                      );
+                                      If(
+                                          !IsBlank(varTicketRefreshError),
+                                          Notify(varTicketRefreshError, NotificationType.Error, 7000),
+                                          Clear(colServiceDraftAnswers);
+                                          Notify(fxTranslate("ServiceTicketCreated", "Serviceanfrage wurde erstellt."), NotificationType.Success, 4000);
+                                          Navigate(ticket_details_screen, ScreenTransition.Fade)
+                                      )
+                                 );
+                                 Set(varServiceSubmitting, false)
+                              Text: =If(varServiceSubmitting, fxTranslate("ServiceRequestBeingCreated", "Serviceanfrage wird erstellt..."), fxTranslate("SubmitServiceRequest", "Serviceanfrage stellen"))
+                              Width: =230
