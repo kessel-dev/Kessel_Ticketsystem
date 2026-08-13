@@ -1,3 +1,11 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
 Screens:
   incident_screen:
     Properties:
@@ -11,7 +19,7 @@ Screens:
         Set(varIncidentSubmitting, false)
     Children:
       - inc_root:
-          Control: GroupContainer
+          Control: GroupContainer@1.5.0
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -21,7 +29,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - dbd_topbar_2:
-                Control: GroupContainer
+                Control: GroupContainer@1.5.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -37,7 +45,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - dbd_brand_container_2:
-                      Control: GroupContainer
+                      Control: GroupContainer@1.5.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -53,7 +61,7 @@ Screens:
                         Width: =fxDbdSidebarWidth + (fxDbdPagePadding * 2)
                       Children:
                         - dbd_logo_2:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(255, 255, 255, 1)
@@ -73,7 +81,7 @@ Screens:
                               Text: ="KESSEL"
                               Width: =32
                         - dbd_topbar_title_2:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =RGBA(18, 31, 52, 1)
                               FillPortions: =1
@@ -88,7 +96,7 @@ Screens:
                               Text: =fxTranslate("ItServicePortal", "IT Service Portal")
                               Wrap: =false
                   - dbd_header_spacer_2:
-                      Control: GroupContainer
+                      Control: GroupContainer@1.5.0
                       Variant: ManualLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -96,7 +104,7 @@ Screens:
                         LayoutMinHeight: =0
                         LayoutMinWidth: =0
                   - inc_language_selector:
-                      Control: ModernDropdown
+                      Control: ModernDropdown@1.0.2
                       Properties:
                         AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
                         Default: |-
@@ -110,7 +118,7 @@ Screens:
                         OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
                         Width: =72
                   - dbd_user_menu_2:
-                      Control: GroupContainer
+                      Control: GroupContainer@1.5.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -130,7 +138,7 @@ Screens:
                         Width: =132
                       Children:
                         - dbd_avatar_2:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(87, 35, 129, 1)
@@ -150,7 +158,7 @@ Screens:
                               Text: =Upper(Left(fxCurrentUser.FullName, 2))
                               Width: =32
                         - dbd_user_name_2:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =RGBA(35, 39, 47, 1)
                               FillPortions: =1
@@ -166,115 +174,8 @@ Screens:
                               Text: =Left(fxCurrentUser.FullName, Find(" ", fxCurrentUser.FullName & " ") - 1)
                               Width: =58
                               Wrap: =false
-            - inc_navigation:
-                Control: GroupContainer
-                Variant: AutoLayout
-                Properties:
-                  BorderColor: =RGBA(226, 232, 240, 1)
-                  BorderThickness: =1
-                  DropShadow: =DropShadow.None
-                  Fill: =RGBA(248, 250, 252, 1)
-                  FillPortions: =0
-                  Height: =42
-                  LayoutAlignItems: =LayoutAlignItems.Center
-                  LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutGap: =8
-                  LayoutMinHeight: =42
-                  LayoutMinWidth: =0
-                  PaddingLeft: =If(App.Width < 600, 12, 28)
-                  PaddingRight: =If(App.Width < 600, 12, 28)
-                  Width: =Parent.Width
-                Children:
-                  - inc_home:
-                      Control: ModernButton
-                      Properties:
-                        AccessibleLabel: =fxTranslate("Home", "Zur Startseite")
-                        Appearance: =ButtonAppearance.Subtle
-                        DisplayMode: =If(varIncidentSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
-                        Height: =32
-                        Icon: ="Home"
-                        OnSelect: |-
-                          =If(
-                              !frm_incident.Unsaved || Confirm(
-                                  fxTranslate("DiscardUnsavedAndGoHome", "Ungespeicherte Änderungen verwerfen und zur Startseite wechseln?"),
-                                  {
-                                      Title: fxTranslate("GoToHome", "Zur Startseite"),
-                                      ConfirmButton: fxTranslate("Discard", "Verwerfen"),
-                                      CancelButton: fxTranslate("Cancel", "Abbrechen")
-                                  }
-                              ),
-                              ResetForm(frm_incident);
-                              Navigate(dashboard_screen, ScreenTransition.CoverRight)
-                          )
-                        Text: =If(App.Width < 600, fxTranslate("HomeShort", "Start"), fxTranslate("Home", "Startseite"))
-                        Width: =If(App.Width < 600, 80, 120)
-                  - inc_nav_separator_1:
-                      Control: ModernText
-                      Properties:
-                        Align: =Align.Center
-                        Color: =RGBA(148, 163, 184, 1)
-                        Height: =24
-                        PaddingBottom: =0
-                        PaddingLeft: =0
-                        PaddingRight: =0
-                        PaddingTop: =0
-                        Size: =13
-                        Text: =">"
-                        Width: =12
-                  - inc_nav_parent:
-                      Control: ModernButton
-                      Properties:
-                        AccessibleLabel: =fxTranslate("CreateTicket", "Ticket erstellen")
-                        Appearance: =ButtonAppearance.Subtle
-                        DisplayMode: =If(varIncidentSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
-                        Height: =32
-                        OnSelect: |-
-                          =If(
-                              !frm_incident.Unsaved || Confirm(
-                                  fxTranslate("DiscardUnsavedAndGoBack", "Ungespeicherte Änderungen verwerfen und zur Ticketauswahl zurückkehren?"),
-                                  {
-                                      Title: fxTranslate("BackToTicketSelection", "Zur Ticketauswahl"),
-                                      ConfirmButton: fxTranslate("Discard", "Verwerfen"),
-                                      CancelButton: fxTranslate("Cancel", "Abbrechen")
-                                  }
-                              ),
-                              ResetForm(frm_incident);
-                              Navigate(request_type_screen, ScreenTransition.CoverRight)
-                          )
-                        Text: =fxTranslate("CreateTicket", "Ticket erstellen")
-                        Visible: =App.Width >= 600
-                        Width: =130
-                  - inc_nav_separator_2:
-                      Control: ModernText
-                      Properties:
-                        Align: =Align.Center
-                        Color: =RGBA(148, 163, 184, 1)
-                        Height: =24
-                        PaddingBottom: =0
-                        PaddingLeft: =0
-                        PaddingRight: =0
-                        PaddingTop: =0
-                        Size: =13
-                        Text: =">"
-                        Visible: =App.Width >= 600
-                        Width: =12
-                  - inc_nav_current:
-                      Control: ModernText
-                      Properties:
-                        Color: =RGBA(51, 65, 85, 1)
-                        FillPortions: =1
-                        FontWeight: =FontWeight.Semibold
-                        Height: =24
-                        LayoutMinWidth: =0
-                        PaddingBottom: =0
-                        PaddingLeft: =0
-                        PaddingRight: =0
-                        PaddingTop: =0
-                        Size: =13
-                        Text: =fxTranslate("ReportIncident", "Störung melden")
-                        Wrap: =false
             - inc_body:
-                Control: GroupContainer
+                Control: GroupContainer@1.5.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -288,7 +189,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - inc_title_block:
-                      Control: GroupContainer
+                      Control: GroupContainer@1.5.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -299,7 +200,7 @@ Screens:
                         Width: =Min(Parent.Width - 72, 1120)
                       Children:
                         - inc_title:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               AutoHeight: =true
                               Color: =RGBA(17, 24, 39, 1)
@@ -309,7 +210,7 @@ Screens:
                               Text: =fxTranslate("ReportIncident", "Störung melden")
                               Width: =Parent.Width
                         - inc_subtitle:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =RGBA(82, 94, 115, 1)
                               Height: =34
@@ -317,7 +218,7 @@ Screens:
                               Text: =fxTranslate("ReportIncidentIntro", "Beschreiben Sie das Problem so konkret wie möglich. Pflichtfelder sind markiert; Hinweise helfen beim Ausfüllen.")
                               Width: =Parent.Width
                   - inc_help_panel:
-                      Control: GroupContainer
+                      Control: GroupContainer@1.5.0
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(200, 179, 221, 1)
@@ -340,7 +241,7 @@ Screens:
                         Width: =Min(Parent.Width - 72, 1120)
                       Children:
                         - inc_help_title:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =RGBA(87, 35, 129, 1)
                               FontWeight: =FontWeight.Semibold
@@ -349,7 +250,7 @@ Screens:
                               Text: =varIncidentHelpTitle
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                         - inc_help_text:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =RGBA(49, 65, 88, 1)
                               Height: =34
@@ -357,7 +258,7 @@ Screens:
                               Text: =varIncidentHelpText
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                   - inc_content:
-                      Control: GroupContainer
+                      Control: GroupContainer@1.5.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -368,7 +269,7 @@ Screens:
                         Width: =Min(Parent.Width - 72, 1120)
                       Children:
                         - inc_form_card:
-                            Control: GroupContainer
+                            Control: GroupContainer@1.5.0
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(226, 232, 240, 1)
@@ -386,7 +287,7 @@ Screens:
                               RadiusTopRight: =14
                             Children:
                               - frm_incident:
-                                  Control: Form
+                                  Control: Form@2.4.4
                                   Layout: Vertical
                                   Properties:
                                     DataSource: =ev_sp_list_tickets
@@ -429,7 +330,7 @@ Screens:
                                     Width: =Parent.Width - 40
                                   Children:
                                     - inc_requestedby_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: ComboBoxEdit
                                         Properties:
                                           DataField: ="RequestedBy"
@@ -443,7 +344,7 @@ Screens:
                                           Y: =0
                                         Children:
                                           - inc_requestedby_label:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(17, 24, 39, 1)
                                                 FontWeight: =FontWeight.Semibold
@@ -453,7 +354,7 @@ Screens:
                                                 X: =60
                                                 Y: =6
                                           - inc_requestedby_info:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(87, 35, 129, 1)
@@ -473,7 +374,7 @@ Screens:
                                                 X: =4
                                                 Y: =6
                                           - inc_requestedby_hint:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =44
@@ -483,7 +384,7 @@ Screens:
                                                 X: =4
                                                 Y: =42
                                           - inc_requestedby:
-                                              Control: ModernCombobox
+                                              Control: ModernCombobox@1.1.1
                                               Properties:
                                                 DefaultSelectedItems: |-
                                                   =With(
@@ -546,7 +447,7 @@ Screens:
                                                 X: =4
                                                 Y: =92
                                     - inc_watchers_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: ComboBoxEdit
                                         Properties:
                                           DataField: ="Beobachter"
@@ -554,13 +455,13 @@ Screens:
                                           DisplayName: =fxTranslate("WatchList", "Beobachtungsliste")
                                           Height: =150
                                           Required: =false
-                                          Update: =inc_watchers.Selected
+                                          Update: =First(varIncidentWatcherSelection)
                                           Width: =Parent.Width
                                           X: =0
                                           Y: =1
                                         Children:
                                           - inc_watchers_label:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 FontWeight: =FontWeight.Semibold
                                                 Height: =34
@@ -569,7 +470,7 @@ Screens:
                                                 X: =60
                                                 Y: =6
                                           - inc_watchers_info:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(87, 35, 129, 1)
@@ -589,7 +490,7 @@ Screens:
                                                 X: =4
                                                 Y: =6
                                           - inc_watchers_hint:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =44
@@ -600,7 +501,7 @@ Screens:
                                                 X: =4
                                                 Y: =42
                                           - inc_watchers:
-                                              Control: ModernCombobox
+                                              Control: ModernCombobox@1.1.1
                                               Properties:
                                                 DefaultSelectedItems: =[Parent.Default]
                                                 DisplayMode: =Parent.DisplayMode
@@ -646,7 +547,7 @@ Screens:
                                                 X: =4
                                                 Y: =92
                                     - inc_category_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: ComboBoxEdit
                                         Properties:
                                           DataField: ="CategoryINC"
@@ -660,7 +561,7 @@ Screens:
                                           Y: =2
                                         Children:
                                           - inc_category_label:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 FontWeight: =FontWeight.Semibold
                                                 Height: =34
@@ -669,7 +570,7 @@ Screens:
                                                 X: =60
                                                 Y: =6
                                           - inc_category_info:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(87, 35, 129, 1)
@@ -689,7 +590,7 @@ Screens:
                                                 X: =4
                                                 Y: =6
                                           - inc_category_hint:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =44
@@ -699,7 +600,7 @@ Screens:
                                                 X: =4
                                                 Y: =42
                                           - inc_category:
-                                              Control: ModernCombobox
+                                              Control: ModernCombobox@1.1.1
                                               Properties:
                                                 AllowExternalSelectedItems: =false
                                                 DefaultSelectedItems: =[Parent.Default]
@@ -715,7 +616,7 @@ Screens:
                                                 X: =4
                                                 Y: =92
                                     - inc_subcategory_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: ComboBoxEdit
                                         Properties:
                                           DataField: ="SubcategoryINC"
@@ -729,7 +630,7 @@ Screens:
                                           Y: =3
                                         Children:
                                           - inc_subcategory_label:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 FontWeight: =FontWeight.Semibold
                                                 Height: =34
@@ -738,7 +639,7 @@ Screens:
                                                 X: =60
                                                 Y: =6
                                           - inc_subcategory_info:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(87, 35, 129, 1)
@@ -758,7 +659,7 @@ Screens:
                                                 X: =4
                                                 Y: =6
                                           - inc_subcategory_hint:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =44
@@ -768,7 +669,7 @@ Screens:
                                                 X: =4
                                                 Y: =42
                                           - inc_subcategory:
-                                              Control: ModernCombobox
+                                              Control: ModernCombobox@1.1.1
                                               Properties:
                                                 AllowExternalSelectedItems: =false
                                                 DefaultSelectedItems: =[Parent.Default]
@@ -784,7 +685,7 @@ Screens:
                                                 X: =4
                                                 Y: =92
                                     - inc_priority_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: ComboBoxEdit
                                         Properties:
                                           DataField: ="Priority"
@@ -798,7 +699,7 @@ Screens:
                                           Y: =4
                                         Children:
                                           - inc_priority_label:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 FontWeight: =FontWeight.Semibold
                                                 Height: =34
@@ -807,7 +708,7 @@ Screens:
                                                 X: =60
                                                 Y: =6
                                           - inc_priority_info:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(87, 35, 129, 1)
@@ -827,7 +728,7 @@ Screens:
                                                 X: =4
                                                 Y: =6
                                           - inc_priority_hint:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =44
@@ -837,7 +738,7 @@ Screens:
                                                 X: =4
                                                 Y: =42
                                           - inc_priority:
-                                              Control: ModernCombobox
+                                              Control: ModernCombobox@1.1.1
                                               Properties:
                                                 AllowExternalSelectedItems: =false
                                                 DefaultSelectedItems: =[Parent.Default]
@@ -853,11 +754,11 @@ Screens:
                                                 X: =4
                                                 Y: =92
                                     - inc_name_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: TextualEdit
                                         Properties:
-                                          DataField: ="Name"
-                                          Default: =ThisItem.Name
+                                          DataField: ="TicketTitel"
+                                          Default: =ThisItem.TicketTitel
                                           DisplayName: =fxTranslate("ShortDescription", "Kurzbeschreibung")
                                           Height: =150
                                           MaxLength: =DataSourceInfo([@ev_sp_list_tickets], DataSourceInfo.MaxLength, Name)
@@ -868,7 +769,7 @@ Screens:
                                           Y: =5
                                         Children:
                                           - inc_name_label:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 FontWeight: =FontWeight.Semibold
                                                 Height: =34
@@ -877,7 +778,7 @@ Screens:
                                                 X: =60
                                                 Y: =6
                                           - inc_name_info:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(87, 35, 129, 1)
@@ -897,7 +798,7 @@ Screens:
                                                 X: =4
                                                 Y: =6
                                           - inc_name_hint:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =44
@@ -908,7 +809,7 @@ Screens:
                                                 X: =4
                                                 Y: =42
                                           - inc_name:
-                                              Control: ModernTextInput
+                                              Control: ModernTextInput@1.1.1
                                               Properties:
                                                 Default: =Parent.Default
                                                 DisplayMode: =Parent.DisplayMode
@@ -922,7 +823,7 @@ Screens:
                                                 X: =4
                                                 Y: =92
                                     - inc_description_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: TextualEdit
                                         Properties:
                                           BorderColor: =fxPrimaryColor
@@ -938,7 +839,7 @@ Screens:
                                           Y: =6
                                         Children:
                                           - inc_description_label:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(87, 35, 129, 1)
                                                 FontWeight: =FontWeight.Semibold
@@ -948,7 +849,7 @@ Screens:
                                                 X: =60
                                                 Y: =6
                                           - inc_description_info:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(87, 35, 129, 1)
@@ -968,7 +869,7 @@ Screens:
                                                 X: =4
                                                 Y: =6
                                           - inc_description_hint:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =72
@@ -978,7 +879,7 @@ Screens:
                                                 X: =4
                                                 Y: =42
                                           - inc_description:
-                                              Control: RichTextEditor
+                                              Control: RichTextEditor@2.7.0
                                               Properties:
                                                 AccessibleLabel: =Parent.DisplayName
                                                 BorderColor: =RGBA(129, 76, 169, 1)
@@ -989,7 +890,7 @@ Screens:
                                                 X: =4
                                                 Y: =118
                                           - inc_description_placeholder:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(17, 24, 39, 1)
                                                 Height: =170
@@ -1006,7 +907,7 @@ Screens:
                                                 X: =24
                                                 Y: =178
                                     - inc_affected_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: TextualEdit
                                         Properties:
                                           DataField: ="Reason"
@@ -1021,7 +922,7 @@ Screens:
                                           Y: =7
                                         Children:
                                           - inc_affected_label:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 FontWeight: =FontWeight.Semibold
                                                 Height: =34
@@ -1030,7 +931,7 @@ Screens:
                                                 X: =60
                                                 Y: =6
                                           - inc_affected_info:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(87, 35, 129, 1)
@@ -1050,7 +951,7 @@ Screens:
                                                 X: =4
                                                 Y: =6
                                           - inc_affected_hint:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =44
@@ -1060,7 +961,7 @@ Screens:
                                                 X: =4
                                                 Y: =42
                                           - inc_affected:
-                                              Control: ModernDropdown
+                                              Control: ModernDropdown@1.0.2
                                               Properties:
                                                 DisplayMode: =Parent.DisplayMode
                                                 Height: =46
@@ -1081,7 +982,7 @@ Screens:
                                                 X: =4
                                                 Y: =92
                                     - inc_attachments_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: ClassicAttachmentsEdit
                                         Properties:
                                           DataField: ="{Attachments}"
@@ -1095,7 +996,7 @@ Screens:
                                           Y: =8
                                         Children:
                                           - inc_attachments_label:
-                                              Control: Label
+                                              Control: Label@2.5.1
                                               Properties:
                                                 Color: =RGBA(17, 24, 39, 1)
                                                 FontWeight: =FontWeight.Semibold
@@ -1106,7 +1007,7 @@ Screens:
                                                 X: =60
                                                 Y: =6
                                           - inc_attachments_info:
-                                              Control: ModernText
+                                              Control: ModernText@1.0.0
                                               Properties:
                                                 Align: =Align.Center
                                                 Color: =RGBA(87, 35, 129, 1)
@@ -1126,7 +1027,7 @@ Screens:
                                                 X: =4
                                                 Y: =6
                                           - inc_attachments:
-                                              Control: Attachments
+                                              Control: Attachments@2.3.0
                                               Properties:
                                                 AddAttachmentText: =fxTranslate("ChooseFile", "Datei auswählen")
                                                 BorderColor: =RGBA(226, 232, 240, 1)
@@ -1138,7 +1039,7 @@ Screens:
                                                 X: =4
                                                 Y: =60
                                     - inc_tickettype_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: ComboBoxEdit
                                         Properties:
                                           DataField: ="TicketType"
@@ -1153,11 +1054,11 @@ Screens:
                                           X: =0
                                           Y: =9
                                     - inc_status_card:
-                                        Control: TypedDataCard
+                                        Control: TypedDataCard@1.0.7
                                         Variant: ComboBoxEdit
                                         Properties:
-                                          DataField: ="StatusINC"
-                                          Default: =ThisItem.StatusINC
+                                          DataField: ="Status"
+                                          Default: =ThisItem.Status
                                           DisplayName: =fxTranslate("Status", "Status")
                                           Height: =0
                                           Required: =false
@@ -1168,7 +1069,7 @@ Screens:
                                           X: =0
                                           Y: =10
                         - inc_sidebar:
-                            Control: GroupContainer
+                            Control: GroupContainer@1.5.0
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(226, 232, 240, 1)
@@ -1190,7 +1091,7 @@ Screens:
                               Width: =230
                             Children:
                               - inc_sidebar_title:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =RGBA(17, 24, 39, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -1199,7 +1100,7 @@ Screens:
                                     Text: =fxTranslate("RequiredInformation", "Erforderliche Informationen")
                                     Width: =Parent.Width - 32
                               - inc_req_person:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =If(IsBlank(inc_requestedby.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                                     Height: =40
@@ -1207,7 +1108,7 @@ Screens:
                                     Text: =If(IsBlank(inc_requestedby.Selected), fxTranslate("AffectedPerson", "Betroffene Person"), fxTranslate("AffectedPersonComplete", "Betroffene Person ✓"))
                                     Width: =Parent.Width - 32
                               - inc_req_category:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =If(IsBlank(inc_category.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                                     Height: =40
@@ -1215,7 +1116,7 @@ Screens:
                                     Text: =If(IsBlank(inc_category.Selected), fxTranslate("Kategorie", "Kategorie"), fxTranslate("CategoryComplete", "Kategorie ✓"))
                                     Width: =Parent.Width - 32
                               - inc_req_subcategory:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =If(IsBlank(inc_subcategory.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                                     Height: =40
@@ -1223,7 +1124,7 @@ Screens:
                                     Text: =If(IsBlank(inc_subcategory.Selected), fxTranslate("Subcategory", "Unterkategorie"), fxTranslate("SubcategoryComplete", "Unterkategorie ✓"))
                                     Width: =Parent.Width - 32
                               - inc_req_priority:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =If(IsBlank(inc_priority.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                                     Height: =40
@@ -1231,7 +1132,7 @@ Screens:
                                     Text: =If(IsBlank(inc_priority.Selected), fxTranslate("Urgency", "Dringlichkeit"), fxTranslate("UrgencyComplete", "Dringlichkeit ✓"))
                                     Width: =Parent.Width - 32
                               - inc_req_name:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =If(IsBlank(Trim(inc_name.Text)), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                                     Height: =40
@@ -1239,7 +1140,7 @@ Screens:
                                     Text: =If(IsBlank(Trim(inc_name.Text)), fxTranslate("ShortDescription", "Kurzbeschreibung"), fxTranslate("ShortDescriptionComplete", "Kurzbeschreibung ✓"))
                                     Width: =Parent.Width - 32
                               - inc_req_description:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =If(IsBlank(Trim(PlainText(inc_description.HtmlText))), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                                     Height: =40
@@ -1247,7 +1148,7 @@ Screens:
                                     Text: =If(IsBlank(Trim(PlainText(inc_description.HtmlText))), fxTranslate("RequestDescription", "Beschreibung der Angelegenheit"), fxTranslate("RequestDescriptionComplete", "Beschreibung der Angelegenheit ✓"))
                                     Width: =Parent.Width - 32
                               - inc_req_affected:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =If(IsBlank(inc_affected.Selected.Value), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                                     Height: =40
@@ -1255,7 +1156,7 @@ Screens:
                                     Text: =If(IsBlank(inc_affected.Selected.Value), fxTranslate("WhoIsAffected", "Wer ist betroffen?"), fxTranslate("WhoIsAffectedComplete", "Wer ist betroffen? ✓"))
                                     Width: =Parent.Width - 32
                               - inc_sidebar_tip:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =RGBA(82, 94, 115, 1)
                                     Height: =70
@@ -1264,7 +1165,7 @@ Screens:
                                       =fxTranslate("IncidentAttachmentTip", "Tipp: Screenshots oder Fehlermeldungen beschleunigen die Bearbeitung deutlich.")
                                     Width: =Parent.Width - 32
             - inc_footer:
-                Control: GroupContainer
+                Control: GroupContainer@1.5.0
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(229, 231, 235, 1)
@@ -1281,7 +1182,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - inc_cancel:
-                      Control: ModernButton
+                      Control: ModernButton@1.0.0
                       Properties:
                         Appearance: =ButtonAppearance.Secondary
                         DisplayMode: =If(varIncidentSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
@@ -1308,7 +1209,7 @@ Screens:
                         Text: =fxTranslate("Cancel", "Abbrechen")
                         Width: =130
                   - inc_submit:
-                      Control: ModernButton
+                      Control: ModernButton@1.0.0
                       Properties:
                         DisplayMode: =If(varIncidentSubmitting Or !frm_incident.Valid Or IsBlank(Trim(PlainText(inc_description.HtmlText))) Or CountRows(inc_requestedby.SelectedItems) = 0 Or IsBlank(inc_category.Selected) Or IsBlank(inc_subcategory.Selected) Or IsBlank(inc_priority.Selected) Or IsBlank(Trim(inc_name.Text)) Or IsBlank(inc_affected.Selected.Value), DisplayMode.Disabled, DisplayMode.Edit)
                         Height: =44
@@ -1375,88 +1276,22 @@ Screens:
                           Set(varIncidentSubmitError, Blank());
                            If(
                                IsBlank(Trim(Coalesce(inc_requestedby.Selected.UserPrincipalName, inc_requestedby.Selected.Email))),
-                               Set(varIncidentSubmitError, fxTranslate("RequesterEmailMissing", "Für die betroffene Person konnte keine Benutzer-E-Mail-Adresse ermittelt werden.")),
-                               IfError(
-                                   Set(
-                                       varCurrentTicket,
-                                       Patch(
-                                           ev_sp_list_tickets,
-                                           Defaults(ev_sp_list_tickets),
-                                           {
-                                               Titel: inc_name.Text,
-                                               Description: varIncidentDescriptionHtml,
-                                               RequestedBy: With(
-                                                   {requester: inc_requestedby.Selected},
-                                                   {
-                                                       Claims: "i:0#.f|membership|" & Lower(Trim(Coalesce(requester.UserPrincipalName, requester.Email))),
-                                                       DisplayName: requester.DisplayName,
-                                                        Email: Trim(Coalesce(requester.Email, requester.UserPrincipalName)),
-                                                       Department: requester.Department,
-                                                       JobTitle: requester.JobTitle,
-                                                       Picture: Blank()
-                                                   }
-                                               ),
-                                               Beobachter: varIncidentWatcherSelection,
-                                               CategoryINC: {Value: inc_category.Selected.Value},
-                                               SubcategoryINC: {Value: inc_subcategory.Selected.Value},
-                                               Priority: {Value: inc_priority.Selected.Value},
-                                               Reason: inc_affected.Selected.Value,
-                                               TicketType: {Value: "Incident"},
-                                               StatusINC: {Value: "Offen"}
-                                           }
-                                       )
-                                   ),
-                                   Set(varIncidentSubmitError, Coalesce(FirstError.Message, fxTranslate("UnknownError", "Unbekannter Fehler.")))
-                               )
+                               Set(varIncidentSubmitError, fxTranslate("RequesterEmailMissing", "Für die betroffene Person konnte keine Benutzer-E-Mail-Adresse ermittelt werden."))
                            );
-                          If(
-                              !IsBlank(varIncidentSubmitError),
-                              Set(varIncidentSubmitting, false);
-                              Notify(
-                                  Substitute(fxTranslate("IncidentTicketCreateFailed", "Das Incident-Ticket konnte nicht erstellt werden: {0}"), "{0}", varIncidentSubmitError),
-                                  NotificationType.Error,
-                                  7000
-                              ),
-                              Set(varTicketDetailId, varCurrentTicket.ID);
-                              IfError(
-                                  create_attach_description.Run({ticketId: Text(varTicketDetailId), html: varIncidentDescriptionPayload}),
-                                  Notify(fxTranslate("IncidentCreatedWithProcessingWarning", "Incident wurde erstellt, aber Beschreibung/Screenshots konnten nicht nachbearbeitet werden."), NotificationType.Warning, 5000),
-                                  Notify(
-                                      If(
-                                          varIncidentDescriptionHasInlineImages,
-                                          fxTranslate("IncidentCreatedImagesProcessing", "Incident wurde erstellt. Eingefügte Screenshots werden vorbereitet und erscheinen ggf. in Kürze."),
-                                          fxTranslate("IncidentCreated", "Incident wurde erstellt.")
-                                      ),
-                                      NotificationType.Success,
-                                      5000
-                                  )
-                              );
-                               Set(varTicketRefreshError, Blank());
-                               IfError(
-                                   Refresh(ev_sp_list_tickets);
-                                   With(
-                                       {refreshedTicket: LookUp(ev_sp_list_tickets, ID = varTicketDetailId)},
-                                       If(
-                                           IsBlank(refreshedTicket),
-                                           Set(varTicketRefreshError, fxTranslate("TicketDetailsRefreshFailed", "Das Incident wurde erstellt, aber die Ticketdetails konnten nicht geladen werden.")),
-                                           Set(varCurrentTicket, refreshedTicket)
-                                       )
-                                   ),
-                                   Set(varTicketRefreshError, Coalesce(FirstError.Message, fxTranslate("TicketDetailsRefreshFailed", "Das Incident wurde erstellt, aber die Ticketdetails konnten nicht geladen werden.")))
-                               );
-                               If(
-                                   !IsBlank(varTicketRefreshError),
-                                   Set(varIncidentSubmitting, false);
-                                   Notify(varTicketRefreshError, NotificationType.Error, 7000),
-                                   ResetForm(frm_incident);
-                                   Set(varIncidentSubmitting, false);
-                                   Navigate(ticket_details_screen, ScreenTransition.Fade)
-                               )
-                          )
+                           If(
+                               !IsBlank(varIncidentSubmitError),
+                               Set(varIncidentSubmitting, false);
+                               Notify(
+                                   Substitute(fxTranslate("IncidentTicketCreateFailed", "Das Incident-Ticket konnte nicht erstellt werden: {0}"), "{0}", varIncidentSubmitError),
+                                   NotificationType.Error,
+                                   7000
+                               ),
+                               SubmitForm(frm_incident)
+                           )
                         Text: =If(varIncidentSubmitting, fxTranslate("IncidentBeingCreated", "Incident wird erstellt..."), fxTranslate("CreateIncident", "Incident erstellen"))
                         Width: =170
       - inc_help_overlay:
-          Control: GroupContainer
+          Control: GroupContainer@1.5.0
           Variant: ManualLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -1466,7 +1301,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - inc_help_popup:
-                Control: GroupContainer
+                Control: GroupContainer@1.5.0
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(200, 179, 221, 1)
@@ -1489,7 +1324,7 @@ Screens:
                   Y: =Max(96, (Parent.Height - Self.Height) / 2)
                 Children:
                   - inc_help_popup_header:
-                      Control: GroupContainer
+                      Control: GroupContainer@1.5.0
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -1501,7 +1336,7 @@ Screens:
                         Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                       Children:
                         - inc_help_popup_icon:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(87, 35, 129, 1)
@@ -1516,7 +1351,7 @@ Screens:
                               Text: ="i"
                               Width: =40
                         - inc_help_popup_title:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =RGBA(17, 24, 39, 1)
                               FillPortions: =1
@@ -1525,7 +1360,7 @@ Screens:
                               Size: =20
                               Text: =varIncidentHelpTitle
                         - inc_help_popup_close:
-                            Control: ModernButton
+                            Control: ModernButton@1.0.0
                             Properties:
                               Appearance: =ButtonAppearance.Subtle
                               Height: =36
@@ -1536,7 +1371,7 @@ Screens:
                                 Set(varIncidentHelpText, Blank())
                               Width: =36
                   - inc_help_popup_text:
-                      Control: ModernText
+                      Control: ModernText@1.0.0
                       Properties:
                         Color: =RGBA(49, 65, 88, 1)
                         Height: =128
@@ -1544,7 +1379,7 @@ Screens:
                         Text: =varIncidentHelpText
                         Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                   - inc_help_popup_ok:
-                      Control: ModernButton
+                      Control: ModernButton@1.0.0
                       Properties:
                         AlignInContainer: =AlignInContainer.End
                         Appearance: =ButtonAppearance.Secondary

@@ -1,3 +1,11 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
 Screens:
   ticket_screen:
     Properties:
@@ -6,7 +14,7 @@ Screens:
         Set(varTicketSubmissionStatus, "")
     Children:
       - con_change_1:
-          Control: GroupContainer
+          Control: GroupContainer@1.5.0
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -17,7 +25,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - con_header_1:
-                Control: GroupContainer
+                Control: GroupContainer@1.5.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -36,7 +44,7 @@ Screens:
                   RadiusTopRight: =0
                 Children:
                   - header_1:
-                      Control: Header
+                      Control: Header@0.0.44
                       Properties:
                         AlignInContainer: =AlignInContainer.Stretch
                         BasePaletteColor: =fxPrimaryColor
@@ -50,7 +58,7 @@ Screens:
                         Title: =fxTranslate("CreateNewTicket", "Neues Ticket erstellen")
                         Width: =Parent.Width - tcs_language_selector.Width - Parent.PaddingLeft - Parent.PaddingRight
                   - tcs_language_selector:
-                      Control: ModernDropdown
+                      Control: ModernDropdown@1.0.2
                       Properties:
                         AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
                         Default: |-
@@ -63,116 +71,8 @@ Screens:
                         LayoutMinWidth: =0
                         OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
                         Width: =72
-            - tcs_navigation:
-                Control: GroupContainer
-                Variant: AutoLayout
-                Properties:
-                  BorderColor: =RGBA(226, 232, 240, 1)
-                  BorderThickness: =1
-                  DropShadow: =DropShadow.None
-                  Fill: =RGBA(248, 250, 252, 1)
-                  FillPortions: =0
-                  Height: =42
-                  LayoutAlignItems: =LayoutAlignItems.Center
-                  LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutGap: =8
-                  LayoutMinHeight: =42
-                  LayoutMinWidth: =0
-                  PaddingLeft: =If(App.Width < 600, 12, 28)
-                  PaddingRight: =If(App.Width < 600, 12, 28)
-                  Visible: =!varEmbed
-                  Width: =Parent.Width
-                Children:
-                  - tcs_home:
-                      Control: ModernButton
-                      Properties:
-                        AccessibleLabel: =fxTranslate("Home", "Zur Startseite")
-                        Appearance: =ButtonAppearance.Subtle
-                        DisplayMode: =If(varTicketSubmissionInProgress, DisplayMode.Disabled, DisplayMode.Edit)
-                        Height: =32
-                        Icon: ="Home"
-                        OnSelect: |-
-                          =If(
-                              !frm_change_1.Unsaved || Confirm(
-                                  fxTranslate("DiscardUnsavedAndGoHome", "Ungespeicherte Änderungen verwerfen und zur Startseite wechseln?"),
-                                  {
-                                      Title: fxTranslate("GoToHome", "Zur Startseite"),
-                                      ConfirmButton: fxTranslate("Discard", "Verwerfen"),
-                                      CancelButton: fxTranslate("Cancel", "Abbrechen")
-                                  }
-                              ),
-                              ResetForm(frm_change_1);
-                              Navigate(dashboard_screen, ScreenTransition.CoverRight)
-                          )
-                        Text: =If(App.Width < 600, fxTranslate("HomeShort", "Start"), fxTranslate("Home", "Startseite"))
-                        Width: =If(App.Width < 600, 80, 120)
-                  - tcs_nav_separator_1:
-                      Control: ModernText
-                      Properties:
-                        Align: =Align.Center
-                        Color: =RGBA(148, 163, 184, 1)
-                        Height: =24
-                        PaddingBottom: =0
-                        PaddingLeft: =0
-                        PaddingRight: =0
-                        PaddingTop: =0
-                        Size: =13
-                        Text: =">"
-                        Width: =12
-                  - tcs_nav_parent:
-                      Control: ModernButton
-                      Properties:
-                        AccessibleLabel: =fxTranslate("CreateTicket", "Ticket erstellen")
-                        Appearance: =ButtonAppearance.Subtle
-                        DisplayMode: =If(varTicketSubmissionInProgress, DisplayMode.Disabled, DisplayMode.Edit)
-                        Height: =32
-                        OnSelect: |-
-                          =If(
-                              !frm_change_1.Unsaved || Confirm(
-                                  fxTranslate("DiscardUnsavedAndGoBack", "Ungespeicherte Änderungen verwerfen und zur Ticketauswahl zurückkehren?"),
-                                  {
-                                      Title: fxTranslate("BackToTicketSelection", "Zur Ticketauswahl"),
-                                      ConfirmButton: fxTranslate("Discard", "Verwerfen"),
-                                      CancelButton: fxTranslate("Cancel", "Abbrechen")
-                                  }
-                              ),
-                              ResetForm(frm_change_1);
-                              Navigate(request_type_screen, ScreenTransition.CoverRight)
-                          )
-                        Text: =fxTranslate("CreateTicket", "Ticket erstellen")
-                        Visible: =App.Width >= 600
-                        Width: =130
-                  - tcs_nav_separator_2:
-                      Control: ModernText
-                      Properties:
-                        Align: =Align.Center
-                        Color: =RGBA(148, 163, 184, 1)
-                        Height: =24
-                        PaddingBottom: =0
-                        PaddingLeft: =0
-                        PaddingRight: =0
-                        PaddingTop: =0
-                        Size: =13
-                        Text: =">"
-                        Visible: =App.Width >= 600
-                        Width: =12
-                  - tcs_nav_current:
-                      Control: ModernText
-                      Properties:
-                        Color: =RGBA(51, 65, 85, 1)
-                        FillPortions: =1
-                        FontWeight: =FontWeight.Semibold
-                        Height: =24
-                        LayoutMinWidth: =0
-                        PaddingBottom: =0
-                        PaddingLeft: =0
-                        PaddingRight: =0
-                        PaddingTop: =0
-                        Size: =13
-                        Text: =fxTranslate("CreateChange", "Change erstellen")
-                        Wrap: =false
             - con_form_1:
-                Control: GroupContainer
+                Control: GroupContainer@1.5.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -190,7 +90,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - frm_change_1:
-                      Control: Form
+                      Control: Form@2.4.4
                       Layout: Vertical
                       Properties:
                         BorderColor: =RGBA(220, 224, 230, 1)
@@ -264,7 +164,7 @@ Screens:
                         Width: =If(!varEmbed And App.Width >= 1100, Max(320, Min(Parent.Width - 340, 920)), Max(320, Min(Parent.Width - If(varEmbed, 0, 8), 920)))
                       Children:
                         - Name_DataCard1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: TextualEdit
                             Properties:
                               DataField: ="TicketTitel"
@@ -278,7 +178,7 @@ Screens:
                               Y: =0
                             Children:
                               - DataCardKey3:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   MetadataKey: FieldName
                                   Properties:
                                     AccessibleLabel: =fxTranslate("NameFieldLabel", "Feldbezeichnung Name")
@@ -301,7 +201,7 @@ Screens:
                                     X: =24
                                     Y: =8
                               - DataCardValue3:
-                                  Control: ModernTextInput
+                                  Control: ModernTextInput@1.1.1
                                   MetadataKey: FieldValue
                                   Properties:
                                     AccessibleLabel: =fxTranslate("EnterTicketName", "Ticketname eingeben")
@@ -318,7 +218,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey3.Y + DataCardKey3.Height + 4
                               - ErrorMessage3:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     Height: =30
@@ -328,7 +228,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardValue3.Y + DataCardValue3.Height
                               - StarVisible3:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: FieldRequired
                                   Properties:
                                     Align: ='TextCanvas.Align'.Center
@@ -338,7 +238,7 @@ Screens:
                                     Width: =30
                                     Y: =DataCardKey3.Y
                         - Description_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: TextualEdit
                             Properties:
                               BorderColor: =fxPrimaryColor
@@ -354,7 +254,7 @@ Screens:
                               Y: =1
                             Children:
                               - ErrorMessage3_1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     Height: =30
@@ -364,7 +264,7 @@ Screens:
                                     X: =24
                                     Y: =lbl_rich_editor_1.Y + lbl_rich_editor_1.Height
                               - StarVisible3_1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: FieldRequired
                                   Properties:
                                     Align: ='TextCanvas.Align'.Center
@@ -374,7 +274,7 @@ Screens:
                                     Width: =30
                                     Y: =lbl_rich_editor_1.Y
                               - lbl_rich_editor_1:
-                                  Control: RichTextEditor
+                                  Control: RichTextEditor@2.7.0
                                   Properties:
                                     AccessibleLabel: =fxTranslate("DescriptionWithOptionalScreenshots", "Beschreibung mit optional eingefügten Screenshots")
                                     BorderColor: =RGBA(87, 35, 129, 1)
@@ -384,7 +284,7 @@ Screens:
                                     X: =24
                                     Y: =88
                               - tcs_desc_title:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     AutoHeight: =true
                                     Color: =RGBA(87, 35, 129, 1)
@@ -396,7 +296,7 @@ Screens:
                                     X: =24
                                     Y: =6
                               - tcs_desc_subtitle:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     AutoHeight: =true
                                     Color: =RGBA(107, 114, 128, 1)
@@ -407,7 +307,7 @@ Screens:
                                     X: =24
                                     Y: =40
                         - RequestedBy_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ComboBoxEdit
                             Properties:
                               DataField: ="RequestedBy"
@@ -421,7 +321,7 @@ Screens:
                               Y: =2
                             Children:
                               - DataCardValue9_1:
-                                  Control: ModernCombobox
+                                  Control: ModernCombobox@1.1.1
                                   MetadataKey: FieldValue
                                   Properties:
                                     DefaultSelectedItems: |-
@@ -479,7 +379,7 @@ Screens:
                                     SelectMultiple: =false
                                     X: =24
                         - Category_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ComboBoxEdit
                             IsLocked: true
                             Properties:
@@ -493,7 +393,7 @@ Screens:
                               Y: =3
                             Children:
                               - DataCardKey5_1:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   MetadataKey: FieldName
                                   Properties:
                                     AccessibleLabel: =fxTranslate("CategoryFieldLabel", "Feldbezeichnung Kategorie")
@@ -509,7 +409,7 @@ Screens:
                                     X: =24
                                     Y: =8
                               - DataCardValue5_1:
-                                  Control: ModernCombobox
+                                  Control: ModernCombobox@1.1.1
                                   MetadataKey: FieldValue
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SelectCategory", "Kategorie auswählen")
@@ -527,7 +427,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey5_1.Y + DataCardKey5_1.Height + 4
                               - ErrorMessage5_1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     FontColor: =RGBA(255, 0, 0, 1)
@@ -538,7 +438,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardValue5_1.Y + DataCardValue5_1.Height
                         - Subcategory_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ComboBoxEdit
                             Properties:
                               DataField: ="Subcategory"
@@ -551,7 +451,7 @@ Screens:
                               Y: =4
                             Children:
                               - DataCardKey_Subcategory_1:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SubcategoryFieldLabel", "Feldbezeichnung Unterkategorie")
                                     AutoHeight: =true
@@ -566,7 +466,7 @@ Screens:
                                     X: =24
                                     Y: =8
                               - DataCardValue_Subcategory_1:
-                                  Control: ModernCombobox
+                                  Control: ModernCombobox@1.1.1
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SelectSubcategory", "Unterkategorie auswählen")
                                     AllowExternalSelectedItems: =false
@@ -583,7 +483,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey_Subcategory_1.Y + DataCardKey_Subcategory_1.Height + 4
                               - ErrorMessage_Subcategory_1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   Properties:
                                     Height: =30
                                     Text: =Parent.Error
@@ -592,7 +492,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardValue_Subcategory_1.Y + DataCardValue_Subcategory_1.Height
                         - Priority_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ComboBoxEdit
                             Properties:
                               DataField: ="Priority"
@@ -605,7 +505,7 @@ Screens:
                               Y: =5
                             Children:
                               - DataCardKey7_1:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   MetadataKey: FieldName
                                   Properties:
                                     AccessibleLabel: =fxTranslate("PriorityFieldLabel", "Feldbezeichnung Priorität")
@@ -621,7 +521,7 @@ Screens:
                                     X: =24
                                     Y: =8
                               - DataCardValue7_1:
-                                  Control: ModernCombobox
+                                  Control: ModernCombobox@1.1.1
                                   MetadataKey: FieldValue
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SelectPriority", "Priorität auswählen")
@@ -639,7 +539,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey7_1.Y + DataCardKey7_1.Height + 4
                               - ErrorMessage7_1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     Height: =30
@@ -649,7 +549,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardValue7_1.Y + DataCardValue7_1.Height
                               - lbl_priority_hint:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     Color: =RGBA(107, 114, 128, 1)
                                     Size: =11
@@ -657,7 +557,7 @@ Screens:
                                     Width: =Parent.Width - 20
                                     Y: =DataCardValue7_1.Y + DataCardValue7_1.Height + 2
                         - Status_DataCard2:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ComboBoxEdit
                             Properties:
                               DataField: ="Status"
@@ -671,7 +571,7 @@ Screens:
                               Y: =5
                             Children:
                               - DataCardKey2:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: FieldName
                                   Properties:
                                     Height: =22
@@ -682,7 +582,7 @@ Screens:
                                     X: =24
                                     Y: =10
                               - DataCardValue2:
-                                  Control: ComboBox
+                                  Control: ComboBox@0.0.51
                                   MetadataKey: FieldValue
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
@@ -695,7 +595,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey2.Y + DataCardKey2.Height + 4
                               - ErrorMessage2:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     Height: =30
@@ -705,7 +605,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardValue2.Y + DataCardValue2.Height
                               - StarVisible2:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: FieldRequired
                                   Properties:
                                     Align: ='TextCanvas.Align'.Center
@@ -715,7 +615,7 @@ Screens:
                                     Width: =30
                                     Y: =DataCardKey2.Y
                         - Reason_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: TextualEdit
                             Properties:
                               DataField: ="Reason"
@@ -729,7 +629,7 @@ Screens:
                               Y: =6
                             Children:
                               - DataCardKey11_1:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   MetadataKey: FieldName
                                   Properties:
                                     AutoHeight: =true
@@ -744,7 +644,7 @@ Screens:
                                     X: =24
                                     Y: =10
                               - dd_affected_change:
-                                  Control: ModernDropdown
+                                  Control: ModernDropdown@1.0.2
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SelectAffectedPeople", "Betroffene Personen auswählen")
                                     DisplayMode: =Parent.DisplayMode
@@ -766,7 +666,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey11_1.Y + DataCardKey11_1.Height + 4
                               - ErrorMessage11_1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     Height: =30
@@ -776,20 +676,20 @@ Screens:
                                     X: =24
                                     Y: =dd_affected_change.Y + dd_affected_change.Height
                         - Beobachter_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ComboBoxEdit
                             Properties:
                               DataField: ="Beobachter"
                               Default: =First(ThisItem.Beobachter)
                               DisplayName: =fxTranslate("WatchList", "Beobachtungsliste")
                               Required: =false
-                              Update: =First(DataCardValue_Beobachter_1.SelectedItems)
+                              Update: =First(varTicketWatcherSelection)
                               Width: =Parent.Width
                               X: =0
                               Y: =7
                             Children:
                               - DataCardKey_Beobachter_1:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   Properties:
                                     AutoHeight: =true
                                     Color: =RGBA(17, 24, 39, 1)
@@ -803,7 +703,7 @@ Screens:
                                     X: =24
                                     Y: =8
                               - DataCardValue_Beobachter_1:
-                                  Control: ModernCombobox
+                                  Control: ModernCombobox@1.1.1
                                   Properties:
                                     DefaultSelectedItems: =[Parent.Default]
                                     DisplayMode: =Parent.DisplayMode
@@ -849,7 +749,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey_Beobachter_1.Y + DataCardKey_Beobachter_1.Height + 4
                         - Attachments_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ClassicAttachmentsEdit
                             Properties:
                               BorderColor: =fxPrimaryColor
@@ -864,7 +764,7 @@ Screens:
                               Y: =8
                             Children:
                               - DataCardKey12_1:
-                                  Control: Label
+                                  Control: Label@2.5.1
                                   MetadataKey: FieldName
                                   Properties:
                                     AutoHeight: =true
@@ -878,7 +778,7 @@ Screens:
                                     X: =24
                                     Y: =6
                               - DataCardValue12_1:
-                                  Control: Attachments
+                                  Control: Attachments@2.3.0
                                   MetadataKey: FieldValue
                                   Properties:
                                     AccessibleLabel: =fxTranslate("AddOptionalTicketAttachments", "Optionale Anhänge zum Ticket hinzufügen")
@@ -899,7 +799,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey12_1.Y + DataCardKey12_1.Height + 5
                               - ErrorMessage12_1:
-                                  Control: Label
+                                  Control: Label@2.5.1
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     AutoHeight: =true
@@ -919,7 +819,7 @@ Screens:
                                     X: =30
                                     Y: =DataCardValue12_1.Y + DataCardValue12_1.Height
                         - TicketType_DataCard1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ComboBoxEdit
                             Properties:
                               DataField: ="TicketType"
@@ -934,7 +834,7 @@ Screens:
                               Y: =9
                             Children:
                               - DataCardKey1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: FieldName
                                   Properties:
                                     Height: =22
@@ -945,7 +845,7 @@ Screens:
                                     X: =24
                                     Y: =10
                               - DataCardValue1:
-                                  Control: ComboBox
+                                  Control: ComboBox@0.0.51
                                   MetadataKey: FieldValue
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
@@ -958,7 +858,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey1.Y + DataCardKey1.Height + 4
                               - ErrorMessage1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     Height: =30
@@ -968,7 +868,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardValue1.Y + DataCardValue1.Height
                               - StarVisible1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: FieldRequired
                                   Properties:
                                     Align: ='TextCanvas.Align'.Center
@@ -978,7 +878,7 @@ Screens:
                                     Width: =30
                                     Y: =DataCardKey1.Y
                         - Department_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ComboBoxEdit
                             IsLocked: true
                             Properties:
@@ -993,7 +893,7 @@ Screens:
                               Y: =10
                             Children:
                               - DataCardKey6_1:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   MetadataKey: FieldName
                                   Properties:
                                     AutoHeight: =true
@@ -1008,7 +908,7 @@ Screens:
                                     X: =24
                                     Y: =8
                               - DataCardValue6_1:
-                                  Control: ModernCombobox
+                                  Control: ModernCombobox@1.1.1
                                   MetadataKey: FieldValue
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
@@ -1026,7 +926,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardKey6_1.Y + DataCardKey6_1.Height + 4
                               - ErrorMessage6_1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     Height: =30
@@ -1036,7 +936,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardValue6_1.Y + DataCardValue6_1.Height
                         - Risk_DataCard1_1:
-                            Control: TypedDataCard
+                            Control: TypedDataCard@1.0.7
                             Variant: ComboBoxEdit
                             IsLocked: true
                             Properties:
@@ -1051,7 +951,7 @@ Screens:
                               Y: =11
                             Children:
                               - DataCardKey8_1:
-                                  Control: ModernText
+                                  Control: ModernText@1.0.0
                                   MetadataKey: FieldName
                                   Properties:
                                     AutoHeight: =true
@@ -1064,7 +964,7 @@ Screens:
                                     Wrap: =false
                                     Y: =10
                               - DataCardValue8_1:
-                                  Control: ModernCombobox
+                                  Control: ModernCombobox@1.1.1
                                   MetadataKey: FieldValue
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
@@ -1078,7 +978,7 @@ Screens:
                                     Width: '=Parent.Width '
                                     Y: =DataCardKey8_1.Y + DataCardKey8_1.Height + 4
                               - ErrorMessage8_1:
-                                  Control: Text
+                                  Control: Text@0.0.51
                                   MetadataKey: ErrorMessage
                                   Properties:
                                     Height: =30
@@ -1088,7 +988,7 @@ Screens:
                                     X: =24
                                     Y: =DataCardValue8_1.Y + DataCardValue8_1.Height
                   - con_required_change:
-                      Control: GroupContainer
+                      Control: GroupContainer@1.5.0
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -1111,7 +1011,7 @@ Screens:
                         Width: =280
                       Children:
                         - txt_required_change_title:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               AutoHeight: =true
                               Color: =RGBA(17, 24, 39, 1)
@@ -1121,7 +1021,7 @@ Screens:
                               Text: =fxTranslate("RequiredInformation", "Erforderliche Informationen")
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                         - txt_required_change_intro:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =RGBA(82, 94, 115, 1)
                               Height: =54
@@ -1129,7 +1029,7 @@ Screens:
                               Text: =fxTranslate("RequiredFieldsChecklistHint", "Pflichtfelder werden automatisch abgehakt, sobald sie ausgefüllt sind.")
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                         - txt_req_title_change:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =If(IsBlank(Trim(DataCardValue3.Text)), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                               Height: =28
@@ -1137,7 +1037,7 @@ Screens:
                               Text: =If(IsBlank(Trim(DataCardValue3.Text)), fxTranslate("Title", "Titel"), fxTranslate("TitleComplete", "Titel ✓"))
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                         - txt_req_description_change:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =If(IsBlank(Trim(PlainText(lbl_rich_editor_1.HtmlText))), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                               Height: =28
@@ -1145,7 +1045,7 @@ Screens:
                               Text: =If(IsBlank(Trim(PlainText(lbl_rich_editor_1.HtmlText))), fxTranslate("Beschreibung", "Beschreibung"), fxTranslate("DescriptionComplete", "Beschreibung ✓"))
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                         - txt_req_category_change:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =If(IsBlank(DataCardValue5_1.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                               Height: =28
@@ -1153,7 +1053,7 @@ Screens:
                               Text: =If(IsBlank(DataCardValue5_1.Selected), fxTranslate("Kategorie", "Kategorie"), fxTranslate("CategoryComplete", "Kategorie ✓"))
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                         - txt_req_subcategory_change:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =If(IsBlank(DataCardValue_Subcategory_1.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                               Height: =28
@@ -1161,7 +1061,7 @@ Screens:
                               Text: =If(IsBlank(DataCardValue_Subcategory_1.Selected), fxTranslate("Subcategory", "Unterkategorie"), fxTranslate("SubcategoryComplete", "Unterkategorie ✓"))
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                         - txt_req_priority_change:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =If(IsBlank(DataCardValue7_1.Selected), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                               Height: =28
@@ -1169,7 +1069,7 @@ Screens:
                               Text: =If(IsBlank(DataCardValue7_1.Selected), fxTranslate("Priorität", "Priorität"), fxTranslate("PriorityComplete", "Priorität ✓"))
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                         - txt_req_affected_change:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =If(IsBlank(dd_affected_change.Selected.Value), RGBA(185, 28, 28, 1), RGBA(22, 101, 52, 1))
                               Height: =28
@@ -1177,7 +1077,7 @@ Screens:
                               Text: =If(IsBlank(dd_affected_change.Selected.Value), fxTranslate("WhoIsAffected", "Wer ist betroffen?"), fxTranslate("WhoIsAffectedComplete", "Wer ist betroffen? ✓"))
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                         - txt_required_change_tip:
-                            Control: ModernText
+                            Control: ModernText@1.0.0
                             Properties:
                               Color: =RGBA(82, 94, 115, 1)
                               Height: =70
@@ -1185,7 +1085,7 @@ Screens:
                               Text: =fxTranslate("NextCreatesTicketHint", "Über Weiter wird das Ticket erstellt und anschließend die Detailseite geöffnet.")
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
             - con_footer_1:
-                Control: GroupContainer
+                Control: GroupContainer@1.5.0
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -1203,7 +1103,7 @@ Screens:
                   PaddingTop: =10
                 Children:
                   - btn_back_4:
-                      Control: ModernButton
+                      Control: ModernButton@1.0.0
                       Properties:
                         AccessibleLabel: =fxTranslate("CancelTicketCreation", "Ticketerstellung abbrechen")
                         Align: =Align.Center
@@ -1240,7 +1140,7 @@ Screens:
                         Text: =fxTranslate("Zurück", "Zurück")
                         Width: =132
                   - btn_submit_1:
-                      Control: ModernButton
+                      Control: ModernButton@1.0.0
                       Properties:
                         AccessibleLabel: =fxTranslate("CreateAndSubmitTicket", "Ticket erstellen und absenden")
                         Align: =Align.Center
@@ -1308,84 +1208,19 @@ Screens:
                               Set(varTicketSubmitError, Blank());
                                If(
                                    IsBlank(Trim(User().Email)),
-                                   Set(varTicketSubmitError, fxTranslate("CurrentUserEmailMissing", "Ihre Benutzer-E-Mail-Adresse konnte nicht ermittelt werden.")),
-                                   IfError(
-                                       Set(
-                                           varCurrentTicket,
-                                           Patch(
-                                               ev_sp_list_tickets,
-                                               Defaults(ev_sp_list_tickets),
-                                               {
-                                                   Titel: DataCardValue3.Text,
-                                                   Description: varSubmittedDescriptionHtml,
-                                                   RequestedBy: {
-                                                       Claims: "i:0#.f|membership|" & Lower(Trim(User().Email)),
-                                                       DisplayName: User().FullName,
-                                                        Email: Trim(User().Email),
-                                                       Department: "",
-                                                       JobTitle: "",
-                                                       Picture: Blank()
-                                                   },
-                                                   Beobachter: varTicketWatcherSelection,
-                                                   Category: {Value: DataCardValue5_1.Selected.Value},
-                                                   Subcategory: {Value: DataCardValue_Subcategory_1.Selected.Value},
-                                                   Priority: {Value: DataCardValue7_1.Selected.Value},
-                                                   Status: {Value: "Offen"},
-                                                   Reason: dd_affected_change.Selected.Value,
-                                                   TicketType: {Value: Coalesce(varRequestType, "Change")},
-                                                   Department: If(IsBlank(DataCardValue6_1.Selected.Value), Blank(), {Value: DataCardValue6_1.Selected.Value}),
-                                                   Risk: If(IsBlank(DataCardValue8_1.Selected.Value), Blank(), {Value: DataCardValue8_1.Selected.Value})
-                                               }
-                                           )
-                                       ),
-                                       Set(varTicketSubmitError, Coalesce(FirstError.Message, fxTranslate("UnknownError", "Unbekannter Fehler.")))
-                                   )
+                                   Set(varTicketSubmitError, fxTranslate("CurrentUserEmailMissing", "Ihre Benutzer-E-Mail-Adresse konnte nicht ermittelt werden."))
                                );
-                              If(
-                                  !IsBlank(varTicketSubmitError),
-                                  Set(varTicketSubmissionInProgress, false);
-                                  Set(varTicketSubmissionStatus, "");
-                                  Notify(
-                                      Substitute(fxTranslate("TicketCreateFailed", "Das Ticket konnte nicht erstellt werden: {0}"), "{0}", varTicketSubmitError),
-                                      NotificationType.Error,
-                                      7000
-                                  ),
-                                  Set(varTicketDetailId, varCurrentTicket.ID);
-                                  Set(
-                                      varTicketSubmissionStatus,
-                                      If(
-                                          varSubmittedDescriptionHadInlineImages,
-                                          fxTranslate("ScreenshotsBeingProcessed", "Screenshots werden verarbeitet..."),
-                                          fxTranslate("TicketBeingFinalized", "Ticket wird finalisiert...")
-                                      )
-                                  );
-                                  IfError(
-                                      create_attach_description.Run({ticketId: Text(varCurrentTicket.ID), html: varSubmittedDescriptionPayload}),
-                                      Notify(fxTranslate("TicketCreatedScreenshotsFailed", "Ticket wurde erstellt, aber Screenshots konnten nicht verarbeitet werden."), NotificationType.Warning, 5000)
-                                  );
-                                   Set(varTicketRefreshError, Blank());
-                                   IfError(
-                                       Refresh(ev_sp_list_tickets);
-                                       With(
-                                           {refreshedTicket: LookUp(ev_sp_list_tickets, ID = varTicketDetailId)},
-                                           If(
-                                               IsBlank(refreshedTicket),
-                                               Set(varTicketRefreshError, fxTranslate("TicketCreatedRefreshFailed", "Ticket wurde erstellt, aber die Ticketdetails konnten nicht geladen werden.")),
-                                               Set(varCurrentTicket, refreshedTicket)
-                                           )
-                                       ),
-                                       Set(varTicketRefreshError, Coalesce(FirstError.Message, fxTranslate("TicketCreatedRefreshFailed", "Ticket wurde erstellt, aber die Ticketdetails konnten nicht geladen werden.")))
-                                   );
-                                   If(
-                                       !IsBlank(varTicketRefreshError),
-                                       Set(varTicketSubmissionInProgress, false);
-                                       Set(varTicketSubmissionStatus, "");
-                                       Notify(varTicketRefreshError, NotificationType.Error, 7000),
-                                       ResetForm(frm_change_1);
-                                       Set(varTicketSubmissionInProgress, false);
-                                       Navigate(ticket_details_screen, ScreenTransition.Fade)
-                                   )
-                              )
+                               If(
+                                   !IsBlank(varTicketSubmitError),
+                                   Set(varTicketSubmissionInProgress, false);
+                                   Set(varTicketSubmissionStatus, "");
+                                   Notify(
+                                       Substitute(fxTranslate("TicketCreateFailed", "Das Ticket konnte nicht erstellt werden: {0}"), "{0}", varTicketSubmitError),
+                                       NotificationType.Error,
+                                       7000
+                                   ),
+                                   SubmitForm(frm_change_1)
+                               )
                            )
                         RadiusBottomLeft: =8
                         RadiusBottomRight: =8
@@ -1395,7 +1230,7 @@ Screens:
                         Text: =fxTranslate("Next", "Weiter")
                         Width: =180
       - con_ticket_submission_overlay:
-          Control: GroupContainer
+          Control: GroupContainer@1.5.0
           Variant: ManualLayout
           Properties:
             Fill: =RGBA(17, 24, 39, 0.58)
@@ -1404,7 +1239,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - con_ticket_submission_dialog:
-                Control: GroupContainer
+                Control: GroupContainer@1.5.0
                 Variant: ManualLayout
                 Properties:
                   DropShadow: =DropShadow.Semilight
@@ -1419,7 +1254,7 @@ Screens:
                   Y: =(Parent.Height - Self.Height) / 2
                 Children:
                   - spn_ticket_submission:
-                      Control: Spinner
+                      Control: Spinner@1.4.6
                       Properties:
                         AccessibleLabel: =fxTranslate("TicketBeingProcessed", "Ticket wird verarbeitet")
                         Appearance: ='Spinner.Appearance'.Primary
@@ -1430,7 +1265,7 @@ Screens:
                         X: =(Parent.Width - Self.Width) / 2
                         Y: =30
                   - txt_ticket_submission_title:
-                      Control: ModernText
+                      Control: ModernText@1.0.0
                       Properties:
                         Align: =Align.Center
                         Color: =RGBA(17, 24, 39, 1)
@@ -1447,7 +1282,7 @@ Screens:
                         X: =24
                         Y: =98
                   - txt_ticket_submission_status:
-                      Control: ModernText
+                      Control: ModernText@1.0.0
                       Properties:
                         Align: =Align.Center
                         Color: =RGBA(87, 35, 129, 1)
@@ -1464,7 +1299,7 @@ Screens:
                         X: =24
                         Y: =132
                   - txt_ticket_submission_note:
-                      Control: ModernText
+                      Control: ModernText@1.0.0
                       Properties:
                         Align: =Align.Center
                         Color: =RGBA(82, 94, 115, 1)
@@ -1479,14 +1314,8 @@ Screens:
                         X: =24
                         Y: =166
       - Text1:
-          Control: ModernText
+          Control: ModernText@1.0.0
           Properties:
             Text: =
             X: =40
             Y: =40
-      - Text2:
-          Control: ModernText
-          Properties:
-            Text: =lbl_rich_editor_1.HtmlText
-            X: =60
-            Y: =60
