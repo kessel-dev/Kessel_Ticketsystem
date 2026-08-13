@@ -1,0 +1,420 @@
+Screens:
+  request_type_screen:
+    Properties:
+      Fill: =RGBA(248, 249, 252, 1)
+      LoadingSpinnerColor: =RGBA(87, 35, 129, 1)
+      OnVisible: |-
+        =Set(varRequestType, Coalesce(varRequestType, "Change"));
+        Set(varSelectedService, "")
+    Children:
+      - rts_root:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(248, 249, 252, 1)
+            Height: =Parent.Height
+            LayoutDirection: =LayoutDirection.Vertical
+            Width: =Parent.Width
+          Children:
+            - dbd_topbar_1:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =72
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                  Width: =Parent.Width
+                Children:
+                  - dbd_brand_container_1:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Parent.Height
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =fxDbdControlGap
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =fxDbdSidebarWidth + (fxDbdPagePadding * 2)
+                        PaddingLeft: =fxDbdPagePadding
+                        PaddingRight: =fxDbdPagePadding
+                        Width: =fxDbdSidebarWidth + (fxDbdPagePadding * 2)
+                      Children:
+                        - dbd_logo_1:
+                            Control: ModernText
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(255, 255, 255, 1)
+                              Fill: =RGBA(87, 35, 129, 1)
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              RadiusBottomLeft: =5
+                              RadiusBottomRight: =5
+                              RadiusTopLeft: =5
+                              RadiusTopRight: =5
+                              Size: =8
+                              Text: ="KESSEL"
+                              Width: =32
+                        - dbd_topbar_title_1:
+                            Control: ModernText
+                            Properties:
+                              Color: =RGBA(18, 31, 52, 1)
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =16
+                              Text: =fxTranslate("ItServicePortal", "IT Service Portal")
+                              Wrap: =false
+                  - dbd_header_spacer_1:
+                      Control: GroupContainer
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =Parent.Height
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                  - dbd_header_actions_1:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =Parent.Height
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =fxDbdControlGap
+                        LayoutJustifyContent: =LayoutJustifyContent.End
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingRight: =fxDbdPagePadding
+                        Width: =236
+                      Children:
+                        - rts_language_selector:
+                            Control: ModernDropdown
+                            Properties:
+                              AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
+                              Default: |-
+                                =LookUp(Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"}), Code = Coalesce(varCurrentLanguage, "de"))
+                              Height: =34
+                              ItemDisplayText: =ThisItem.Label
+                              Items: |-
+                                =Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"})
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
+                              Width: =72
+                  - dbd_user_menu_1:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =40
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =8
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        PaddingLeft: =4
+                        PaddingRight: =8
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
+                        Width: =132
+                      Children:
+                        - dbd_avatar_1:
+                            Control: ModernText
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(87, 35, 129, 1)
+                              Fill: =RGBA(246, 241, 249, 1)
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              RadiusBottomLeft: =16
+                              RadiusBottomRight: =16
+                              RadiusTopLeft: =16
+                              RadiusTopRight: =16
+                              Size: =12
+                              Text: =Upper(Left(fxCurrentUser.FullName, 2))
+                              Width: =32
+                        - dbd_user_name_1:
+                            Control: ModernText
+                            Properties:
+                              Color: =RGBA(35, 39, 47, 1)
+                              FillPortions: =1
+                              FontWeight: =FontWeight.Semibold
+                              Height: =24
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: =Left(fxCurrentUser.FullName, Find(" ", fxCurrentUser.FullName & " ") - 1)
+                              Width: =58
+                              Wrap: =false
+            - rts_navigation:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  BorderColor: =RGBA(226, 232, 240, 1)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(248, 250, 252, 1)
+                  FillPortions: =0
+                  Height: =42
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinHeight: =42
+                  LayoutMinWidth: =0
+                  PaddingLeft: =If(App.Width < 600, 12, 28)
+                  PaddingRight: =If(App.Width < 600, 12, 28)
+                  Width: =Parent.Width
+                Children:
+                  - rts_home:
+                      Control: ModernButton
+                      Properties:
+                        AccessibleLabel: =fxTranslate("Home", "Zur Startseite")
+                        Appearance: =ButtonAppearance.Subtle
+                        Height: =32
+                        Icon: ="Home"
+                        LayoutMinHeight: =32
+                        LayoutMinWidth: =0
+                        OnSelect: =Navigate(dashboard_screen, ScreenTransition.CoverRight)
+                        Text: =If(App.Width < 600, fxTranslate("HomeShort", "Start"), fxTranslate("Home", "Startseite"))
+                        Width: =If(App.Width < 600, 80, 120)
+                  - rts_nav_separator:
+                      Control: ModernText
+                      Properties:
+                        Align: =Align.Center
+                        Color: =RGBA(148, 163, 184, 1)
+                        Height: =24
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =13
+                        Text: =">"
+                        Width: =12
+                  - rts_nav_current:
+                      Control: ModernText
+                      Properties:
+                        Color: =RGBA(51, 65, 85, 1)
+                        FillPortions: =1
+                        FontWeight: =FontWeight.Semibold
+                        Height: =24
+                        LayoutMinWidth: =0
+                        PaddingBottom: =0
+                        PaddingLeft: =0
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =13
+                        Text: =fxTranslate("CreateTicket", "Ticket erstellen")
+                        Wrap: =false
+            - rts_body:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(248, 249, 252, 1)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutMinHeight: =0
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =12
+                  PaddingLeft: =32
+                  PaddingRight: =32
+                  PaddingTop: =16
+                  Width: =Parent.Width
+                Children:
+                  - rts_intro:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =If(App.Height < 760, 66, 82)
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =6
+                        LayoutJustifyContent: =LayoutJustifyContent.Center
+                        PaddingLeft: =4
+                        PaddingRight: =4
+                        Width: =Min(Parent.Width - 64, 1180)
+                      Children:
+                        - rts_intro_title:
+                            Control: ModernText
+                            Properties:
+                              AutoHeight: =true
+                              Color: =RGBA(17, 24, 39, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =If(App.Height < 760, 28, 34)
+                              Size: =If(App.Height < 760, 18, 22)
+                              Text: =fxTranslate("HowCanWeHelp", "Wobei können wir helfen?")
+                              Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
+                  - rts_choice_shell:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =If(App.Width < 720, 780, Max(260, Min(340, Parent.Height - rts_intro.Height - Parent.PaddingTop - Parent.PaddingBottom - 12)))
+                        LayoutDirection: =If(App.Width < 720, LayoutDirection.Vertical, LayoutDirection.Horizontal)
+                        LayoutGap: =16
+                        LayoutMinHeight: =0
+                        PaddingBottom: =10
+                        PaddingLeft: =10
+                        PaddingRight: =10
+                        PaddingTop: =10
+                        Width: =Min(Parent.Width - 64, 1180)
+                      Children:
+                        - rts_incident_card:
+                            Control: ModernCard
+                            Properties:
+                              AccessibleLabel: =fxTranslate("CreateIncident", "Incident erstellen")
+                              AlignInContainer: =AlignInContainer.Stretch
+                              BorderRadius: =16
+                              Description: =fxTranslate("IncidentCardDescription", "Melden Sie eine Störung oder einen Fehler, der den normalen Betrieb beeinträchtigt.")
+                              DescriptionColor: =If(varRequestType = "Incident", RGBA(255, 255, 255, 0.88), RGBA(82, 94, 115, 1))
+                              DescriptionSize: =14
+                              DropShadow: =If(varRequestType = "Incident", DropShadow.Regular, DropShadow.Light)
+                              Fill: =If(varRequestType = "Incident", RGBA(87, 35, 129, 1), RGBA(255, 255, 255, 1))
+                              FillPortions: =1
+                              Height: =250
+                              Image: ='1147337301'
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnSelect: =Set(varRequestType, "Incident")
+                              Subtitle: =If(varRequestType = "Incident", fxTranslate("Selected", "AUSGEWÄHLT"), fxTranslate("IncidentOrError", "STÖRUNG ODER FEHLER"))
+                              SubtitleColor: =If(varRequestType = "Incident", RGBA(236, 219, 249, 1), RGBA(87, 35, 129, 1))
+                              SubtitleSize: =12
+                              Title: =fxTranslate("CreateIncident", "Incident erstellen")
+                              TitleColor: =If(varRequestType = "Incident", RGBA(255, 255, 255, 1), RGBA(17, 24, 39, 1))
+                              TitleSize: =20
+                        - rts_change_card:
+                            Control: ModernCard
+                            Properties:
+                              AccessibleLabel: =fxTranslate("CreateChange", "Change erstellen")
+                              AlignInContainer: =AlignInContainer.Stretch
+                              BorderRadius: =16
+                              Description: =fxTranslate("ChangeCardDescription", "Planen Sie eine Änderung, Erweiterung oder Anpassung Ihrer IT-Umgebung.")
+                              DescriptionColor: =If(varRequestType = "Change", RGBA(255, 255, 255, 0.88), RGBA(82, 94, 115, 1))
+                              DescriptionSize: =14
+                              DropShadow: =If(varRequestType = "Change", DropShadow.Regular, DropShadow.Light)
+                              Fill: =If(varRequestType = "Change", RGBA(87, 35, 129, 1), RGBA(255, 255, 255, 1))
+                              FillPortions: =1
+                              Height: =250
+                              Image: ='901627692'
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnSelect: =Set(varRequestType, "Change")
+                              Subtitle: =If(varRequestType = "Change", fxTranslate("Selected", "AUSGEWÄHLT"), fxTranslate("PlannedChange", "GEPLANTE ÄNDERUNG"))
+                              SubtitleColor: =If(varRequestType = "Change", RGBA(236, 219, 249, 1), RGBA(87, 35, 129, 1))
+                              SubtitleSize: =12
+                              Title: =fxTranslate("CreateChange", "Change erstellen")
+                              TitleColor: =If(varRequestType = "Change", RGBA(255, 255, 255, 1), RGBA(17, 24, 39, 1))
+                              TitleSize: =20
+                        - rts_service_card:
+                            Control: ModernCard
+                            Properties:
+                              AccessibleLabel: =fxTranslate("OpenServiceCatalog", "Servicekatalog öffnen")
+                              AlignInContainer: =AlignInContainer.Stretch
+                              BorderRadius: =16
+                              Description: =fxTranslate("ServiceCatalogCardDescription", "Bestellen Sie Hardware, Software oder Zugänge über unseren Servicekatalog.")
+                              DescriptionColor: =RGBA(82, 94, 115, 1)
+                              DescriptionSize: =14
+                              DisplayMode: =DisplayMode.Disabled
+                              DropShadow: =DropShadow.Light
+                              Fill: =RGBA(255, 255, 255, 1)
+                              FillPortions: =1
+                              Height: =250
+                              Image: ='183945265'
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnSelect: =Set(varRequestType, "Service")
+                              Subtitle: =fxTranslate("OrderAndAccess", "BESTELLUNG UND ZUGANG")
+                              SubtitleColor: =RGBA(87, 35, 129, 1)
+                              SubtitleSize: =12
+                              Title: =fxTranslate("RequestService", "Service anfordern")
+                              TitleColor: =RGBA(17, 24, 39, 1)
+                              TitleSize: =20
+            - rts_footer:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  BorderColor: =RGBA(229, 231, 235, 1)
+                  BorderThickness: =1
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =64
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutJustifyContent: =LayoutJustifyContent.SpaceBetween
+                  PaddingLeft: =22
+                  PaddingRight: =22
+                  Width: =Parent.Width
+                Children:
+                  - rts_back_button:
+                      Control: ModernButton
+                      Properties:
+                        Appearance: =ButtonAppearance.Secondary
+                        Height: =40
+                        Icon: ="ChevronLeft"
+                        OnSelect: =Navigate(dashboard_screen, ScreenTransition.CoverRight)
+                        Text: =fxTranslate("Zurück", "Zurück")
+                        Width: =120
+                  - rts_footer_actions:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =40
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =12
+                        LayoutMinHeight: =40
+                        Width: =300
+                      Children:
+                        - rts_cancel_button:
+                            Control: ModernButton
+                            Properties:
+                              Appearance: =ButtonAppearance.Secondary
+                              Height: =40
+                              OnSelect: =Navigate(dashboard_screen, ScreenTransition.CoverRight)
+                              Text: =fxTranslate("Cancel", "Abbrechen")
+                              Width: =120
+                        - rts_next_button:
+                            Control: ModernButton
+                            Properties:
+                              Height: =40
+                              Icon: ="ChevronRight"
+                              OnSelect: =Switch(varRequestType, "Incident", Navigate(incident_screen, ScreenTransition.CoverRight), "Service", Navigate(service_catalog_screen, ScreenTransition.CoverRight), Navigate(ticket_screen, ScreenTransition.CoverRight))
+                              Text: =If(varRequestType = "Service", fxTranslate("OpenServiceCatalog", "Servicekatalog öffnen"), fxTranslate("Next", "Weiter"))
+                              Width: =160

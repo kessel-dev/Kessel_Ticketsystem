@@ -1,0 +1,5 @@
+.flowagent/
+*.msapp
+*.zip
+*.tmp
+*.bak
