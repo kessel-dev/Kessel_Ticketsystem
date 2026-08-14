@@ -93,7 +93,6 @@ Screens:
             Height: =Parent.Height
             LayoutAlignItems: =LayoutAlignItems.Center
             LayoutDirection: =LayoutDirection.Vertical
-            LayoutOverflowX: =LayoutOverflow.Hide
             LayoutOverflowY: =LayoutOverflow.Scroll
             PaddingBottom: =24
             Width: =Parent.Width
@@ -146,14 +145,13 @@ Screens:
                         - NavTabsDesktop4:
                             Control: ModernTabList
                             Properties:
-                              Appearance: =TabListAppearance.Subtle
                               AccessibleLabel: =fxTranslate("MainNavigation", "Hauptnavigation")
+                              Appearance: =TabListAppearance.Subtle
                               BasePaletteColor: =RGBA(87, 35, 129, 1)
                               Default: |-
                                 ={Key: "dashboard", Value: fxTranslate("Dashboard", "Dashboard")}
                               FillPortions: =1
                               Height: =56
-                              ItemDisplayText: =ThisItem.Value
                               Items: |-
                                 =Table(
                                     {Key: "dashboard", Value: fxTranslate("Dashboard", "Dashboard")},
@@ -173,8 +171,8 @@ Screens:
                         - IconChat4:
                             Control: ModernIcon
                             Properties:
-                              Height: =24
                               AccessibleLabel: =fxTranslate("ShowNotifications", "Benachrichtigungen anzeigen")
+                              Height: =24
                               Icon: ="Alert"
                               IconColor: =RGBA(35, 39, 47, 1)
                               LayoutMinHeight: =16
@@ -185,9 +183,9 @@ Screens:
                         - IconShare4:
                             Control: ModernIcon
                             Properties:
-                              Height: =24
                               AccessibleLabel: =fxTranslate("RefreshDashboard", "Dashboard aktualisieren")
                               DisplayMode: =If(varS6Refreshing, DisplayMode.Disabled, DisplayMode.Edit)
+                              Height: =24
                               Icon: ="ArrowClockwise"
                               IconColor: =RGBA(35, 39, 47, 1)
                               LayoutMinHeight: =16
@@ -211,8 +209,8 @@ Screens:
                         - IconSettings4:
                             Control: ModernIcon
                             Properties:
-                              Height: =24
                               AccessibleLabel: =fxTranslate("CreateTicket", "Ticket erstellen")
+                              Height: =24
                               Icon: =Icon.Add
                               IconColor: =RGBA(87, 35, 129, 1)
                               LayoutMinHeight: =16
@@ -223,23 +221,22 @@ Screens:
                         - Avatar4:
                             Control: Avatar
                             Properties:
+                              AccessibleLabel: =fxCurrentUser.FullName
+                              Appearance: ='Avatar.Appearance'.Brand
                               Height: =32
                               LayoutMinHeight: =16
                               LayoutMinWidth: =16
                               Name: =fxCurrentUser.FullName
-                              AccessibleLabel: =fxCurrentUser.FullName
-                              Appearance: ='Avatar.Appearance'.Brand
                               Width: =32
                   - NavTabsMobile4:
                       Control: ModernTabList
                       Properties:
-                        Appearance: =TabListAppearance.Subtle
                         AccessibleLabel: =fxTranslate("MainNavigation", "Hauptnavigation")
+                        Appearance: =TabListAppearance.Subtle
                         BasePaletteColor: =RGBA(87, 35, 129, 1)
                         Default: |-
                           ={Key: "dashboard", Value: fxTranslate("Dashboard", "Dashboard")}
                         Height: =If(App.Width < 640, 48, 0)
-                        ItemDisplayText: =ThisItem.Value
                         Items: |-
                           =Table(
                               {Key: "dashboard", Value: fxTranslate("Dashboard", "Dashboard")},
@@ -429,17 +426,6 @@ Screens:
                         LayoutOverflowX: =LayoutOverflow.Scroll
                         Width: =If(App.Width < 1180, Parent.Width - Parent.PaddingLeft - Parent.PaddingRight, 670)
                       Children:
-                        - AdvancedFilterToggle6:
-                            Control: ModernButton
-                            Properties:
-                              AccessibleLabel: =fxTranslate("Filter", "Filter")
-                              Appearance: =If(varS6ShowFilters, ButtonAppearance.Primary, ButtonAppearance.Secondary)
-                              BasePaletteColor: =RGBA(87, 35, 129, 1)
-                              Height: =40
-                              Icon: ="Filter"
-                              OnSelect: =Set(varS6ShowFilters, !varS6ShowFilters)
-                              Text: =fxTranslate("Filter", "Filter") & If(fxDbdActiveFilterCount > 0, " (" & fxDbdActiveFilterCount & ")", "")
-                              Width: =105
                         - SaveFilterButton6:
                             Control: ModernButton
                             Properties:
@@ -472,64 +458,9 @@ Screens:
                                 Set(varS6SaveAsDefault, If(varS6SaveMode = "update", Coalesce(varS6SelectedSavedView.IsDefault, false), false));
                                 Set(varS6ShowSaveFilterDialog, true);
                                 Set(varS6ShowSavedFilterActions, false);
-                                Reset(SavedFilterNameInput6);
-                                Reset(SavedFilterDefaultCheckbox6)
+                                Reset(SavedFilterNameInput6)
                               Text: =If(varS6FiltersDirty And !IsBlank(varS6SelectedSavedView.ID) And (Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email) Or (varS6SelectedSavedView.Scope.Value = fxSavedViewScopeGlobal And fxCanManageGlobalSavedViews)), fxTranslate("SaveChanges", "Änderungen speichern"), fxTranslate("SaveFilter", "Filter speichern"))
                               Width: =145
-                        - PersonalSavedFilterPicker6:
-                            Control: ModernCombobox
-                            Properties:
-                              AccessibleLabel: =fxTranslate("SavedFilters", "Gespeicherte Filter")
-                              Appearance: =Appearance.Outline
-                              DefaultSelectedItems: =If(IsBlank(varS6SelectedSavedView.ID) Or Lower(varS6SelectedSavedView.OwnerEmail) <> Lower(fxCurrentUser.Email), [], [varS6SelectedSavedView])
-                              Height: =40
-                              InputTextPlaceholder: =fxTranslate("SavedFilters", "Gespeicherte Filter")
-                              IsSearchable: =false
-                              ItemDisplayText: =ThisItem.Title
-                              Items: =SortByColumns(Filter(fxDashboardSavedViews, OwnerEmail = fxCurrentUser.Email), "Title", SortOrder.Ascending)
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
-                              OnChange: |-
-                                =If(
-                                    !IsBlank(Self.Selected.ID),
-                                    Set(varS6SelectedSavedView, Self.Selected);
-                                    Set(varSavedFilter, ParseJSON(Self.Selected.FilterJson));
-                                    Set(varS6QuickFilter, Coalesce(Text(varSavedFilter.quickFilter), "all"));
-                                    Set(varDbdSearchText, Coalesce(Text(varSavedFilter.searchText), ""));
-                                    Set(varDbdStatusFilter, {Value: Coalesce(Text(varSavedFilter.status), "Alle")});
-                                    Set(varDbdPriorityFilter, {Value: Coalesce(Text(varSavedFilter.priority), "Alle")});
-                                    Set(varDbdScopeFilter, {Value: Coalesce(Text(varSavedFilter.scope), "Alle")});
-                                    Set(varDbdTicketTypeFilter, {Value: Coalesce(Text(varSavedFilter.ticketType), "Alle")});
-                                    Set(varDbdCategoryFilter, {Value: Coalesce(Text(varSavedFilter.category), "Alle")});
-                                    Set(varDbdDepartmentFilter, {Value: Coalesce(Text(varSavedFilter.department), "Alle")});
-                                    Set(varDbdRiskFilter, {Value: Coalesce(Text(varSavedFilter.risk), "Alle")});
-                                    Set(varDbdRequesterFilter, If(IsBlank(Text(varSavedFilter.requesterEmail)), Blank(), {Email: Text(varSavedFilter.requesterEmail), DisplayName: Coalesce(Text(varSavedFilter.requesterDisplayName), Text(varSavedFilter.requesterEmail))}));
-                                    Reset(FilterTabs2);
-                                    Reset(SearchInput2);
-                                    Reset(StatusFilter6);
-                                    Reset(PriorityFilter6);
-                                    Reset(ScopeFilter6);
-                                    Reset(TicketTypeFilter6);
-                                    Reset(CategoryFilter6);
-                                    Reset(DepartmentFilter6);
-                                    Reset(RiskFilter6);
-                                    Reset(RequesterFilter6);
-                                    Set(varS6FiltersDirty, false);
-                                    Set(varS6ShowSavedFilterActions, false)
-                                )
-                              SelectMultiple: =false
-                              Width: =180
-                        - SavedFilterActionsToggle6:
-                            Control: ModernButton
-                            Properties:
-                              AccessibleLabel: =fxTranslate("ManageSavedFilter", "Gespeicherten Filter verwalten")
-                              Appearance: =ButtonAppearance.Subtle
-                              DisplayMode: =If(IsBlank(varS6SelectedSavedView.ID), DisplayMode.Disabled, DisplayMode.Edit)
-                              Height: =40
-                              Layout: =ButtonLayout.TextOnly
-                              OnSelect: =Set(varS6ShowSavedFilterActions, !varS6ShowSavedFilterActions)
-                              Text: ="..."
-                              Width: =34
                         - SavedViewPicker6:
                             Control: ModernCombobox
                             Properties:
@@ -573,6 +504,17 @@ Screens:
                                 )
                               SelectMultiple: =false
                               Width: =170
+                        - AdvancedFilterToggle6:
+                            Control: ModernButton
+                            Properties:
+                              AccessibleLabel: =fxTranslate("Filter", "Filter")
+                              Appearance: =If(varS6ShowFilters, ButtonAppearance.Primary, ButtonAppearance.Secondary)
+                              BasePaletteColor: =RGBA(87, 35, 129, 1)
+                              Height: =40
+                              Icon: ="Filter"
+                              OnSelect: =Set(varS6ShowFilters, !varS6ShowFilters)
+                              Text: =fxTranslate("Filter", "Filter") & If(fxDbdActiveFilterCount > 0, " (" & fxDbdActiveFilterCount & ")", "")
+                              Width: =105
             - SavedFilterManagementRow6:
                 Control: GroupContainer
                 Variant: AutoLayout
@@ -606,7 +548,6 @@ Screens:
                       Control: ModernButton
                       Properties:
                         Appearance: =ButtonAppearance.Subtle
-                        Height: =32
                         OnSelect: |-
                           =Set(varSavedFilter, ParseJSON(varS6SelectedSavedView.FilterJson));
                           Set(varS6QuickFilter, Coalesce(Text(varSavedFilter.quickFilter), "all"));
@@ -638,15 +579,13 @@ Screens:
                       Properties:
                         Appearance: =ButtonAppearance.Subtle
                         DisplayMode: =If(Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email) Or (varS6SelectedSavedView.Scope.Value = fxSavedViewScopeGlobal And fxCanManageGlobalSavedViews), DisplayMode.Edit, DisplayMode.Disabled)
-                        Height: =32
                         Icon: ="Edit"
                         OnSelect: |-
                           =Set(varS6SaveMode, "rename");
                           Set(varS6SaveNameDefault, varS6SelectedSavedView.Title);
                           Set(varS6SaveAsDefault, Coalesce(varS6SelectedSavedView.IsDefault, false));
                           Set(varS6ShowSaveFilterDialog, true);
-                          Reset(SavedFilterNameInput6);
-                          Reset(SavedFilterDefaultCheckbox6)
+                          Reset(SavedFilterNameInput6)
                         Text: =fxTranslate("Rename", "Umbenennen")
                         Width: =120
                   - SetDefaultSavedFilter6:
@@ -654,7 +593,6 @@ Screens:
                       Properties:
                         Appearance: =ButtonAppearance.Subtle
                         DisplayMode: =If(Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email), DisplayMode.Edit, DisplayMode.Disabled)
-                        Height: =32
                         Icon: ="Star"
                         OnSelect: |-
                           =IfError(
@@ -675,7 +613,6 @@ Screens:
                       Properties:
                         Appearance: =ButtonAppearance.Subtle
                         DisplayMode: =If(Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email) Or (varS6SelectedSavedView.Scope.Value = fxSavedViewScopeGlobal And fxCanManageGlobalSavedViews), DisplayMode.Edit, DisplayMode.Disabled)
-                        Height: =32
                         Icon: ="Delete"
                         OnSelect: |-
                           =IfError(
@@ -685,7 +622,6 @@ Screens:
                               Set(varS6SelectedSavedView, Blank());
                               Set(varS6FiltersDirty, false);
                               Set(varS6ShowSavedFilterActions, false);
-                              Reset(PersonalSavedFilterPicker6);
                               Reset(SavedViewPicker6);
                               Notify(fxTranslate("ViewDeleted", "Ansicht gelöscht."), NotificationType.Success, 2000)
                           )
@@ -713,7 +649,6 @@ Screens:
                       Control: Gallery
                       Variant: Horizontal
                       Properties:
-                        FillPortions: =1
                         Height: =32
                         Items: =fxDbdActiveFilters
                         LayoutMinHeight: =0
@@ -783,7 +718,6 @@ Screens:
                 Variant: GridLayout
                 Properties:
                   BorderColor: =RGBA(229, 231, 235, 1)
-                  BorderThickness: =0
                   DropShadow: =DropShadow.None
                   Fill: =RGBA(248, 249, 252, 1)
                   FillPortions: =0
@@ -795,7 +729,6 @@ Screens:
                   LayoutGridRows: =If(App.Width >= 1024, 1, If(App.Width >= 800, 2, If(App.Width >= 520, 4, 8)))
                   LayoutMinHeight: =0
                   LayoutMinWidth: =0
-                  LayoutOverflowX: =LayoutOverflow.Hide
                   PaddingBottom: =0
                   PaddingLeft: =0
                   PaddingRight: =0
@@ -813,9 +746,6 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =0
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
                       Children:
                         - StatusFilterLabel6:
                             Control: ModernText
@@ -833,9 +763,9 @@ Screens:
                                 =LookUp(AddColumns(Table({Value: "Alle"}, {Value: "Offen"}, {Value: "Zugewiesen"}, {Value: "In Bearbeitung"}, {Value: "Warten auf Anforderer"}, {Value: "Gelöst"}, {Value: "Geschlossen"}), DisplayValue, fxTranslate(Value, Value)), Value = Coalesce(varDbdStatusFilter.Value, "Alle"))
                               Height: =30
                               ItemDisplayText: =ThisItem.DisplayValue
-                              LayoutMinWidth: =0
                               Items: |-
                                 =AddColumns(Table({Value: "Alle"}, {Value: "Offen"}, {Value: "Zugewiesen"}, {Value: "In Bearbeitung"}, {Value: "Warten auf Anforderer"}, {Value: "Gelöst"}, {Value: "Geschlossen"}), DisplayValue, fxTranslate(Value, Value))
+                              LayoutMinWidth: =0
                               OnChange: |-
                                 =Set(varDbdStatusFilter, {Value: Self.Selected.Value});
                                 Set(varS6FiltersDirty, !IsBlank(varS6SelectedSavedView.ID))
@@ -846,9 +776,6 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =0
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
                       Children:
                         - PriorityFilterLabel6:
                             Control: ModernText
@@ -866,9 +793,9 @@ Screens:
                                 =LookUp(AddColumns(Table({Value: "Alle"}, {Value: "Kritisch"}, {Value: "Hoch"}, {Value: "Mittel"}, {Value: "Niedrig"}), DisplayValue, fxTranslate(Value, Value)), Value = Coalesce(varDbdPriorityFilter.Value, "Alle"))
                               Height: =30
                               ItemDisplayText: =ThisItem.DisplayValue
-                              LayoutMinWidth: =0
                               Items: |-
                                 =AddColumns(Table({Value: "Alle"}, {Value: "Kritisch"}, {Value: "Hoch"}, {Value: "Mittel"}, {Value: "Niedrig"}), DisplayValue, fxTranslate(Value, Value))
+                              LayoutMinWidth: =0
                               OnChange: |-
                                 =Set(varDbdPriorityFilter, {Value: Self.Selected.Value});
                                 Set(varS6FiltersDirty, !IsBlank(varS6SelectedSavedView.ID))
@@ -879,9 +806,6 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =0
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
                       Children:
                         - TicketTypeFilterLabel6:
                             Control: ModernText
@@ -899,9 +823,9 @@ Screens:
                                 =LookUp(AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, TicketType.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value)), Value = Coalesce(varDbdTicketTypeFilter.Value, "Alle"))
                               Height: =30
                               ItemDisplayText: =ThisItem.DisplayValue
-                              LayoutMinWidth: =0
                               Items: |-
                                 =AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, TicketType.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value))
+                              LayoutMinWidth: =0
                               OnChange: |-
                                 =Set(varDbdTicketTypeFilter, {Value: Self.Selected.Value});
                                 Set(varS6FiltersDirty, !IsBlank(varS6SelectedSavedView.ID))
@@ -912,9 +836,6 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =0
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
                       Children:
                         - ScopeFilterLabel6:
                             Control: ModernText
@@ -932,9 +853,9 @@ Screens:
                                 =LookUp(AddColumns(Table({Value: "Alle"}, {Value: "Mir zugewiesen"}, {Value: "Von mir erstellt"}, {Value: "Von mir angefordert"}), DisplayValue, fxTranslate(Value, Value)), Value = Coalesce(varDbdScopeFilter.Value, "Alle"))
                               Height: =30
                               ItemDisplayText: =ThisItem.DisplayValue
-                              LayoutMinWidth: =0
                               Items: |-
                                 =AddColumns(Table({Value: "Alle"}, {Value: "Mir zugewiesen"}, {Value: "Von mir erstellt"}, {Value: "Von mir angefordert"}), DisplayValue, fxTranslate(Value, Value))
+                              LayoutMinWidth: =0
                               OnChange: |-
                                 =Set(varDbdScopeFilter, {Value: Self.Selected.Value});
                                 Set(varS6FiltersDirty, !IsBlank(varS6SelectedSavedView.ID))
@@ -945,9 +866,6 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =0
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
                         Visible: =fxIsAgentExperience
                       Children:
                         - CategoryFilterLabel6:
@@ -966,9 +884,9 @@ Screens:
                                 =LookUp(AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Coalesce(Category.Value, CategoryINC.Value, "")), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value)), Value = Coalesce(varDbdCategoryFilter.Value, "Alle"))
                               Height: =30
                               ItemDisplayText: =ThisItem.DisplayValue
-                              LayoutMinWidth: =0
                               Items: |-
                                 =AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Coalesce(Category.Value, CategoryINC.Value, "")), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value))
+                              LayoutMinWidth: =0
                               OnChange: |-
                                 =Set(varDbdCategoryFilter, {Value: Self.Selected.Value});
                                 Set(varS6FiltersDirty, !IsBlank(varS6SelectedSavedView.ID))
@@ -979,9 +897,6 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =0
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
                         Visible: =fxIsAgentExperience
                       Children:
                         - DepartmentFilterLabel6:
@@ -1000,9 +915,9 @@ Screens:
                                 =LookUp(AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Department.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value)), Value = Coalesce(varDbdDepartmentFilter.Value, "Alle"))
                               Height: =30
                               ItemDisplayText: =ThisItem.DisplayValue
-                              LayoutMinWidth: =0
                               Items: |-
                                 =AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Department.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value))
+                              LayoutMinWidth: =0
                               OnChange: |-
                                 =Set(varDbdDepartmentFilter, {Value: Self.Selected.Value});
                                 Set(varS6FiltersDirty, !IsBlank(varS6SelectedSavedView.ID))
@@ -1013,9 +928,6 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =0
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
                         Visible: =fxIsAgentExperience
                       Children:
                         - RiskFilterLabel6:
@@ -1034,9 +946,9 @@ Screens:
                                 =LookUp(AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Risk.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value)), Value = Coalesce(varDbdRiskFilter.Value, "Alle"))
                               Height: =30
                               ItemDisplayText: =ThisItem.DisplayValue
-                              LayoutMinWidth: =0
                               Items: |-
                                 =AddColumns(SortByColumns(Ungroup(Table({Rows: Table({Value: "Alle"})}, {Rows: Filter(ForAll(Distinct(ev_sp_list_tickets, Risk.Value), {Value: Value}), !IsBlank(Value))}), Rows), "Value", SortOrder.Ascending), DisplayValue, fxTranslate(Value, Value))
+                              LayoutMinWidth: =0
                               OnChange: |-
                                 =Set(varDbdRiskFilter, {Value: Self.Selected.Value});
                                 Set(varS6FiltersDirty, !IsBlank(varS6SelectedSavedView.ID))
@@ -1047,9 +959,6 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         LayoutDirection: =LayoutDirection.Vertical
-                        LayoutGap: =0
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
                         Visible: =fxIsAgentExperience
                       Children:
                         - RequesterFilterLabel6:
@@ -1064,14 +973,13 @@ Screens:
                         - RequesterFilter6:
                             Control: ModernCombobox
                             Properties:
-                              DefaultSelectedItems: |-
-                                =If(IsBlank(varDbdRequesterFilter.Email), [], [varDbdRequesterFilter])
+                              DefaultSelectedItems: =If(IsBlank(varDbdRequesterFilter.Email), [], [varDbdRequesterFilter])
                               Height: =30
                               InputTextPlaceholder: =fxTranslate("All", "Alle")
                               ItemDisplayText: =ThisItem.DisplayName
-                              LayoutMinWidth: =0
                               Items: |-
                                 =SortByColumns(Filter(ForAll(Distinct(ev_sp_list_tickets, RequestedBy.Email), {Email: Value, DisplayName: LookUp(ev_sp_list_tickets, RequestedBy.Email = Value).RequestedBy.DisplayName}), !IsBlank(Email)), "DisplayName", SortOrder.Ascending)
+                              LayoutMinWidth: =0
                               OnChange: |-
                                 =Set(varDbdRequesterFilter, Self.Selected);
                                 Set(varS6FiltersDirty, !IsBlank(varS6SelectedSavedView.ID))
@@ -1125,7 +1033,6 @@ Screens:
                             Properties:
                               AccessibleLabel: =fxTranslate("CloseNotifications", "Benachrichtigungen schließen")
                               Appearance: =ButtonAppearance.Subtle
-                              Height: =32
                               Icon: ="Dismiss"
                               Layout: =ButtonLayout.IconOnly
                               OnSelect: =Set(varS6ShowNotifications, false)
@@ -1144,7 +1051,6 @@ Screens:
                       Control: Gallery
                       Variant: Vertical
                       Properties:
-                        FillPortions: =1
                         Items: =fxDbdNotifications
                         LayoutMinHeight: =0
                         LayoutMinWidth: =0
@@ -1186,7 +1092,6 @@ Screens:
                                   Properties:
                                     AccessibleLabel: =fxTranslate("OpenTicket", "Ticket öffnen")
                                     Appearance: =ButtonAppearance.Subtle
-                                    Height: =32
                                     Icon: ="ArrowRight"
                                     Layout: =ButtonLayout.IconOnly
                                     OnSelect: |-
@@ -1236,7 +1141,6 @@ Screens:
                             Properties:
                               FillPortions: =1
                               FontWeight: =FontWeight.Semibold
-                              Height: =32
                               LayoutMinHeight: =0
                               LayoutMinWidth: =0
                               Size: =16
@@ -1344,10 +1248,7 @@ Screens:
                       Control: ModernDataGrid
                       Properties:
                         AccessibleLabel: =fxTranslate("TicketList", "Ticketliste")
-                        AlignInContainer: =AlignInContainer.Stretch
                         BasePaletteColor: =RGBA(87, 35, 129, 1)
-                        DisplayMode: =DisplayMode.Edit
-                        FillPortions: =1
                         Items: |-
                           =With(
                               {
@@ -1398,12 +1299,9 @@ Screens:
                               Set(varTicketLoadedModified, varCurrentTicket.Geändert);
                               Navigate(ticket_details_screen, ScreenTransition.None)
                           )
-                        Searchable: =false
                         SelectMultiple: =false
                         ShowAIRowSummary: =false
-                        ShowHeaders: =true
                         ShowSelector: =false
-                        Sortable: =true
                         Width: =Parent.Width
                       Children:
                         - TicketUpdatedTableColumn6:
@@ -1574,7 +1472,6 @@ Screens:
                                   Control: ModernText
                                   Properties:
                                     FontWeight: =FontWeight.Semibold
-                                    Height: =32
                                     Size: =12
                                     Text: =Coalesce(ThisItem.TicketId, ThisItem.Titel, Text(ThisItem.ID))
                                     Width: =If(App.Width < 640, 78, 110)
@@ -1584,7 +1481,6 @@ Screens:
                                   Properties:
                                     FillPortions: =1
                                     FontWeight: =If(!IsBlank(LookUp(fxDbdNotifications, TicketId = ThisItem.ID)), FontWeight.Bold, FontWeight.Semibold)
-                                    Height: =32
                                     LayoutMinWidth: =100
                                     Size: =12
                                     Text: =Concatenate(If(!IsBlank(LookUp(fxDbdNotifications, TicketId = ThisItem.ID)), "* ", ""), Coalesce(ThisItem.TicketTitel, ThisItem.Titel, fxTranslate("NoTitle", "Ohne Titel")))
@@ -1592,7 +1488,6 @@ Screens:
                               - TicketRequester6:
                                   Control: ModernText
                                   Properties:
-                                    Height: =32
                                     Size: =12
                                     Text: =Coalesce(ThisItem.RequestedBy.DisplayName, ThisItem.RequestedBy.Email, "-")
                                     Visible: =App.Width >= 850
@@ -1601,7 +1496,6 @@ Screens:
                               - TicketAssignee6:
                                   Control: ModernText
                                   Properties:
-                                    Height: =32
                                     Size: =12
                                     Text: =Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen"))
                                     Visible: =fxIsAgentExperience && App.Width >= 1100
@@ -1643,7 +1537,6 @@ Screens:
                               - TicketUpdated6:
                                   Control: ModernText
                                   Properties:
-                                    Height: =32
                                     Size: =11
                                     Text: =Text(ThisItem.Geändert, "[$-de-DE]dd.mm. HH:mm")
                                     Visible: =App.Width >= 900
@@ -1654,7 +1547,6 @@ Screens:
                                   Properties:
                                     AccessibleLabel: =Substitute(fxTranslate("OpenTicketTemplate", "Ticket {0} öffnen"), "{0}", Coalesce(ThisItem.TicketId, ThisItem.Titel, Text(ThisItem.ID)))
                                     Appearance: =ButtonAppearance.Subtle
-                                    Height: =32
                                     Icon: ="ArrowRight"
                                     Layout: =ButtonLayout.IconOnly
                                     OnSelect: |-
@@ -1717,7 +1609,6 @@ Screens:
                       Control: ModernText
                       Properties:
                         FontWeight: =FontWeight.Bold
-                        Height: =32
                         Size: =20
                         Text: =If(varS6SaveMode = "rename", fxTranslate("RenameFilter", "Filter umbenennen"), If(varS6SaveMode = "update", fxTranslate("SaveChanges", "Änderungen speichern"), fxTranslate("SaveFilter", "Filter speichern")))
                         Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
@@ -1740,13 +1631,15 @@ Screens:
                         Placeholder: =fxTranslate("ViewNameExample", "Kritische SAP Changes")
                         Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                   - SavedFilterDefaultCheckbox6:
-                      Control: Checkbox
+                      Control: ModernCheckbox
                       Properties:
                         AccessibleLabel: =fxTranslate("UseAsDefaultView", "Als Standardansicht verwenden")
                         BasePaletteColor: =RGBA(87, 35, 129, 1)
-                        Checked: =varS6SaveAsDefault
-                        Height: =32
+                        Default: =varS6SaveAsDefault
+                        FontWeight: =""
                         Label: =fxTranslate("UseAsDefaultView", "Als Standardansicht verwenden")
+                        OnCheck: =
+                        OnUncheck: =
                         Visible: =varS6SaveMode <> "rename" And (varS6SaveMode = "new" Or Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email))
                         Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                   - SavedFilterDialogSpacer6:
@@ -1782,7 +1675,6 @@ Screens:
                         - ConfirmSaveFilter6:
                             Control: ModernButton
                             Properties:
-                              Appearance: =ButtonAppearance.Primary
                               BasePaletteColor: =RGBA(87, 35, 129, 1)
                               Height: =40
                               OnSelect: |-
@@ -1853,7 +1745,6 @@ Screens:
                                             Set(varS6ShowSaveFilterDialog, false);
                                             Set(varS6ShowSavedFilterActions, false);
                                             Set(varS6FiltersDirty, false);
-                                            Reset(PersonalSavedFilterPicker6);
                                             Reset(SavedViewPicker6);
                                             Notify(fxTranslate("ViewSaved", "Ansicht gespeichert."), NotificationType.Success, 2000)
                                         )
