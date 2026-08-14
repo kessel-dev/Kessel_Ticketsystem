@@ -2451,6 +2451,7 @@ Screens:
                                                 LayoutDirection: =LayoutDirection.Vertical
                                                 LayoutGap: =1
                                                 LayoutMinHeight: =0
+                                                LayoutMinWidth: =0
                                                 Width: =Parent.Width - 70
                                               Children:
                                                 - lbl_ticket_number:
@@ -2496,6 +2497,7 @@ Screens:
                                                       Size: =12
                                                       Text: =ThisItem.TicketTitel
                                                       Width: =Parent.Width
+                                                      Wrap: =false
                                                 - lbl_ticket_status:
                                                     Control: ModernText
                                                     Properties:
@@ -2957,6 +2959,52 @@ Screens:
                                           RadiusTopRight: =6
                                           Width: =Parent.Width
                                         Children:
+                                          - form_ticket_attachments_inline:
+                                              Control: Form
+                                              Layout: Vertical
+                                              Properties:
+                                                BorderColor: =RGBA(0, 0, 0, 1)
+                                                BorderStyle: =%BorderStyle.RESERVED%.Solid
+                                                DefaultMode: =%FormMode.RESERVED%.Edit
+                                              Children:
+                                                - dc_ticket_attachment_inline:
+                                                    Control: TypedDataCard
+                                                    Variant: ClassicAttachmentsEdit
+                                                    Properties:
+                                                      BorderColor: =RGBA(0, 0, 0, 1)
+                                                      BorderStyle: =%BorderStyle.RESERVED%.Solid
+                                                      DataField: =""
+                                                      Default: =%QUALIFIED_DATACARD_FIELD_VALUE.ID%
+                                                      DisplayMode: =%DisplayMode.RESERVED%.Edit
+                                                      DisplayName: =""
+                                                      Height: =200
+                                                      Required: =false
+                                                      Update: =%FieldValue.ID%.Attachments
+                                                      X: =0
+                                                      Y: =0
+                                                    Children:
+                                                      - att_ticket_inline_upload:
+                                                          Control: Attachments
+                                                          Properties:
+                                                            BorderColor: =RGBA(69, 69, 69, 1)
+                                                            BorderStyle: =%BorderStyle.RESERVED%.Solid
+                                                            BorderThickness: =0
+                                                            DisabledBorderColor: =RGBA(186, 186, 186, 1)
+                                                            DisabledColor: =RGBA(186, 186, 186, 1)
+                                                            DisabledFill: =RGBA(242, 242, 242, 1)
+                                                            DisplayMode: =%DisplayMode.RESERVED%.Edit
+                                                            DropTargetBorderStyle: =%BorderStyle.RESERVED%.Dotted
+                                                            FocusedBorderThickness: =0
+                                                            Font: =%Font.RESERVED%.'Open Sans'
+                                                            FontWeight: =%FontWeight.RESERVED%.Normal
+                                                            HoverColor: =Self.Color
+                                                            HoverFill: =RGBA(186, 186, 186, 1)
+                                                            ItemColor: =Self.Color
+                                                            ItemFill: =RGBA(234, 234, 234, 1)
+                                                            ItemHoverColor: =Self.HoverColor
+                                                            ItemHoverFill: =Self.HoverFill
+                                                            PressedColor: =Self.Color
+                                                            PressedFill: =ColorFade(Self.Fill, -30%)
                                           - lbl_attach_empty:
                                               Control: ModernText
                                               Properties:
@@ -3012,66 +3060,6 @@ Screens:
                                                       Size: =12
                                                       Visible: =!IsEmpty(ThisItem.Anlagen)
                                                       Width: =Parent.TemplateWidth
-                                          - form_ticket_attachments_inline:
-                                              Control: Form
-                                              Layout: Vertical
-                                              Properties:
-                                                DataSource: =ev_sp_list_tickets
-                                                FillPortions: =0
-                                                Height: =If(varShowTicketAttachmentUpload, 200, 0)
-                                                Item: =varCurrentTicket
-                                                LayoutMinHeight: =0
-                                                LayoutMinWidth: =0
-                                                OnFailure: |-
-                                                  =Set(varTicketAttachmentSubmitting, false);
-                                                  Notify(fxTranslate("AttachmentSaveFailed", "Anlage konnte nicht gespeichert werden."), NotificationType.Error, 4000)
-                                                OnSuccess: |-
-                                                  =Set(varTicketAttachmentSubmitting, false);
-                                                  Refresh(ev_sp_list_tickets);
-                                                  Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = form_ticket_attachments_inline.LastSubmit.ID));
-                                                  Set(varTicketLoadedModified, varCurrentTicket.Geändert);
-                                                  ResetForm(form_ticket_attachments_inline);
-                                                  Set(varShowTicketAttachmentUpload, false);
-                                                  Notify(fxTranslate("AttachmentSaved", "Anlage gespeichert."), NotificationType.Success, 2500)
-                                                Visible: =varShowTicketAttachmentUpload
-                                                Width: =Parent.Width
-                                              Children:
-                                                - dc_ticket_attachment_inline:
-                                                    Control: TypedDataCard
-                                                    Variant: ClassicAttachmentsEdit
-                                                    Properties:
-                                                      DataField: ="{Attachments}"
-                                                      Default: =ThisItem.Anlagen
-                                                      DisplayName: =fxTranslate("Anlagen", "Anhänge")
-                                                      Height: =190
-                                                      Required: =false
-                                                      Update: =att_ticket_inline_upload.Attachments
-                                                      Width: =Parent.Width
-                                                      X: =0
-                                                      Y: =0
-                                                    Children:
-                                                      - att_ticket_inline_upload:
-                                                          Control: Attachments
-                                                          Properties:
-                                                            AccessibleLabel: =fxTranslate("TicketAttachments", "Ticketanlagen")
-                                                            AddAttachmentColor: =RGBA(87, 35, 129, 1)
-                                                            AddAttachmentText: =fxTranslate("ChooseFile", "Datei auswählen")
-                                                            BorderColor: =RGBA(226, 232, 240, 1)
-                                                            BorderThickness: =1
-                                                            DisplayMode: =If(fxCanEditCurrentTicket && !fxIsCurrentTicketClosed && !varTicketAttachmentSubmitting, DisplayMode.Edit, DisplayMode.Disabled)
-                                                            Height: =150
-                                                            Items: =Parent.Default
-                                                            MaxAttachments: =10
-                                                            MaxAttachmentsText: =fxTranslate("MaxAttachmentsReached", "Max. Anzahl von Anhängen erreicht.")
-                                                            NoAttachmentsText: =fxTranslate("NoFileSelected", "Keine Datei ausgewählt")
-                                                            PaddingBottom: =6
-                                                            PaddingLeft: =6
-                                                            PaddingRight: =6
-                                                            PaddingTop: =6
-                                                            Size: =12
-                                                            Width: =Parent.Width - 8
-                                                            X: =4
-                                                            Y: =4
                                           - row_ticket_attachment_actions:
                                               Control: GroupContainer
                                               Variant: AutoLayout
@@ -3093,7 +3081,7 @@ Screens:
                                                       DisplayMode: =If(varTicketAttachmentSubmitting, DisplayMode.Disabled, DisplayMode.Edit)
                                                       Height: =34
                                                       OnSelect: |-
-                                                        =ResetForm(form_ticket_attachments_inline);
+                                                        =ResetForm(form_ticket_attachments_inline_1);
                                                         Set(varShowTicketAttachmentUpload, false)
                                                       Text: =fxTranslate("Cancel", "Abbrechen")
                                                       Width: =110
@@ -3104,7 +3092,7 @@ Screens:
                                                       Height: =34
                                                       OnSelect: |-
                                                         =Set(varTicketAttachmentSubmitting, true);
-                                                        SubmitForm(form_ticket_attachments_inline)
+                                                        SubmitForm(form_ticket_attachments_inline_1)
                                                       Text: =fxTranslate("Speichern", "Speichern")
                                                       Width: =110
                               - card_watchers_below_attachments:
@@ -3612,7 +3600,7 @@ Screens:
                                           Visible: =varShowCommentAttachmentTray Or !IsEmpty(att_comment_upload.Attachments)
                                           Width: =Parent.Width
                                         Children:
-                                          - CommentByClaims_DataCard1:
+                                          - CommentByClaims_DataCard1_1:
                                               Control: TypedDataCard
                                               Variant: TextualEdit
                                               Properties:
@@ -3627,46 +3615,80 @@ Screens:
                                                 X: =0
                                                 Y: =0
                                               Children:
-                                                - DataCardKey4:
-                                                    Control: Text
+                                                - DataCardKey4_1:
+                                                    Control: ModernText
                                                     Properties:
+                                                      FontWeight: =FontWeight.Semibold
                                                       Height: =22
+                                                      PaddingBottom: =0
+                                                      PaddingLeft: =0
+                                                      PaddingRight: =0
+                                                      PaddingTop: =0
+                                                      RadiusBottomLeft: =0
+                                                      RadiusBottomRight: =0
+                                                      RadiusTopLeft: =0
+                                                      RadiusTopRight: =0
+                                                      Size: =14
                                                       Text: =Parent.DisplayName
-                                                      Weight: ='TextCanvas.Weight'.Semibold
+                                                      VerticalAlign: =VerticalAlign.Top
                                                       Width: =Parent.Width - 48
                                                       Wrap: =false
                                                       X: =24
                                                       Y: =10
-                                                - DataCardValue4:
-                                                    Control: TextInput
+                                                - DataCardValue4_1:
+                                                    Control: ModernTextInput
                                                     Properties:
                                                       AccessibleLabel: =Parent.DisplayName
+                                                      Default: =Parent.Default
                                                       DisplayMode: =Parent.DisplayMode
-                                                      Mode: ="'TextInputCanvas.Mode'.TextInputModeSingleLine"
+                                                      FontWeight: =""
+                                                      MaxLength: =-1
+                                                      Placeholder: =""
                                                       Required: =Parent.Required
+                                                      Size: =0
+                                                      TriggerOutput: =TriggerOutput.FocusOut
                                                       ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
-                                                      Value: =Parent.Default
                                                       Width: =Parent.Width - 48
                                                       X: =24
-                                                      Y: =DataCardKey4.Y + DataCardKey4.Height + 4
-                                                - ErrorMessage4:
-                                                    Control: Text
+                                                      Y: =DataCardKey4_1.Y + DataCardKey4_1.Height + 4
+                                                - ErrorMessage4_1:
+                                                    Control: ModernText
                                                     Properties:
                                                       Height: =30
+                                                      PaddingBottom: =0
+                                                      PaddingLeft: =0
+                                                      PaddingRight: =0
+                                                      PaddingTop: =0
+                                                      RadiusBottomLeft: =0
+                                                      RadiusBottomRight: =0
+                                                      RadiusTopLeft: =0
+                                                      RadiusTopRight: =0
+                                                      Size: =14
                                                       Text: =Parent.Error
+                                                      VerticalAlign: =VerticalAlign.Top
                                                       Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
                                                       Width: =Parent.Width - 48
                                                       X: =24
-                                                      Y: =DataCardValue4.Y + DataCardValue4.Height
-                                                - StarVisible4:
-                                                    Control: Text
+                                                      Y: =DataCardValue4_1.Y + DataCardValue4_1.Height
+                                                - StarVisible4_1:
+                                                    Control: ModernText
                                                     Properties:
-                                                      Align: ='TextCanvas.Align'.Center
+                                                      Align: =Align.Center
                                                       Height: =30
+                                                      PaddingBottom: =0
+                                                      PaddingLeft: =0
+                                                      PaddingRight: =0
+                                                      PaddingTop: =0
+                                                      RadiusBottomLeft: =0
+                                                      RadiusBottomRight: =0
+                                                      RadiusTopLeft: =0
+                                                      RadiusTopRight: =0
+                                                      Size: =14
                                                       Text: ="*"
+                                                      VerticalAlign: =VerticalAlign.Top
                                                       Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
                                                       Width: =30
-                                                      Y: =DataCardKey4.Y
+                                                      Y: =DataCardKey4_1.Y
                                           - dc_comment_text:
                                               Control: TypedDataCard
                                               Variant: TextualEdit
@@ -4243,6 +4265,63 @@ Screens:
                         Width: =36
                         X: =Parent.Width - 52
                         Y: =12
+      - form_ticket_attachments_inline_1:
+          Control: Form
+          Layout: Vertical
+          Properties:
+            DataSource: =ev_sp_list_tickets
+            Height: =If(varShowTicketAttachmentUpload, 200, 0)
+            Item: =varCurrentTicket
+            OnFailure: |-
+              =Set(varTicketAttachmentSubmitting, false);
+              Notify(fxTranslate("AttachmentSaveFailed", "Anlage konnte nicht gespeichert werden."), NotificationType.Error, 4000)
+            OnSuccess: |-
+              =Set(varTicketAttachmentSubmitting, false);
+              Refresh(ev_sp_list_tickets);
+              Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = form_ticket_attachments_inline_1.LastSubmit.ID));
+              Set(varTicketLoadedModified, varCurrentTicket.Geändert);
+              ResetForm(form_ticket_attachments_inline_1);
+              Set(varShowTicketAttachmentUpload, false);
+              Notify(fxTranslate("AttachmentSaved", "Anlage gespeichert."), NotificationType.Success, 2500)
+            Visible: =varShowTicketAttachmentUpload
+            Width: =Parent.Width
+          Children:
+            - dc_ticket_attachment_inline_1:
+                Control: TypedDataCard
+                Variant: ClassicAttachmentsEdit
+                Properties:
+                  DataField: ="{Attachments}"
+                  Default: =ThisItem.Anlagen
+                  DisplayName: =fxTranslate("Anlagen", "Anhänge")
+                  Height: =190
+                  Required: =false
+                  Update: =att_ticket_inline_upload_1.Attachments
+                  Width: =Parent.Width
+                  X: =0
+                  Y: =0
+                Children:
+                  - att_ticket_inline_upload_1:
+                      Control: Attachments
+                      Properties:
+                        AccessibleLabel: =fxTranslate("TicketAttachments", "Ticketanlagen")
+                        AddAttachmentColor: =RGBA(87, 35, 129, 1)
+                        AddAttachmentText: =fxTranslate("ChooseFile", "Datei auswählen")
+                        BorderColor: =RGBA(226, 232, 240, 1)
+                        BorderThickness: =1
+                        DisplayMode: =If(fxCanEditCurrentTicket && !fxIsCurrentTicketClosed && !varTicketAttachmentSubmitting, DisplayMode.Edit, DisplayMode.Disabled)
+                        Height: =150
+                        Items: =Parent.Default
+                        MaxAttachments: =10
+                        MaxAttachmentsText: =fxTranslate("MaxAttachmentsReached", "Max. Anzahl von Anhängen erreicht.")
+                        NoAttachmentsText: =fxTranslate("NoFileSelected", "Keine Datei ausgewählt")
+                        PaddingBottom: =6
+                        PaddingLeft: =6
+                        PaddingRight: =6
+                        PaddingTop: =6
+                        Size: =12
+                        Width: =Parent.Width - 8
+                        X: =4
+                        Y: =4
       - tds_promote_change_overlay:
           Control: GroupContainer
           Variant: ManualLayout

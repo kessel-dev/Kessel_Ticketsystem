@@ -413,6 +413,124 @@ App:
       fxDbdCardRadius = 8;
       fxDbdControlGap = 8;
       fxDbdSectionGap = 14;
+      fxDbdActiveFilters = Filter(
+          Table(
+              {Key: "status", Label: fxTranslate("Status", "Status"), Value: Coalesce(varDbdStatusFilter.Value, "Alle")},
+              {Key: "priority", Label: fxTranslate("Priority", "Priorität"), Value: Coalesce(varDbdPriorityFilter.Value, "Alle")},
+              {Key: "scope", Label: fxTranslate("Scope", "Umfang"), Value: Coalesce(varDbdScopeFilter.Value, "Alle")},
+              {Key: "ticketType", Label: fxTranslate("TicketType", "Tickettyp"), Value: Coalesce(varDbdTicketTypeFilter.Value, "Alle")},
+              {Key: "category", Label: fxTranslate("Category", "Kategorie"), Value: Coalesce(varDbdCategoryFilter.Value, "Alle")},
+              {Key: "department", Label: fxTranslate("Department", "Abteilung"), Value: Coalesce(varDbdDepartmentFilter.Value, "Alle")},
+              {Key: "risk", Label: fxTranslate("Risk", "Risiko"), Value: Coalesce(varDbdRiskFilter.Value, "Alle")},
+              {Key: "requester", Label: fxTranslate("Requester", "Anforderer"), Value: Coalesce(varDbdRequesterFilter.DisplayName, varDbdRequesterFilter.Email, "Alle")}
+          ),
+          !IsBlank(Value) && Value <> "Alle"
+      );
+      fxDbdActiveFilterCount = CountRows(fxDbdActiveFilters);
+      fxFilteredDashboardTickets = With(
+          {
+              accessibleTickets: If(
+                  fxIsAgentExperience,
+                  ev_sp_list_tickets,
+                  Filter(
+                      ev_sp_list_tickets,
+                      RequestedBy.Email = fxCurrentUser.Email
+                          || 'Erstellt von'.Email = fxCurrentUser.Email
+                          || 'Zugewiesen an'.Email = fxCurrentUser.Email
+                  )
+              )
+          },
+          With(
+              {
+                  scopeTickets: Switch(
+                      Coalesce(varDbdScopeFilter.Value, "Alle"),
+                      "Mir zugewiesen", Filter(accessibleTickets, 'Zugewiesen an'.Email = fxCurrentUser.Email),
+                      "Von mir erstellt", Filter(accessibleTickets, 'Erstellt von'.Email = fxCurrentUser.Email),
+                      "Von mir angefordert", Filter(accessibleTickets, RequestedBy.Email = fxCurrentUser.Email),
+                      accessibleTickets
+                  )
+              },
+              With(
+                  {
+                      searchTickets: If(
+                          IsBlank(Trim(varDbdSearchText)),
+                          scopeTickets,
+                          Filter(
+                              scopeTickets,
+                              StartsWith(Titel, Trim(varDbdSearchText))
+                                  || StartsWith(TicketId, Trim(varDbdSearchText))
+                                  || StartsWith(TicketTitel, Trim(varDbdSearchText))
+                                  || StartsWith(RequestedBy.DisplayName, Trim(varDbdSearchText))
+                          )
+                      )
+                  },
+                  With(
+                      {
+                          requesterTickets: If(
+                              IsBlank(varDbdRequesterFilter.Email),
+                              searchTickets,
+                              Filter(searchTickets, RequestedBy.Email = varDbdRequesterFilter.Email)
+                          )
+                      },
+                      With(
+                          {
+                              statusTickets: If(
+                                  Coalesce(varDbdStatusFilter.Value, "Alle") = "Alle",
+                                  requesterTickets,
+                                  Filter(requesterTickets, Coalesce(Status.Value, StatusINC.Value, "") = varDbdStatusFilter.Value)
+                              )
+                          },
+                          With(
+                              {
+                                  priorityTickets: If(
+                                      !fxIsAgentExperience || Coalesce(varDbdPriorityFilter.Value, "Alle") = "Alle",
+                                      statusTickets,
+                                      Filter(statusTickets, Priority.Value = varDbdPriorityFilter.Value)
+                                  )
+                              },
+                              With(
+                                  {
+                                      typeTickets: If(
+                                          Coalesce(varDbdTicketTypeFilter.Value, "Alle") = "Alle",
+                                          priorityTickets,
+                                          Filter(priorityTickets, TicketType.Value = varDbdTicketTypeFilter.Value)
+                                      )
+                                  },
+                                  With(
+                                      {
+                                          categoryTickets: If(
+                                              !fxIsAgentExperience || Coalesce(varDbdCategoryFilter.Value, "Alle") = "Alle",
+                                              typeTickets,
+                                              Filter(typeTickets, Coalesce(Category.Value, CategoryINC.Value, "") = varDbdCategoryFilter.Value)
+                                          )
+                                      },
+                                      With(
+                                          {
+                                              departmentTickets: If(
+                                                  !fxIsAgentExperience || Coalesce(varDbdDepartmentFilter.Value, "Alle") = "Alle",
+                                                  categoryTickets,
+                                                  Filter(categoryTickets, Department.Value = varDbdDepartmentFilter.Value)
+                                              )
+                                          },
+                                          With(
+                                              {
+                                                  riskTickets: If(
+                                                      !fxIsAgentExperience || Coalesce(varDbdRiskFilter.Value, "Alle") = "Alle",
+                                                      departmentTickets,
+                                                      Filter(departmentTickets, Risk.Value = varDbdRiskFilter.Value)
+                                                  )
+                                              },
+                                              SortByColumns(riskTickets, "ID", SortOrder.Descending)
+                                          )
+                                      )
+                                  )
+                              )
+                          )
+                      )
+                  )
+              )
+          )
+      );
       fxCanManageGlobalSavedViews = Coalesce(
           fxIsAdmin,
           false

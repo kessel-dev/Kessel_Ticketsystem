@@ -1,0 +1,676 @@
+Screens:
+  Screen2:
+    Properties:
+      OnVisible: |-
+        =If(
+            IsBlank(varCurrentTicket),
+            Set(
+                varCurrentTicket,
+                First(
+                    SortByColumns(
+                        Filter(
+                            ev_sp_list_tickets,
+                            Coalesce(fxIsAgentExperience, false)
+                                Or RequestedBy.Email = fxCurrentUser.Email
+                                Or 'Erstellt von'.Email = fxCurrentUser.Email
+                                Or 'Zugewiesen an'.Email = fxCurrentUser.Email
+                        ),
+                        "ID",
+                        SortOrder.Descending
+                    )
+                )
+            )
+        )
+    Children:
+      - ApprScroll1:
+          Control: GroupContainer
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Vertical
+            LayoutOverflowY: =LayoutOverflow.Scroll
+            PaddingBottom: =24
+            Width: =Parent.Width
+          Children:
+            - TopNav2:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =If(App.Width < 640, 104, 56)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  Width: =Parent.Width
+                Children:
+                  - TitleRow2:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =0
+                        Height: =56
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Horizontal
+                        LayoutGap: =12
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingLeft: =If(App.Width < 640, 16, 24)
+                        PaddingRight: =If(App.Width < 640, 16, 24)
+                        Width: =Parent.Width
+                      Children:
+                        - AppTitle2:
+                            Control: ModernText
+                            Properties:
+                              FillPortions: =If(App.Width < 640, 1, 0)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingTop: =0
+                              Size: =If(App.Width < 640, 13, 16)
+                              Text: =fxTranslate("ItServicePortal", "IT Service Portal")
+                              Width: =If(App.Width < 640, 0, 200)
+                        - NavTabsDesktop2:
+                            Control: ModernTabList
+                            Properties:
+                              AlignInContainer: =AlignInContainer.Center
+                              Appearance: =TabListAppearance.Subtle
+                              BasePaletteColor: =RGBA(87, 35, 129, 1)
+                              Default: |-
+                                ={Value: fxTranslate("Tickets", "Tickets")}
+                              FillPortions: =1
+                              Height: =56
+                              Items: |-
+                                =Table(
+                                    {Value: fxTranslate("Dashboard", "Dashboard")},
+                                    {Value: fxTranslate("CreateTicket", "Ticket erstellen")},
+                                    {Value: fxTranslate("Tickets", "Tickets")}
+                                )
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              OnChange: |-
+                                =Switch(
+                                    Self.Selected.Value,
+                                    fxTranslate("CreateTicket", "Ticket erstellen"), Navigate(request_type_screen, ScreenTransition.Cover),
+                                    Navigate(dashboard_screen, ScreenTransition.Cover)
+                                )
+                              Visible: =App.Width >= 640
+                        - LanguageSelector2:
+                            Control: ModernDropdown
+                            Properties:
+                              AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
+                              Default: |-
+                                =LookUp(Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"}), Code = Coalesce(varCurrentLanguage, "de"))
+                              Height: =34
+                              ItemDisplayText: =ThisItem.Label
+                              Items: |-
+                                =Table({Code: "de", Label: "DE"}, {Code: "en", Label: "EN"})
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
+                              Width: =72
+                        - UserName2:
+                            Control: ModernText
+                            Properties:
+                              Color: =RGBA(35, 39, 47, 1)
+                              FontWeight: =FontWeight.Semibold
+                              Height: =24
+                              LayoutMinHeight: =0
+                              LayoutMinWidth: =0
+                              Size: =12
+                              Text: =Left(fxCurrentUser.FullName, Find(" ", fxCurrentUser.FullName & " ") - 1)
+                              Visible: =App.Width >= 760
+                              Width: =72
+                        - Avatar2:
+                            Control: ModernText
+                            Properties:
+                              Align: =Align.Center
+                              Color: =RGBA(87, 35, 129, 1)
+                              Fill: =RGBA(246, 241, 249, 1)
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              RadiusBottomLeft: =16
+                              RadiusBottomRight: =16
+                              RadiusTopLeft: =16
+                              RadiusTopRight: =16
+                              Size: =12
+                              Text: =Upper(Left(fxCurrentUser.FullName, 2))
+                              Width: =32
+                  - NavTabsMobile2:
+                      Control: ModernTabList
+                      Properties:
+                        Appearance: =TabListAppearance.Subtle
+                        BasePaletteColor: =RGBA(87, 35, 129, 1)
+                        Default: |-
+                          ={Value: fxTranslate("Tickets", "Tickets")}
+                        Height: =If(App.Width < 640, 48, 0)
+                        Items: |-
+                          =Table(
+                              {Value: fxTranslate("Dashboard", "Dashboard")},
+                              {Value: fxTranslate("CreateTicket", "Ticket erstellen")},
+                              {Value: fxTranslate("Tickets", "Tickets")}
+                          )
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnChange: |-
+                          =Switch(
+                              Self.Selected.Value,
+                              fxTranslate("CreateTicket", "Ticket erstellen"), Navigate(request_type_screen, ScreenTransition.Cover),
+                              Navigate(dashboard_screen, ScreenTransition.Cover)
+                          )
+                        Width: =Parent.Width
+            - NavDivider2:
+                Control: ModernText
+                Properties:
+                  Fill: =RGBA(237, 237, 237, 1)
+                  Height: =2
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =0
+                  PaddingTop: =0
+                  Text: =""
+                  Width: =Parent.Width
+            - TitleBand1:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =If(App.Width < 640, 152, 128)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =8
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =12
+                  PaddingLeft: =If(App.Width < 640, 16, 40)
+                  PaddingRight: =If(App.Width < 640, 16, 40)
+                  PaddingTop: =32
+                  Width: =Parent.Width
+                Children:
+                  - PageTitle1:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        FontWeight: =FontWeight.Bold
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingTop: =0
+                        Size: =If(App.Width < 640, 22, 28)
+                        Text: =Coalesce(varCurrentTicket.TicketTitel, fxTranslate("TicketDetails", "Ticketdetails"))
+                        Width: =Parent.Width - If(App.Width < 640, 32, 80)
+                  - PageSubtitle1:
+                      Control: ModernText
+                      Properties:
+                        AutoHeight: =true
+                        Color: =RGBA(96, 94, 92, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingTop: =0
+                        Size: =If(App.Width < 640, 12, 14)
+                        Text: =Coalesce(varCurrentTicket.TicketId, varCurrentTicket.Titel, Text(varCurrentTicket.ID)) & " · " & Coalesce(fxCurrentTicketStatus, fxTranslate("Unknown", "Unbekannt"))
+                        Width: =Parent.Width - If(App.Width < 640, 32, 80)
+            - TwoColRow1:
+                Control: GroupContainer
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Fill: =RGBA(255, 255, 255, 1)
+                  FillPortions: =0
+                  Height: =If(App.Width < 640, 780, 560)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =If(App.Width < 640, LayoutDirection.Vertical, LayoutDirection.Horizontal)
+                  LayoutGap: =24
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =24
+                  PaddingLeft: =If(App.Width < 640, 16, 40)
+                  PaddingRight: =If(App.Width < 640, 16, 40)
+                  Width: =Parent.Width
+                Children:
+                  - FormCard1:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        FillPortions: =7
+                        Height: =If(App.Width < 640, 460, 512)
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =8
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =20
+                        PaddingLeft: =20
+                        PaddingRight: =20
+                        PaddingTop: =20
+                      Children:
+                        - FormHeading1:
+                            Control: ModernText
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingTop: =0
+                              Size: =18
+                              Text: ="Submission details"
+                              Width: =Parent.Width - 40
+                        - ReviewForm1:
+                            Control: Form
+                            Layout: Vertical
+                            Properties:
+                              DataSource: |-
+                                =Table({Title: "Sunrise Study", Medium: "Watercolor", Reviewer: "Ava Mitchell", DueDate: Date(2026, 2, 12), Priority: "Standard", Notes: "Please review the warm gradient transitions and the harbor composition."})
+                              Item: |-
+                                =First(Table({Title: "Sunrise Study", Medium: "Watercolor", Reviewer: "Ava Mitchell", DueDate: Date(2026, 2, 12), Priority: "Standard", Notes: "Please review the warm gradient transitions and the harbor composition."}))
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              NumberOfColumns: =If(App.Width < 640, 1, 2)
+                        - ApprButtonRow1:
+                            Control: GroupContainer
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              FillPortions: =0
+                              Height: =56
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =12
+                              LayoutJustifyContent: =LayoutJustifyContent.End
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =8
+                              PaddingLeft: =8
+                              PaddingRight: =8
+                              PaddingTop: =8
+                              Width: =Parent.Width - 40
+                            Children:
+                              - SendReviewBtnR1:
+                                  Control: ModernButton
+                                  Properties:
+                                    Height: =40
+                                    LayoutMinHeight: =16
+                                    LayoutMinWidth: =16
+                                    Text: ="Send for review"
+                                    Width: =160
+                              - CancelReviewBtnR1:
+                                  Control: ModernButton
+                                  Properties:
+                                    Appearance: =ButtonAppearance.Secondary
+                                    Height: =40
+                                    LayoutMinHeight: =16
+                                    LayoutMinWidth: =16
+                                    Text: ="Cancel"
+                                    Width: =120
+                  - ReviewersCard1:
+                      Control: GroupContainer
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(250, 250, 250, 1)
+                        FillPortions: =3
+                        Height: =If(App.Width < 640, 260, 512)
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutGap: =4
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =16
+                        PaddingLeft: =16
+                        PaddingRight: =16
+                        PaddingTop: =16
+                        Visible: =!IsBlank(varCurrentTicket)
+                        Width: =If(App.Width < 640, Parent.Width - 32, 0)
+                      Children:
+                        - ReviewersHeading1:
+                            Control: ModernText
+                            Properties:
+                              FontWeight: =FontWeight.Semibold
+                              Height: =28
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingTop: =0
+                              Size: =16
+                              Text: =fxTranslate("TicketProcess", "Ticketprozess")
+                              Width: =Parent.Width - 32
+                        - ReviewersSub1:
+                            Control: ModernText
+                            Properties:
+                              Color: =RGBA(96, 94, 92, 1)
+                              Height: =20
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: |-
+                                =With(
+                                    {
+                                        approvalRequests: SortByColumns(
+                                            Filter(
+                                                AddColumns(
+                                                    Filter(
+                                                        ev_sp_list_config_transition_requests,
+                                                        TicketID = varCurrentTicket.ID
+                                                    ) As transitionRequest,
+                                                    TransitionConfig,
+                                                    LookUp(
+                                                        colTransitionConfig,
+                                                        ID = transitionRequest.TransitionID
+                                                    )
+                                                ),
+                                                Coalesce(TransitionConfig.ApprovalRequired, false)
+                                            ),
+                                            "ID",
+                                            SortOrder.Ascending
+                                        )
+                                    },
+                                    If(
+                                        IsEmpty(approvalRequests),
+                                        fxTranslate("NoApprovalRequests", "Keine Freigabevorgänge vorhanden"),
+                                        With(
+                                            {
+                                                pendingRequest: LookUp(
+                                                    approvalRequests,
+                                                    Lower(Coalesce(RequestStatus, "")) = "pending"
+                                                )
+                                            },
+                                            CountRows(approvalRequests) & " " &
+                                            If(
+                                                CountRows(approvalRequests) = 1,
+                                                fxTranslate("ApprovalStep", "Freigabeschritt"),
+                                                fxTranslate("ApprovalSteps", "Freigabeschritte")
+                                            ) &
+                                            If(
+                                                IsBlank(pendingRequest.ID),
+                                                "",
+                                                " · " & If(
+                                                    IsBlank(pendingRequest.TransitionConfig.Title),
+                                                    Coalesce(pendingRequest.ActionKey, pendingRequest.RequestStatus),
+                                                    fxTranslate(pendingRequest.TransitionConfig.Title, pendingRequest.TransitionConfig.Title)
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                              Width: =Parent.Width - 32
+                        - ReviewersGallery1:
+                            Control: Gallery
+                            Variant: Vertical
+                            Properties:
+                              FillPortions: =0
+                              Height: =Parent.Height - ReviewersHeading1.Height - ReviewersSub1.Height - Parent.PaddingTop - Parent.PaddingBottom - 8
+                              Items: |-
+                                =With(
+                                    {
+                                        approvalRequests: SortByColumns(
+                                            Filter(
+                                                AddColumns(
+                                                    Filter(
+                                                        ev_sp_list_config_transition_requests,
+                                                        TicketID = varCurrentTicket.ID
+                                                    ) As transitionRequest,
+                                                    TransitionConfig,
+                                                    LookUp(
+                                                        colTransitionConfig,
+                                                        ID = transitionRequest.TransitionID
+                                                    )
+                                                ),
+                                                Coalesce(TransitionConfig.ApprovalRequired, false)
+                                            ),
+                                            "ID",
+                                            SortOrder.Ascending
+                                        )
+                                    },
+                                    AddColumns(
+                                        approvalRequests As approvalRequest,
+                                        Step,
+                                        CountRows(Filter(approvalRequests, ID <= approvalRequest.ID)),
+                                        ReviewerDisplayName,
+                                        With(
+                                            {
+                                                requiredRole: Coalesce(approvalRequest.TransitionConfig.RequiredRole, "")
+                                            },
+                                            Switch(
+                                                requiredRole,
+                                                "Requester", Coalesce(varCurrentTicket.RequestedBy.DisplayName, varCurrentTicket.'Erstellt von'.DisplayName, requiredRole),
+                                                "Assignee", Coalesce(varCurrentTicket.'Zugewiesen an'.DisplayName, requiredRole),
+                                                "Change Manager", Coalesce(varCurrentTicket.ChangeManager.DisplayName, requiredRole),
+                                                "CAB-Member", Coalesce(varCurrentTicket.ChangeManager.DisplayName, requiredRole),
+                                                Coalesce(approvalRequest.RequestedByName, requiredRole)
+                                            )
+                                        ),
+                                        Role,
+                                        If(
+                                            IsBlank(approvalRequest.TransitionConfig.Title),
+                                            Coalesce(approvalRequest.ActionKey, approvalRequest.RequestStatus),
+                                            fxTranslate(approvalRequest.TransitionConfig.Title, approvalRequest.TransitionConfig.Title)
+                                        ),
+                                        Status,
+                                        Switch(
+                                            Lower(Coalesce(approvalRequest.RequestStatus, "")),
+                                            "pending", "current",
+                                            "approved", "done",
+                                            "completed", "done",
+                                            "succeeded", "done",
+                                            "processed", "done",
+                                            "rejected", "blocked",
+                                            "failed", "blocked",
+                                            "cancelled", "blocked",
+                                            "canceled", "blocked",
+                                            "error", "blocked",
+                                            "waiting"
+                                        ),
+                                        IsFirst,
+                                        approvalRequest.ID = First(approvalRequests).ID,
+                                        IsLast,
+                                        approvalRequest.ID = Last(approvalRequests).ID
+                                    )
+                                )
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              TemplatePadding: =0
+                              TemplateSize: =88
+                              Width: =Parent.Width - 32
+                            Children:
+                              - StepRow1:
+                                  Control: GroupContainer
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    Height: =88
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =12
+                                    PaddingBottom: =8
+                                    PaddingLeft: =8
+                                    PaddingRight: =8
+                                    PaddingTop: =8
+                                    Width: =Parent.TemplateWidth
+                                  Children:
+                                    - StepRail1:
+                                        Control: GroupContainer
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          FillPortions: =0
+                                          Height: =88
+                                          LayoutAlignItems: =LayoutAlignItems.Center
+                                          LayoutDirection: =LayoutDirection.Vertical
+                                          LayoutMinHeight: =16
+                                          LayoutMinWidth: =16
+                                          PaddingBottom: =8
+                                          PaddingLeft: =8
+                                          PaddingRight: =8
+                                          PaddingTop: =8
+                                          Width: =40
+                                        Children:
+                                          - StepTopLine1:
+                                              Control: GroupContainer
+                                              Variant: AutoLayout
+                                              Properties:
+                                                AlignInContainer: =AlignInContainer.Center
+                                                DropShadow: =DropShadow.None
+                                                Fill: =If(ThisItem.IsFirst, RGBA(250, 250, 250, 1), If(ThisItem.Status = "waiting", RGBA(225, 223, 221, 1), RGBA(16, 124, 16, 1)))
+                                                FillPortions: =0
+                                                Height: =34
+                                                LayoutAlignItems: =LayoutAlignItems.Center
+                                                LayoutDirection: =LayoutDirection.Horizontal
+                                                LayoutMinHeight: =16
+                                                LayoutMinWidth: =16
+                                                PaddingBottom: =8
+                                                PaddingLeft: =8
+                                                PaddingRight: =8
+                                                PaddingTop: =8
+                                                Width: =2
+                                          - StepBadge1:
+                                              Control: GroupContainer
+                                              Variant: AutoLayout
+                                              Properties:
+                                                AlignInContainer: =AlignInContainer.Center
+                                                DropShadow: =DropShadow.None
+                                                Fill: =Switch(ThisItem.Status, "done", RGBA(16, 124, 16, 1), "current", RGBA(87, 35, 129, 1), "blocked", RGBA(185, 28, 28, 1), RGBA(225, 223, 221, 1))
+                                                FillPortions: =0
+                                                Height: =28
+                                                LayoutAlignItems: =LayoutAlignItems.Center
+                                                LayoutDirection: =LayoutDirection.Vertical
+                                                LayoutJustifyContent: =LayoutJustifyContent.Center
+                                                LayoutMinHeight: =16
+                                                LayoutMinWidth: =16
+                                                PaddingBottom: =8
+                                                PaddingLeft: =8
+                                                PaddingRight: =8
+                                                PaddingTop: =8
+                                                RadiusBottomLeft: =100
+                                                RadiusBottomRight: =100
+                                                RadiusTopLeft: =100
+                                                RadiusTopRight: =100
+                                                Width: =28
+                                              Children:
+                                                - StepBadgeText1:
+                                                    Control: ModernText
+                                                    Properties:
+                                                      Align: =Align.Center
+                                                      Color: =If(ThisItem.Status = "waiting", RGBA(96, 94, 92, 1), RGBA(255, 255, 255, 1))
+                                                      FontWeight: =FontWeight.Semibold
+                                                      Height: =20
+                                                      LayoutMinHeight: =16
+                                                      LayoutMinWidth: =16
+                                                      PaddingBottom: =0
+                                                      PaddingTop: =0
+                                                      Size: =13
+                                                      Text: =Switch(ThisItem.Status, "done", "✓", "blocked", "!", Text(ThisItem.Step))
+                                                      Width: =28
+                                          - StepBottomLine1:
+                                              Control: GroupContainer
+                                              Variant: AutoLayout
+                                              Properties:
+                                                AlignInContainer: =AlignInContainer.Center
+                                                DropShadow: =DropShadow.None
+                                                Fill: =If(ThisItem.IsLast, RGBA(250, 250, 250, 1), If(ThisItem.Status = "done", RGBA(16, 124, 16, 1), RGBA(225, 223, 221, 1)))
+                                                FillPortions: =0
+                                                Height: =34
+                                                LayoutAlignItems: =LayoutAlignItems.Center
+                                                LayoutDirection: =LayoutDirection.Horizontal
+                                                LayoutMinHeight: =16
+                                                LayoutMinWidth: =16
+                                                PaddingBottom: =8
+                                                PaddingLeft: =8
+                                                PaddingRight: =8
+                                                PaddingTop: =8
+                                                Width: =2
+                                    - StepContent1:
+                                        Control: GroupContainer
+                                        Variant: AutoLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          Height: =88
+                                          LayoutAlignItems: =LayoutAlignItems.Center
+                                          LayoutDirection: =LayoutDirection.Vertical
+                                          LayoutGap: =4
+                                          LayoutJustifyContent: =LayoutJustifyContent.Center
+                                          LayoutMinHeight: =16
+                                          LayoutMinWidth: =16
+                                          PaddingBottom: =8
+                                          PaddingLeft: =8
+                                          PaddingRight: =8
+                                          PaddingTop: =8
+                                        Children:
+                                          - StepName1:
+                                              Control: ModernText
+                                              Properties:
+                                                FontWeight: =FontWeight.Semibold
+                                                Height: =20
+                                                LayoutMinHeight: =16
+                                                LayoutMinWidth: =16
+                                                PaddingBottom: =0
+                                                PaddingTop: =0
+                                                Size: =14
+                                                Text: =ThisItem.ReviewerDisplayName
+                                                Width: =Parent.Width
+                                          - StepRole1:
+                                              Control: ModernText
+                                              Properties:
+                                                Color: =RGBA(96, 94, 92, 1)
+                                                Height: =18
+                                                LayoutMinHeight: =16
+                                                LayoutMinWidth: =16
+                                                PaddingBottom: =0
+                                                PaddingTop: =0
+                                                Size: =12
+                                                Text: =ThisItem.Role
+                                                Width: =Parent.Width
+                                          - StepChip1:
+                                              Control: GroupContainer
+                                              Variant: AutoLayout
+                                              Properties:
+                                                AlignInContainer: =AlignInContainer.Start
+                                                DropShadow: =DropShadow.None
+                                                Fill: =Switch(ThisItem.Status, "done", RGBA(223, 246, 221, 1), "current", RGBA(246, 241, 249, 1), "blocked", RGBA(254, 226, 226, 1), RGBA(243, 242, 241, 1))
+                                                FillPortions: =0
+                                                Height: =24
+                                                LayoutAlignItems: =LayoutAlignItems.Center
+                                                LayoutDirection: =LayoutDirection.Horizontal
+                                                LayoutJustifyContent: =LayoutJustifyContent.Center
+                                                LayoutMinHeight: =16
+                                                LayoutMinWidth: =16
+                                                PaddingBottom: =8
+                                                PaddingLeft: =10
+                                                PaddingRight: =10
+                                                PaddingTop: =8
+                                                RadiusBottomLeft: =100
+                                                RadiusBottomRight: =100
+                                                RadiusTopLeft: =100
+                                                RadiusTopRight: =100
+                                                Width: =Switch(ThisItem.Status, "done", 116, "current", 116, "blocked", 104, 92)
+                                              Children:
+                                                - StepChipText1:
+                                                    Control: ModernText
+                                                    Properties:
+                                                      Align: =Align.Center
+                                                      Color: =Switch(ThisItem.Status, "done", RGBA(16, 124, 16, 1), "current", RGBA(87, 35, 129, 1), "blocked", RGBA(185, 28, 28, 1), RGBA(96, 94, 92, 1))
+                                                      FontWeight: =FontWeight.Semibold
+                                                      Height: =18
+                                                      LayoutMinHeight: =16
+                                                      LayoutMinWidth: =16
+                                                      PaddingBottom: =0
+                                                      PaddingTop: =0
+                                                      Size: =12
+                                                      Text: =Switch(ThisItem.Status, "done", fxTranslate("Completed", "✓ Erledigt"), "current", fxTranslate("InProgress", "● In Arbeit"), "blocked", fxTranslate("Rejected", "! Abgelehnt"), fxTranslate("Waiting", "○ Wartet"))
+                                                      Width: =Parent.Width - 20

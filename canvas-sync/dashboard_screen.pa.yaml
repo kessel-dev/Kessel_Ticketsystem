@@ -2584,15 +2584,25 @@ Screens:
             Width: =Parent.Width
           Children:
             - dbd_notifications_dismiss:
-                Control: Button
+                Control: ModernButton
                 Properties:
-                  AcceptsFocus: =false
                   AccessibleLabel: =fxTranslate("CloseNotifications", "Benachrichtigungen schließen")
-                  Appearance: ='ButtonCanvas.Appearance'.Transparent
+                  Align: =Align.Center
+                  Appearance: =ButtonAppearance.Transparent
                   BorderThickness: =0
+                  FontWeight: =""
                   Height: =Parent.Height
                   OnSelect: =Set(varShowNotifications, false)
+                  PaddingBottom: =5
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =5
+                  RadiusBottomLeft: =4
+                  RadiusBottomRight: =4
+                  RadiusTopLeft: =4
+                  RadiusTopRight: =4
                   Text: =""
+                  VerticalAlign: =VerticalAlign.Middle
                   Width: =Parent.Width
             - dbd_notifications_flyout:
                 Control: GroupContainer
@@ -2722,19 +2732,18 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - dbd_notifications_flyout_item:
-                            Control: Button
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =Substitute(fxTranslate("OpenTicketNotificationTemplate", "Benachrichtigung zu Ticket {0} öffnen"), "{0}", Text(ThisItem.TicketId))
                               Align: =Align.Left
-                              Appearance: ='ButtonCanvas.Appearance'.Subtle
+                              Appearance: =ButtonAppearance.Subtle
                               BorderColor: =RGBA(229, 231, 235, 1)
-                              BorderRadius: =7
                               BorderThickness: =1
-                              FontColor: =RGBA(31, 41, 55, 1)
-                              FontSize: =11
+                              Color: =RGBA(31, 41, 55, 1)
+                              FontWeight: =""
                               Height: =55
                               Icon: ="ArrowRight"
-                              Layout: ='ButtonCanvas.Layout'.IconAfter
+                              Layout: =ButtonLayout.IconAfter
                               OnSelect: |-
                                 =IfError(
                                     Patch(ev_sp_list_notifications, ThisItem, {IsRead: true, ReadAt: Today()});
@@ -2761,6 +2770,11 @@ Screens:
                               PaddingLeft: =10
                               PaddingRight: =10
                               PaddingTop: =7
+                              RadiusBottomLeft: =7
+                              RadiusBottomRight: =7
+                              RadiusTopLeft: =7
+                              RadiusTopRight: =7
+                              Size: =11
                               Text: =Substitute(Substitute(fxTranslate("TicketNotificationTemplate", "Ticket {0} - {1}"), "{0}", Text(ThisItem.TicketId)), "{1}", Text(ThisItem.Created, "[$-de-DE]dd.mm. HH:mm")) & Char(10) & If(ThisItem.NotificationType = "Internal", fxTranslate("NewInternalNote", "Neue interne Notiz"), fxTranslate("NewTicketActivity", "Neue Ticketaktivität"))
                               VerticalAlign: =VerticalAlign.Middle
                               Width: =Parent.TemplateWidth - 6

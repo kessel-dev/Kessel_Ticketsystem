@@ -4,6 +4,9 @@ EditorState:
     - incident_screen
     - request_type_screen
     - service_catalog_screen
-    - ticket_details_screen
     - ticket_screen
+    - ticket_details_screen
     - service_wizard_screen
+    - Screen1
+    - Screen2
+    - Screen6
