@@ -270,7 +270,7 @@ Screens:
                   DropShadow: =DropShadow.None
                   Fill: =RGBA(255, 255, 255, 1)
                   FillPortions: =0
-                  Height: =If(App.Width < 640, 120, 104)
+                  Height: =If(App.Width < 640, 120, 80)
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Vertical
                   LayoutGap: =8
@@ -293,18 +293,6 @@ Screens:
                         PaddingTop: =0
                         Size: =If(App.Width < 640, 22, 28)
                         Text: =If(fxIsAgentExperience, fxTranslate("CurrentTickets", "Aktuelle Tickets"), fxTranslate("MyTickets", "Meine Tickets"))
-                        Width: =Parent.Width - If(App.Width < 640, 32, 80)
-                  - PageSubtitle3:
-                      Control: ModernText
-                      Properties:
-                        AutoHeight: =true
-                        Color: =RGBA(96, 94, 92, 1)
-                        LayoutMinHeight: =16
-                        LayoutMinWidth: =16
-                        PaddingBottom: =0
-                        PaddingTop: =0
-                        Size: =If(App.Width < 640, 12, 14)
-                        Text: =fxTranslate("DashboardIntro", "Tickets durchsuchen, priorisieren und direkt zur Bearbeitung öffnen.")
                         Width: =Parent.Width - If(App.Width < 640, 32, 80)
             - FilterRow2:
                 Control: GroupContainer
@@ -429,7 +417,7 @@ Screens:
                       Control: ModernTextInput
                       Properties:
                         AccessibleLabel: =fxTranslate("SearchTickets", "Tickets durchsuchen")
-                        Default: =Coalesce(varDbdSearchText, "")
+                        Default: =Coalesce(varDbdSearchText, "Tickets suchen ...")
                         FillPortions: =If(App.Width < 1180, 0, 1)
                         Height: =40
                         LayoutMinHeight: =0
@@ -769,7 +757,6 @@ Screens:
                   RadiusBottomRight: =8
                   RadiusTopLeft: =8
                   RadiusTopRight: =8
-                  Visible: =true
                   Width: =Parent.Width - If(App.Width < 640, 32, 80)
                 Children:
                   - StatusFilterField6:
@@ -1036,37 +1023,6 @@ Screens:
                   RadiusTopRight: =0
                   Width: =Parent.Width - If(App.Width < 640, 32, 80)
                 Children:
-                  - TicketTableSummary6:
-                      Control: GroupContainer
-                      Variant: AutoLayout
-                      Properties:
-                        DropShadow: =DropShadow.None
-                        FillPortions: =0
-                        Height: =48
-                        LayoutAlignItems: =LayoutAlignItems.Center
-                        LayoutDirection: =LayoutDirection.Horizontal
-                        PaddingLeft: =16
-                        PaddingRight: =16
-                        Width: =Parent.Width
-                      Children:
-                        - TicketTableTitle6:
-                            Control: ModernText
-                            Properties:
-                              FillPortions: =1
-                              FontWeight: =FontWeight.Semibold
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
-                              Size: =16
-                              Text: =fxTranslate("Tickets", "Tickets")
-                        - TicketCount6:
-                            Control: ModernText
-                            Properties:
-                              Align: =Align.Right
-                              Color: =RGBA(96, 94, 92, 1)
-                              Height: =28
-                              Text: =""
-                              Visible: =false
-                              Width: =120
                   - TicketColumns6:
                       Control: GroupContainer
                       Variant: AutoLayout
@@ -1475,18 +1431,6 @@ Screens:
                         LayoutMinWidth: =0
                         Placeholder: =fxTranslate("ViewNameExample", "Kritische SAP Changes")
                         Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
-                  - SavedFilterDefaultCheckbox6:
-                      Control: ModernCheckbox
-                      Properties:
-                        AccessibleLabel: =fxTranslate("UseAsDefaultView", "Als Standardansicht verwenden")
-                        BasePaletteColor: =RGBA(87, 35, 129, 1)
-                        Default: =varS6SaveAsDefault
-                        FontWeight: =""
-                        Label: =fxTranslate("UseAsDefaultView", "Als Standardansicht verwenden")
-                        OnCheck: =
-                        OnUncheck: =
-                        Visible: =varS6SaveMode <> "rename" And (varS6SaveMode = "new" Or Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email))
-                        Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                   - SavedFilterDialogSpacer6:
                       Control: ModernText
                       Properties:
@@ -1597,3 +1541,15 @@ Screens:
                                 )
                               Text: =fxTranslate("Save", "Speichern")
                               Width: =110
+                  - SavedFilterDefaultCheckbox6:
+                      Control: ModernCheckbox
+                      Properties:
+                        AccessibleLabel: =fxTranslate("UseAsDefaultView", "Als Standardansicht verwenden")
+                        BasePaletteColor: =RGBA(87, 35, 129, 1)
+                        Default: =varS6SaveAsDefault
+                        FontWeight: =""
+                        Label: =fxTranslate("UseAsDefaultView", "Als Standardansicht verwenden")
+                        OnCheck: =
+                        OnUncheck: =
+                        Visible: =varS6SaveMode <> "rename" And (varS6SaveMode = "new" Or Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email))
+                        Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight

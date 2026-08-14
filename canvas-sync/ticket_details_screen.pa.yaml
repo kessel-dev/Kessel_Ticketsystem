@@ -72,7 +72,7 @@ Screens:
                 Coalesce(fxIsAdmin, false)
                     || Coalesce(fxIsAgent, false)
                     || RequestedBy.Email = User().Email
-                    || 'Zugewiesen an'.Email = User().Email
+                    || !IsBlank(LookUp('Zugewiesen an', Lower(Email) = Lower(User().Email)))
             )
         );
         Set(
@@ -251,8 +251,8 @@ Screens:
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(226, 232, 240, 1)
-                  BorderThickness: =1
-                  DropShadow: =DropShadow.Semilight
+                  BorderThickness: =0
+                  DropShadow: =DropShadow.None
                   Fill: =RGBA(255, 255, 255, 1)
                   FillPortions: =0
                   Height: =84
@@ -473,7 +473,7 @@ Screens:
                   DropShadow: =DropShadow.Semilight
                   Fill: =RGBA(255, 255, 255, 1)
                   FillPortions: =0
-                  Height: =120
+                  Height: =If(App.Width >= 1180, 156, If(App.Width >= 600, 216, 198))
                   LayoutDirection: =LayoutDirection.Vertical
                   LayoutGap: =4
                   PaddingBottom: =8
@@ -493,7 +493,7 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         FillPortions: =0
-                        Height: =If(App.Width < 600, 44, 40)
+                        Height: =If(App.Width < 600, 54, 72)
                         LayoutAlignItems: =LayoutAlignItems.Center
                         LayoutDirection: =LayoutDirection.Horizontal
                         LayoutGap: =12
@@ -510,16 +510,13 @@ Screens:
                               FillPortions: =1
                               Font: =Font.Arial
                               FontWeight: =FontWeight.Bold
-                              Height: =38
+                              Height: =68
                               LayoutMinWidth: =If(App.Width < 600, 155, 260)
                               Size: =If(App.Width < 600, 18, If(App.Width < 900, 20, 22))
                               Text: |-
-                                =Coalesce(varCurrentTicket.TicketTitel, "") &
-                                If(
-                                    IsBlank(varCurrentTicket.Titel),
-                                    "",
-                                    " - " & Text(varCurrentTicket.Titel)
-                                )
+                                =Coalesce(varCurrentTicket.TicketId, varCurrentTicket.Titel, Text(varCurrentTicket.ID)) &
+                                Char(10) &
+                                Coalesce(varCurrentTicket.TicketTitel, fxTranslate("NoTitle", "Ohne Titel"))
                         - hdr_actions:
                             Control: GroupContainer
                             Variant: AutoLayout
@@ -532,7 +529,7 @@ Screens:
                               LayoutGap: =10
                               LayoutJustifyContent: =LayoutJustifyContent.End
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =If(App.Width < 600, 132, 680)
+                              LayoutMinWidth: =If(App.Width < 600, 132, If(App.Width < 900, 300, 520))
                               Visible: =locTicketMode <> "Edit"
                             Children:
                               - btn_back:
@@ -560,6 +557,22 @@ Screens:
                                     RadiusTopRight: =6
                                     Text: =If(App.Width < 600, "Details bearbeiten", fxTranslate("Zurück", "Zurück"))
                                     Width: =If(App.Width < 600, 132, 130)
+                              - btn_edit_ticket_header_action:
+                                  Control: ModernButton
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("EditTicketDetails", "Ticketdetails bearbeiten")
+                                    Appearance: =ButtonAppearance.Secondary
+                                    DisplayMode: =If(fxCanEditCurrentTicket, DisplayMode.Edit, DisplayMode.Disabled)
+                                    Height: =36
+                                    Icon: ="Edit"
+                                    Layout: =ButtonLayout.IconOnly
+                                    OnSelect: |-
+                                      =Set(locTicketMode, "Edit");
+                                      ResetForm(frmTicketDetails)
+                                    Text: =""
+                                    Tooltip: =fxTranslate("Edit", "Bearbeiten")
+                                    Visible: =App.Width >= 600 && fxCanViewCurrentTicket
+                                    Width: =42
                               - btn_save:
                                   Control: ModernButton
                                   Properties:
@@ -643,7 +656,7 @@ Screens:
                                                               "Agent", fxIsAgent,
                                                               "Support", fxIsAgent,
                                                               "CAB-Member", fxIsCabMember,
-                                                               "Assignee", varCurrentTicket.'Zugewiesen an'.Email = User().Email,
+                                                               "Assignee", !IsBlank(LookUp(varCurrentTicket.'Zugewiesen an', Lower(Email) = Lower(User().Email))),
                                                                "Requester", varCurrentTicket.RequestedBy.Email = User().Email,
                                                               "Change Manager", fxIsAgent || fxIsCabMember,
                                                               Blank(), true,
@@ -814,7 +827,7 @@ Screens:
                                                     Coalesce(fxIsAdmin, false)
                                                         || Coalesce(fxIsAgent, false)
                                                         || RequestedBy.Email = User().Email
-                                                        || 'Zugewiesen an'.Email = User().Email
+                                                        || !IsBlank(LookUp('Zugewiesen an', Lower(Email) = Lower(User().Email)))
                                                 )
                                             );
                                                Set(
@@ -856,29 +869,30 @@ Screens:
                                     Width: =72
                   - hdr_meta_row:
                       Control: GroupContainer
-                      Variant: AutoLayout
+                      Variant: GridLayout
                       Properties:
                         DropShadow: =DropShadow.None
                         FillPortions: =0
-                        Height: =54
-                        LayoutAlignItems: =LayoutAlignItems.Center
-                        LayoutDirection: =LayoutDirection.Horizontal
-                        LayoutGap: =2
-                        LayoutMinHeight: =32
-                        LayoutOverflowX: =LayoutOverflow.Scroll
+                        Height: =If(App.Width >= 1180, 60, 120)
+                        LayoutGap: =8
+                        LayoutGridColumnMinWidth: =0
+                        LayoutGridColumns: =If(App.Width >= 1180, 8, If(App.Width >= 600, 4, 2))
+                        LayoutGridRowMinHeight: =60
+                        LayoutGridRows: =If(App.Width >= 1180, 1, 2)
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
                         Width: =Parent.Width
                       Children:
-                        - chip_status:
+                        - meta_status_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
-                              AlignInContainer: =AlignInContainer.Center
                               DropShadow: =DropShadow.None
                               Fill: =If(App.Width < 600, RGBA(240, 253, 244, 1), RGBA(0, 0, 0, 0))
-                              Height: =Parent.Height
+                              Height: =60
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =If(App.Width < 600, 74, 92)
+                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -942,17 +956,16 @@ Screens:
                                     Size: =14
                                     Text: =Coalesce(fxCurrentTicketStatus, "Nicht gesetzt")
                                     Wrap: =false
-                        - chip_priority:
+                        - meta_priority_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
-                              AlignInContainer: =AlignInContainer.Center
                               DropShadow: =DropShadow.None
                               Fill: =If(App.Width < 600, RGBA(255, 247, 237, 1), RGBA(0, 0, 0, 0))
-                              Height: =Parent.Height
+                              Height: =60
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =If(App.Width < 600, 84, 106)
+                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1012,17 +1025,16 @@ Screens:
                                     Size: =14
                                     Text: =Coalesce(varCurrentTicket.Priority.Value, "Mittel")
                                     Wrap: =false
-                        - chip_opened:
+                        - meta_opened_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
-                              AlignInContainer: =AlignInContainer.Center
                               DropShadow: =DropShadow.None
                               Fill: =If(App.Width < 600, RGBA(248, 250, 252, 1), RGBA(0, 0, 0, 0))
-                              Height: =Parent.Height
+                              Height: =60
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =If(App.Width < 600, 96, 118)
+                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1082,16 +1094,15 @@ Screens:
                                     Size: =14
                                     Text: =If(IsBlank(varCurrentTicket.Erstellt), "-", Text(varCurrentTicket.Erstellt, "[$-de-DE]dd.mm.yyyy"))
                                     Wrap: =false
-                        - chip_role:
+                        - meta_assignee_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
-                              AlignInContainer: =AlignInContainer.Center
                               DropShadow: =DropShadow.None
-                              Height: =Parent.Height
+                              Height: =60
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =132
+                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1140,7 +1151,7 @@ Screens:
                                   Control: ModernText
                                   Properties:
                                     AccessibleLabel: |-
-                                      =fxTranslate("Assignee", "Bearbeiter") & ": " & Coalesce(varCurrentTicket.'Zugewiesen an'.DisplayName, "-")
+                                      =fxTranslate("Assignee", "Bearbeiter") & ": " & Coalesce(Concat(varCurrentTicket.'Zugewiesen an' As assignee, Coalesce(assignee.DisplayName, assignee.Email), ", "), "-")
                                     Color: =RGBA(15, 23, 42, 1)
                                     FillPortions: =1
                                     FontWeight: =FontWeight.Bold
@@ -1151,39 +1162,17 @@ Screens:
                                     PaddingRight: =0
                                     PaddingTop: =0
                                     Size: =14
-                                    Text: =Coalesce(varCurrentTicket.'Zugewiesen an'.DisplayName, "-")
+                                    Text: =Coalesce(Concat(varCurrentTicket.'Zugewiesen an' As assignee, Coalesce(assignee.DisplayName, assignee.Email), ", "), "-")
                                     Wrap: =false
-                        - btn_edit_ticket_details_header:
-                            Control: ModernButton
-                            Properties:
-                              AccessibleLabel: =fxTranslate("EditTicketDetails", "Ticketdetails bearbeiten")
-                              AlignInContainer: =AlignInContainer.Center
-                              Appearance: =ButtonAppearance.Secondary
-                              DisplayMode: =If(fxCanViewCurrentTicket, DisplayMode.Edit, DisplayMode.Disabled)
-                              Height: =Parent.Height
-                              Icon: ="Edit"
-                              Layout: =ButtonLayout.IconOnly
-                              OnSelect: |-
-                                =Set(locTicketMode, "Edit");
-                                ResetForm(frmTicketDetails)
-                              RadiusBottomLeft: =6
-                              RadiusBottomRight: =6
-                              RadiusTopLeft: =6
-                              RadiusTopRight: =6
-                              Text: =""
-                              Tooltip: =fxTranslate("Edit", "Bearbeiten")
-                              Visible: =false
-                              Width: =20
-                        - chip_category:
+                        - meta_category_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
-                              AlignInContainer: =AlignInContainer.Center
                               DropShadow: =DropShadow.None
-                              Height: =Parent.Height
+                              Height: =60
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =124
+                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1245,16 +1234,15 @@ Screens:
                                     Size: =14
                                     Text: =Coalesce(varCurrentTicket.Category.Value, varCurrentTicket.CategoryINC.Value, "-")
                                     Wrap: =false
-                        - chip_subcategory:
+                        - meta_subcategory_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
-                              AlignInContainer: =AlignInContainer.Center
                               DropShadow: =DropShadow.None
-                              Height: =Parent.Height
+                              Height: =60
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =136
+                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1298,16 +1286,15 @@ Screens:
                                     Size: =14
                                     Text: =Coalesce(varCurrentTicket.Subcategory.Value, varCurrentTicket.SubcategoryINC.Value, "-")
                                     Wrap: =false
-                        - chip_recorded_by:
+                        - meta_recorded_by_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
-                              AlignInContainer: =AlignInContainer.Center
                               DropShadow: =DropShadow.None
-                              Height: =Parent.Height
+                              Height: =60
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =142
+                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1351,16 +1338,15 @@ Screens:
                                     Size: =14
                                     Text: =Coalesce(varCurrentTicket.'Erstellt von'.DisplayName, varCurrentTicket.RequestedBy.DisplayName, "-")
                                     Wrap: =false
-                        - chip_watchers:
+                        - meta_watchers_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
-                              AlignInContainer: =AlignInContainer.Center
                               DropShadow: =DropShadow.None
-                              Height: =Parent.Height
+                              Height: =60
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =144
+                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1387,52 +1373,64 @@ Screens:
                                     Text: =fxTranslate("Watchers", "Beobachter")
                                     Width: =Parent.Width
                                     Wrap: =false
-                              - lbl_chip_watchers_value:
-                                  Control: ModernText
+                              - dcv_watchers_header:
+                                  Control: ModernCombobox
                                   Properties:
-                                    AccessibleLabel: |-
-                                      =fxTranslate("Watchers", "Beobachter") & ": " & If(IsEmpty(varCurrentTicket.Beobachter), "-", Concat(varCurrentTicket.Beobachter, DisplayName, ", "))
-                                    Color: =RGBA(15, 23, 42, 1)
-                                    FillPortions: =1
-                                    FontWeight: =FontWeight.Bold
-                                    LayoutMinHeight: =22
+                                    AccessibleLabel: =fxTranslate("Watchers", "Beobachter")
+                                    AllowExternalSelectedItems: =true
+                                    Appearance: =Appearance.Outline
+                                    DefaultSelectedItems: =varCurrentTicket.Beobachter
+                                    DisplayMode: =If(fxCanEditCurrentTicket && !fxIsCurrentTicketClosed, DisplayMode.Edit, DisplayMode.View)
+                                    Height: =32
+                                    InputTextPlaceholder: =If(IsEmpty(varCurrentTicket.Beobachter), fxTranslate("NoWatchersAddPlaceholder", "Beobachter hinzufügen..."), fxTranslate("AddWatcherPlaceholder", "Weitere hinzufügen..."))
+                                    ItemDisplayText: =ThisItem.DisplayName
+                                    Items: |-
+                                      =SortByColumns(
+                                          ForAll(
+                                              Filter(
+                                                  'Office365-Benutzer'.SearchUser({searchTerm: Trim(Self.SearchText)}),
+                                                  AccountEnabled = true &&
+                                                  !IsBlank(DisplayName) &&
+                                                  !IsBlank(Coalesce(Mail, UserPrincipalName)) &&
+                                                  (EndsWith(Lower(Mail), "@kessel.de") Or EndsWith(Lower(UserPrincipalName), "@kessel.de")) &&
+                                                  CountRows(Split(Trim(DisplayName), " ")) >= 2 &&
+                                                  !StartsWith(Lower(DisplayName), "aaa") &&
+                                                  !StartsWith(Lower(UserPrincipalName), "aaa") &&
+                                                  !StartsWith(Lower(MailNickname), "aaa") &&
+                                                  !StartsWith(Lower(DisplayName), "admin") &&
+                                                  !StartsWith(Lower(UserPrincipalName), "admin") &&
+                                                  !StartsWith(Lower(MailNickname), "admin") &&
+                                                  !StartsWith(Lower(DisplayName), "adm ") &&
+                                                  !StartsWith(Lower(DisplayName), "abteilungsleiter") &&
+                                                  !StartsWith(Lower(DisplayName), "administrator") &&
+                                                  !StartsWith(Lower(DisplayName), "service") &&
+                                                  !StartsWith(Lower(DisplayName), "test")
+                                              ),
+                                              {
+                                                  Claims: "i:0#.f|membership|" & Lower(Coalesce(Mail, UserPrincipalName)),
+                                                  DisplayName: DisplayName,
+                                                  Email: Coalesce(Mail, UserPrincipalName),
+                                                  Department: Department,
+                                                  JobTitle: JobTitle,
+                                                  Picture: Blank()
+                                              }
+                                          ),
+                                          "DisplayName",
+                                          SortOrder.Ascending
+                                      )
+                                    LayoutMinHeight: =32
                                     LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =14
-                                    Text: =If(IsEmpty(varCurrentTicket.Beobachter), fxTranslate("None", "Keine"), CountRows(varCurrentTicket.Beobachter) & " " & fxTranslate("Watchers", "Beobachter"))
-                                    Wrap: =false
-                        - spacer_header_meta:
-                            Control: GroupContainer
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              Height: =Parent.Height
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutMinWidth: =16
-                              Visible: =App.Width >= 600
-                        - btn_edit_ticket_details_header_right:
-                            Control: ModernButton
-                            Properties:
-                              AccessibleLabel: =fxTranslate("EditTicketDetails", "Ticketdetails bearbeiten")
-                              Appearance: =ButtonAppearance.Subtle
-                              DisplayMode: =If(fxCanViewCurrentTicket, DisplayMode.Edit, DisplayMode.Disabled)
-                              Height: =Parent.Height
-                              Icon: ="Edit"
-                              Layout: =ButtonLayout.IconOnly
-                              OnSelect: |-
-                                =Set(locTicketMode, "Edit");
-                                ResetForm(frmTicketDetails)
-                              RadiusBottomLeft: =6
-                              RadiusBottomRight: =6
-                              RadiusTopLeft: =6
-                              RadiusTopRight: =6
-                              Text: =""
-                              Tooltip: =fxTranslate("Edit", "Bearbeiten")
-                              Visible: =App.Width >= 600 && locTicketMode <> "Edit" && fxCanViewCurrentTicket
-                              Width: =42
+                                    OnChange: |-
+                                      =If(
+                                          fxCanEditCurrentTicket && !fxIsCurrentTicketClosed,
+                                          IfError(
+                                              Set(varCurrentTicket, Patch(ev_sp_list_tickets, varCurrentTicket, {Beobachter: Self.SelectedItems}));
+                                              Set(varTicketLoadedModified, varCurrentTicket.Geändert),
+                                              Notify(fxTranslate("WatchersSaveFailed", "Beobachter konnten nicht gespeichert werden."), NotificationType.Error, 3000)
+                                          )
+                                      )
+                                    SelectMultiple: =true
+                                    Width: =Parent.Width
             - line_header:
                 Control: GroupContainer
                 Variant: AutoLayout
@@ -1654,7 +1652,14 @@ Screens:
                         LayoutMinWidth: =16
                         OnFailure: =Notify("Änderungen konnten nicht gespeichert werden. Bitte erneut versuchen.", NotificationType.Error)
                         OnSuccess: |-
-                          =Set(varUpdatedTicket, frmTicketDetails.LastSubmit);
+                          =Set(
+                              varUpdatedTicket,
+                              Patch(
+                                  ev_sp_list_tickets,
+                                  frmTicketDetails.LastSubmit,
+                                  {'Zugewiesen an': dcv_assignedto.SelectedItems}
+                              )
+                          );
                           Refresh(ev_sp_list_tickets);
                           Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = varUpdatedTicket.ID));
                           Set(varTicketLoadedModified, varCurrentTicket.Geändert);
@@ -1665,14 +1670,14 @@ Screens:
                       Children:
                         - Zugewiesenan_DataCard1:
                             Control: TypedDataCard
-                            Variant: ModernComboBoxEdit
+                            Variant: ModernComboBoxMultiSelectEdit
                             IsLocked: true
                             Properties:
                               DataField: ="Zugewiesenan"
-                              Default: =ThisItem.'Zugewiesen an'
+                              Default: =First(ThisItem.'Zugewiesen an')
                               DisplayName: =fxTranslate("Assignee", "Bearbeiter")
                               Required: =false
-                              Update: =If(IsEmpty(dcv_assignedto.SelectedItems), ThisItem.'Zugewiesen an', First(dcv_assignedto.SelectedItems))
+                              Update: =First(dcv_assignedto.SelectedItems)
                               Visible: =fxIsAgentExperience
                               Width: =If(App.Width >= 960, Parent.Width, Parent.Width)
                               X: =0
@@ -1695,7 +1700,8 @@ Screens:
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
-                                    DefaultSelectedItems: =If(IsBlank(varCurrentTicket.'Zugewiesen an'), [], [varCurrentTicket.'Zugewiesen an'])
+                                    AllowExternalSelectedItems: =true
+                                    DefaultSelectedItems: =varCurrentTicket.'Zugewiesen an'
                                     Height: =40
                                     ItemDisplayText: =ThisItem.DisplayName
                                     Items: |-
@@ -1732,6 +1738,7 @@ Screens:
                                           "DisplayName",
                                           SortOrder.Ascending
                                       )
+                                    SelectMultiple: =true
                                     Width: =Parent.Width - 32
                                     X: =16
                                     Y: =dck_assignedto.Y + dck_assignedto.Height + 4
@@ -2310,26 +2317,36 @@ Screens:
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(229, 231, 235, 1)
-                              BorderThickness: =1
-                              DropShadow: =DropShadow.Semilight
-                              Fill: =RGBA(255, 255, 255, 1)
+                              BorderThickness: =0
+                              DropShadow: =DropShadow.None
+                              Fill: =RGBA(248, 249, 252, 1)
                               FillPortions: =0
                               Height: =If(App.Width < 1180, 340, Parent.Height)
                               LayoutDirection: =LayoutDirection.Vertical
-                              LayoutGap: =12
+                              LayoutGap: =8
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =If(App.Width < 1180, 0, 250)
-                              PaddingBottom: =12
-                              PaddingLeft: =12
-                              PaddingRight: =12
-                              PaddingTop: =12
+                              LayoutMinWidth: =If(App.Width < 1180, 0, 220)
+                              PaddingBottom: =10
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =10
                               RadiusBottomLeft: =8
                               RadiusBottomRight: =8
                               RadiusTopLeft: =8
                               RadiusTopRight: =8
                               Visible: =fxIsAgentExperience && App.Width >= 1180
-                              Width: =If(App.Width < 1180, Parent.Width, 240)
+                              Width: =If(App.Width < 1180, Parent.Width, 220)
                             Children:
+                              - lbl_ticket_list_title:
+                                  Control: ModernText
+                                  Properties:
+                                    Color: =RGBA(15, 23, 42, 1)
+                                    FillPortions: =0
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =24
+                                    Size: =16
+                                    Text: =fxTranslate("Tickets", "Tickets")
+                                    Width: =Parent.Width
                               - inp_ticket_list_search:
                                   Control: ModernTextInput
                                   Properties:
@@ -2340,7 +2357,7 @@ Screens:
                                     LayoutMinHeight: =38
                                     LayoutMinWidth: =0
                                     OnChange: =Set(varTicketListSearchText, Self.Text)
-                                    Placeholder: =fxTranslate("SearchChangesPlaceholder", "Change suchen...")
+                                    Placeholder: =fxTranslate("SearchTickets", "Ticket suchen...")
                                     Width: =Parent.Width
                               - gal_tickets:
                                   Control: Gallery
@@ -2348,7 +2365,7 @@ Screens:
                                   Properties:
                                     AccessibleLabel: =fxTranslate("TicketList", "Ticketliste")
                                     Fill: =RGBA(255, 255, 255, 1)
-                                    Height: =Parent.Height - inp_ticket_list_search.Height - Parent.LayoutGap - Parent.PaddingTop - Parent.PaddingBottom
+                                    Height: =Parent.Height - lbl_ticket_list_title.Height - inp_ticket_list_search.Height - (2 * Parent.LayoutGap) - Parent.PaddingTop - Parent.PaddingBottom
                                     Items: |-
                                       =SortByColumns(
                                           If(
@@ -2376,7 +2393,7 @@ Screens:
                                       )
                                     TabIndex: =0
                                     TemplatePadding: =0
-                                    TemplateSize: =76
+                                    TemplateSize: =64
                                     Width: =Parent.Width
                                   Children:
                                     - shp_selected_bar:
@@ -2394,15 +2411,15 @@ Screens:
                                         Properties:
                                           BorderColor: =RGBA(229, 231, 235, 1)
                                           DropShadow: =DropShadow.None
-                                          Fill: =RGBA(255, 255, 255, 1)
+                                          Fill: =If(ThisItem.ID = varCurrentTicket.ID, RGBA(246, 241, 249, 1), RGBA(255, 255, 255, 1))
                                           Height: =Parent.TemplateHeight - 2
                                           LayoutAlignItems: =LayoutAlignItems.Center
                                           LayoutDirection: =LayoutDirection.Horizontal
-                                          LayoutGap: =10
-                                          PaddingBottom: =8
-                                          PaddingLeft: =12
-                                          PaddingRight: =12
-                                          PaddingTop: =8
+                                          LayoutGap: =8
+                                          PaddingBottom: =6
+                                          PaddingLeft: =10
+                                          PaddingRight: =10
+                                          PaddingTop: =6
                                           RadiusBottomLeft: =0
                                           RadiusBottomRight: =0
                                           RadiusTopLeft: =0
@@ -2598,7 +2615,7 @@ Screens:
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
-                              FillPortions: =If(App.Width < 1180, 0, 1)
+                              FillPortions: =If(App.Width < 1180, 0, 55)
                               Height: |-
                                 =If(
                                     App.Width < 600,
@@ -2639,12 +2656,18 @@ Screens:
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(229, 231, 235, 1)
-                                    BorderThickness: =1
-                                    DropShadow: =DropShadow.Semilight
+                                    BorderThickness: =0
+                                    DropShadow: =DropShadow.None
                                     Fill: =RGBA(255, 255, 255, 1)
                                     FillPortions: =0
                                     Height: |-
-                                      =If(App.Width < 600, 160, Parent.Height - 270
+                                      =If(
+                                          App.Width < 600,
+                                          160,
+                                          Max(
+                                              280,
+                                              Parent.Height - card_attachments.Height - Parent.LayoutGap
+                                          )
                                       )
                                     LayoutDirection: =LayoutDirection.Vertical
                                     LayoutGap: =12
@@ -2785,7 +2808,7 @@ Screens:
                                           LayoutAlignItems: =LayoutAlignItems.Center
                                           LayoutDirection: =LayoutDirection.Vertical
                                           LayoutGap: =12
-                                          LayoutJustifyContent: =LayoutJustifyContent.Center
+                                          LayoutJustifyContent: =LayoutJustifyContent.Start
                                           LayoutMinHeight: =0
                                           LayoutMinWidth: =0
                                           Visible: =!varDescriptionEditMode && IsBlank(varCurrentTicket.Description)
@@ -2809,6 +2832,7 @@ Screens:
                                                 RadiusBottomRight: =28
                                                 RadiusTopLeft: =28
                                                 RadiusTopRight: =28
+                                                Visible: =false
                                                 Width: =56
                                               Children:
                                                 - lbl_empty_description_icon:
@@ -2831,8 +2855,8 @@ Screens:
                                           - lbl_empty_description:
                                               Control: ModernText
                                               Properties:
-                                                Align: =Align.Center
-                                                AlignInContainer: =AlignInContainer.Center
+                                                Align: =Align.Left
+                                                AlignInContainer: =AlignInContainer.Stretch
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =24
                                                 LayoutMinHeight: =24
@@ -2843,7 +2867,7 @@ Screens:
                                                 PaddingTop: =0
                                                 Size: =13
                                                 Text: =fxTranslate("NoDescriptionAvailable", "Keine Beschreibung vorhanden.")
-                                                Width: =220
+                                                Width: =Parent.Width
                                                 Wrap: =false
                                     - gal_description_screenshots:
                                         Control: Gallery
@@ -2896,13 +2920,22 @@ Screens:
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(226, 232, 240, 1)
-                                    BorderThickness: =1
+                                    BorderThickness: =0
                                     DropShadow: =DropShadow.None
                                     Fill: =RGBA(255, 255, 255, 1)
-                                    Height: =If(varShowTicketAttachmentUpload, 430, 340)
+                                    Height: |-
+                                      =If(
+                                          varShowTicketAttachmentUpload,
+                                          220,
+                                          If(
+                                              IsEmpty(varCurrentTicket.Anlagen) && IsEmpty(colTicketDetailCommentAttachments),
+                                              84,
+                                              180
+                                          )
+                                      )
                                     LayoutDirection: =LayoutDirection.Vertical
                                     LayoutGap: =8
-                                    LayoutMaxHeight: =100
+                                    LayoutMaxHeight: =220
                                     LayoutMinHeight: =0
                                     LayoutMinWidth: =0
                                     LayoutOverflowY: =LayoutOverflow.Scroll
@@ -2943,10 +2976,10 @@ Screens:
                                         Variant: AutoLayout
                                         Properties:
                                           BorderColor: =RGBA(226, 232, 240, 1)
-                                          BorderThickness: =1
+                                          BorderThickness: =0
                                           DropShadow: =DropShadow.None
                                           Fill: =RGBA(255, 255, 255, 1)
-                                          Height: =If(varShowTicketAttachmentUpload, 340, 250)
+                                          Height: =Max(24, Parent.Height - row_attach_title.Height - Parent.LayoutGap - Parent.PaddingTop - Parent.PaddingBottom)
                                           LayoutDirection: =LayoutDirection.Vertical
                                           LayoutGap: =4
                                           PaddingBottom: =4
@@ -2959,59 +2992,13 @@ Screens:
                                           RadiusTopRight: =6
                                           Width: =Parent.Width
                                         Children:
-                                          - form_ticket_attachments_inline:
-                                              Control: Form
-                                              Layout: Vertical
-                                              Properties:
-                                                BorderColor: =RGBA(0, 0, 0, 1)
-                                                BorderStyle: =%BorderStyle.RESERVED%.Solid
-                                                DefaultMode: =%FormMode.RESERVED%.Edit
-                                              Children:
-                                                - dc_ticket_attachment_inline:
-                                                    Control: TypedDataCard
-                                                    Variant: ClassicAttachmentsEdit
-                                                    Properties:
-                                                      BorderColor: =RGBA(0, 0, 0, 1)
-                                                      BorderStyle: =%BorderStyle.RESERVED%.Solid
-                                                      DataField: =""
-                                                      Default: =%QUALIFIED_DATACARD_FIELD_VALUE.ID%
-                                                      DisplayMode: =%DisplayMode.RESERVED%.Edit
-                                                      DisplayName: =""
-                                                      Height: =200
-                                                      Required: =false
-                                                      Update: =%FieldValue.ID%.Attachments
-                                                      X: =0
-                                                      Y: =0
-                                                    Children:
-                                                      - att_ticket_inline_upload:
-                                                          Control: Attachments
-                                                          Properties:
-                                                            BorderColor: =RGBA(69, 69, 69, 1)
-                                                            BorderStyle: =%BorderStyle.RESERVED%.Solid
-                                                            BorderThickness: =0
-                                                            DisabledBorderColor: =RGBA(186, 186, 186, 1)
-                                                            DisabledColor: =RGBA(186, 186, 186, 1)
-                                                            DisabledFill: =RGBA(242, 242, 242, 1)
-                                                            DisplayMode: =%DisplayMode.RESERVED%.Edit
-                                                            DropTargetBorderStyle: =%BorderStyle.RESERVED%.Dotted
-                                                            FocusedBorderThickness: =0
-                                                            Font: =%Font.RESERVED%.'Open Sans'
-                                                            FontWeight: =%FontWeight.RESERVED%.Normal
-                                                            HoverColor: =Self.Color
-                                                            HoverFill: =RGBA(186, 186, 186, 1)
-                                                            ItemColor: =Self.Color
-                                                            ItemFill: =RGBA(234, 234, 234, 1)
-                                                            ItemHoverColor: =Self.HoverColor
-                                                            ItemHoverFill: =Self.HoverFill
-                                                            PressedColor: =Self.Color
-                                                            PressedFill: =ColorFade(Self.Fill, -30%)
                                           - lbl_attach_empty:
                                               Control: ModernText
                                               Properties:
                                                 Color: =RGBA(51, 65, 85, 1)
                                                 Size: =13
                                                 Text: =If(IsBlank(varCurrentTicket) || IsEmpty(varCurrentTicket.Anlagen), fxTranslate("NothingAttached", "Es wurde nichts angefügt."), "")
-                                                Visible: =(IsBlank(varCurrentTicket) || (IsEmpty(varCurrentTicket.Anlagen) && IsEmpty(colTicketDetailComments))) && !varShowTicketAttachmentUpload
+                                                Visible: =(IsBlank(varCurrentTicket) || (IsEmpty(varCurrentTicket.Anlagen) && IsEmpty(colTicketDetailCommentAttachments))) && !varShowTicketAttachmentUpload
                                                 Width: =Parent.Width
                                           - att_ticket:
                                               Control: Attachments
@@ -3029,6 +3016,7 @@ Screens:
                                                 LayoutMinWidth: =0
                                                 NoAttachmentsText: =fxTranslate("NothingAttached", "Es wurde nichts angefügt.")
                                                 Size: =12
+                                                Visible: =!IsEmpty(varCurrentTicket.Anlagen)
                                                 Width: =Parent.Width
                                           - gal_ticket_comment_attachments:
                                               Control: Gallery
@@ -3037,12 +3025,12 @@ Screens:
                                                 AccessibleLabel: =fxTranslate("CommentAttachments", "Kommentaranhänge")
                                                 FillPortions: =0
                                                 Height: =120
-                                                Items: =colTicketDetailComments
+                                                Items: =colTicketDetailCommentAttachments
                                                 LayoutMinHeight: =0
                                                 LayoutMinWidth: =0
                                                 TemplatePadding: =2
                                                 TemplateSize: =54
-                                                Visible: =!IsEmpty(colTicketDetailComments)
+                                                Visible: =!IsEmpty(colTicketDetailCommentAttachments)
                                                 Width: =Parent.Width
                                               Children:
                                                 - att_ticket_comment_attachment:
@@ -3095,120 +3083,15 @@ Screens:
                                                         SubmitForm(form_ticket_attachments_inline_1)
                                                       Text: =fxTranslate("Speichern", "Speichern")
                                                       Width: =110
-                              - card_watchers_below_attachments:
-                                  Control: GroupContainer
-                                  Variant: AutoLayout
-                                  Properties:
-                                    BorderColor: =RGBA(226, 232, 240, 1)
-                                    BorderThickness: =1
-                                    DropShadow: =DropShadow.None
-                                    Fill: =RGBA(255, 255, 255, 1)
-                                    Height: =170
-                                    LayoutDirection: =LayoutDirection.Vertical
-                                    LayoutGap: =8
-                                    LayoutMinHeight: =0
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =12
-                                    PaddingLeft: =12
-                                    PaddingRight: =12
-                                    PaddingTop: =12
-                                    RadiusBottomLeft: =8
-                                    RadiusBottomRight: =8
-                                    RadiusTopLeft: =8
-                                    RadiusTopRight: =8
-                                    Visible: =App.Width >= 600 && fxCanViewCurrentTicket
-                                    Width: =Parent.Width
-                                  Children:
-                                    - lbl_watchers_below_title:
-                                        Control: ModernText
-                                        Properties:
-                                          Color: =RGBA(15, 23, 42, 1)
-                                          FontWeight: =FontWeight.Bold
-                                          Height: =22
-                                          Size: =14
-                                          Text: =fxTranslate("Watchers", "Beobachter")
-                                          Width: =Parent.Width
-                                    - dcv_watchers_below:
-                                        Control: ModernCombobox
-                                        Properties:
-                                          AccessibleLabel: =fxTranslate("Watchers", "Beobachter")
-                                          AlignInContainer: =AlignInContainer.Stretch
-                                          Appearance: =Appearance.Outline
-                                          DefaultSelectedItems: =If(IsEmpty(varCurrentTicket.Beobachter), [], varCurrentTicket.Beobachter)
-                                          DisplayMode: =If(fxCanViewCurrentTicket && !fxIsCurrentTicketClosed, DisplayMode.Edit, DisplayMode.View)
-                                          FillPortions: =1
-                                          Height: =52
-                                          InputTextPlaceholder: =fxTranslate("AddWatcherPlaceholder", "Beobachter hinzufügen...")
-                                          ItemDisplayText: =ThisItem.DisplayName
-                                          Items: |-
-                                            =SortByColumns(
-                                                ForAll(
-                                                    Filter(
-                                                        'Office365-Benutzer'.SearchUser({searchTerm: Trim(Self.SearchText)}),
-                                                        AccountEnabled = true &&
-                                                        !IsBlank(DisplayName) &&
-                                                        !IsBlank(Coalesce(Mail, UserPrincipalName)) &&
-                                                        (EndsWith(Lower(Mail), "@kessel.de") Or EndsWith(Lower(UserPrincipalName), "@kessel.de")) &&
-                                                        CountRows(Split(Trim(DisplayName), " ")) >= 2 &&
-                                                        !StartsWith(Lower(DisplayName), "aaa") &&
-                                                        !StartsWith(Lower(UserPrincipalName), "aaa") &&
-                                                        !StartsWith(Lower(MailNickname), "aaa") &&
-                                                        !StartsWith(Lower(DisplayName), "admin") &&
-                                                        !StartsWith(Lower(UserPrincipalName), "admin") &&
-                                                        !StartsWith(Lower(MailNickname), "admin") &&
-                                                        !StartsWith(Lower(DisplayName), "adm ") &&
-                                                        !StartsWith(Lower(DisplayName), "abteilungsleiter") &&
-                                                        !StartsWith(Lower(DisplayName), "administrator") &&
-                                                        !StartsWith(Lower(DisplayName), "service") &&
-                                                        !StartsWith(Lower(DisplayName), "test")
-                                                    ),
-                                                    {
-                                                        Claims: "i:0#.f|membership|" & Lower(Coalesce(Mail, UserPrincipalName)),
-                                                        DisplayName: DisplayName,
-                                                        Email: Coalesce(Mail, UserPrincipalName),
-                                                        Department: Department,
-                                                        JobTitle: JobTitle,
-                                                        Picture: Blank()
-                                                    }
-                                                ),
-                                                "DisplayName",
-                                                SortOrder.Ascending
-                                            )
-                                          LayoutMaxHeight: =30
-                                          LayoutMinHeight: =0
-                                          Width: =Parent.Width - 150
-                                    - btn_save_watchers_below:
-                                        Control: ModernButton
-                                        Properties:
-                                          AccessibleLabel: =fxTranslate("SaveWatchers", "Beobachter speichern")
-                                          AlignInContainer: =AlignInContainer.Stretch
-                                          DisplayMode: =If(fxCanViewCurrentTicket && !fxIsCurrentTicketClosed, DisplayMode.Edit, DisplayMode.Disabled)
-                                          Height: =36
-                                          Icon: ="Save"
-                                          LayoutMaxWidth: =150
-                                          LayoutMinWidth: =130
-                                          OnSelect: |-
-                                            =IfError(
-                                                Set(varCurrentTicket, Patch(ev_sp_list_tickets, varCurrentTicket, {Beobachter: dcv_watchers_below.SelectedItems}));
-                                                Set(varTicketLoadedModified, varCurrentTicket.Geändert);
-                                                Notify(fxTranslate("WatchersSaved", "Beobachter gespeichert."), NotificationType.Success, 1500),
-                                                Notify(fxTranslate("WatchersSaveFailed", "Beobachter konnten nicht gespeichert werden."), NotificationType.Error, 3000)
-                                            )
-                                          RadiusBottomLeft: =6
-                                          RadiusBottomRight: =6
-                                          RadiusTopLeft: =6
-                                          RadiusTopRight: =6
-                                          Text: =fxTranslate("Speichern", "Speichern")
-                                          Width: =130
                         - conActivity:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(229, 231, 235, 1)
-                              BorderThickness: =1
-                              DropShadow: =DropShadow.Semilight
+                              BorderThickness: =0
+                              DropShadow: =DropShadow.None
                               Fill: =RGBA(255, 255, 255, 1)
-                              FillPortions: =If(App.Width < 1180, 0, 1)
+                              FillPortions: =If(App.Width < 1180, 0, 45)
                               Height: =If(App.Width < 600, If(varActivityExpanded, Min(560, App.Height - 96), 52), If(App.Width < 1180, Min(620, Max(500, App.Height - 180)), Parent.Height))
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutGap: =8
@@ -3229,6 +3112,7 @@ Screens:
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
+                                    Fill: =RGBA(248, 250, 252, 1)
                                     FillPortions: =0
                                     Height: =36
                                     LayoutAlignItems: =LayoutAlignItems.Center
@@ -3249,7 +3133,7 @@ Screens:
                                           LayoutGap: =8
                                           LayoutMinHeight: =0
                                           LayoutMinWidth: =0
-                                          Width: =110
+                                          Width: =180
                                         Children:
                                           - lbl_activity_title:
                                               Control: ModernText
@@ -3382,7 +3266,7 @@ Screens:
                                                     RGBA(226, 232, 240, 1)
                                                 )
                                             )
-                                          BorderThickness: =1
+                                          BorderThickness: =0
                                           DropShadow: =DropShadow.None
                                           Fill: |-
                                             =If(
@@ -3471,7 +3355,7 @@ Screens:
                                     AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(100, 116, 139, 1)
                                     FillPortions: =1
-                                    Height: =240
+                                    Height: =120
                                     Size: =14
                                     Text: =fxTranslate("NoActivities", "Noch keine Aktivitäten vorhanden.")
                                     Visible: =(App.Width >= 600 || varActivityExpanded) && IsEmpty(gal_activity.AllItems)
@@ -3504,12 +3388,12 @@ Screens:
                                     BorderStyle: =BorderStyle.None
                                     BorderThickness: =1
                                     DropShadow: =DropShadow.None
-                                    Fill: =RGBA(255, 255, 255, 1)
-                                    Height: =If(varShowCommentAttachmentTray Or !IsEmpty(att_comment_upload.Attachments), 178, 104)
+                                    Fill: =RGBA(248, 250, 252, 1)
+                                    Height: =If(varShowCommentAttachmentTray Or !IsEmpty(att_comment_upload.Attachments), 222, 152)
                                     LayoutDirection: =LayoutDirection.Vertical
                                     LayoutGap: =4
                                     LayoutJustifyContent: =LayoutJustifyContent.End
-                                    LayoutMaxHeight: =190
+                                    LayoutMaxHeight: =230
                                     LayoutMinHeight: =50
                                     PaddingBottom: =6
                                     PaddingLeft: =10
@@ -3540,7 +3424,10 @@ Screens:
                                              If(
                                                  Coalesce(varCommentType, "Chat") <> "Internal",
                                                  Collect(colNotificationRecipients, {Email: varCurrentTicket.RequestedBy.Email});
-                                                 Collect(colNotificationRecipients, {Email: varCurrentTicket.'Zugewiesen an'.Email});
+                                                 ForAll(
+                                                     varCurrentTicket.'Zugewiesen an' As assignee,
+                                                     Collect(colNotificationRecipients, {Email: assignee.Email})
+                                                 );
                                                  ForAll(
                                                      varCurrentTicket.Beobachter As observer,
                                                      Collect(colNotificationRecipients, {Email: observer.Email})
@@ -3796,9 +3683,9 @@ Screens:
                                           AlignInContainer: =AlignInContainer.Stretch
                                           Appearance: =Appearance.Outline
                                           DisplayMode: =If(fxCanCommentOnCurrentTicket, DisplayMode.Edit, DisplayMode.Disabled)
-                                          Height: =44
+                                          Height: =82
                                           LayoutMaxHeight: =150
-                                          LayoutMinHeight: =44
+                                          LayoutMinHeight: =82
                                           LayoutMinWidth: =0
                                           MaxLength: =400
                                           Placeholder: =fxTranslate("MessageSupportPlaceholder", "Nachricht an Support schreiben...")
@@ -3842,7 +3729,7 @@ Screens:
                                                 DisplayMode: =If(fxCanCommentOnCurrentTicket && !varCommentSubmitting, DisplayMode.Edit, DisplayMode.Disabled)
                                                 Height: =36
                                                 Icon: ="Attach"
-                                                Layout: =ButtonLayout.IconOnly
+                                                Layout: =ButtonLayout.IconBefore
                                                 OnSelect: =Set(varShowCommentAttachmentTray, true)
                                                 RadiusBottomLeft: =6
                                                 RadiusBottomRight: =6
@@ -3873,8 +3760,9 @@ Screens:
                                                 RadiusBottomRight: =6
                                                 RadiusTopLeft: =6
                                                 RadiusTopRight: =6
+                                                Text: =fxTranslate("Reply", "Antwort")
                                                 Tooltip: =fxTranslate("Send", "Senden")
-                                                Width: =36
+                                                Width: =110
                         - mobile_attachments_bottom:
                             Control: GroupContainer
                             Variant: AutoLayout
