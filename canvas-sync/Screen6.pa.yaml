@@ -94,7 +94,6 @@ Screens:
             LayoutAlignItems: =LayoutAlignItems.Center
             LayoutDirection: =LayoutDirection.Vertical
             LayoutOverflowY: =LayoutOverflow.Scroll
-            PaddingBottom: =24
             Width: =Parent.Width
           Children:
             - TopNav4:
@@ -400,7 +399,7 @@ Screens:
                         AccessibleLabel: =fxTranslate("SearchTickets", "Tickets durchsuchen")
                         Default: =Coalesce(varDbdSearchText, "")
                         FillPortions: =If(App.Width < 1180, 0, 1)
-                        Height: =44
+                        Height: =40
                         LayoutMinHeight: =0
                         LayoutMinWidth: =220
                         OnChange: |-
@@ -426,41 +425,6 @@ Screens:
                         LayoutOverflowX: =LayoutOverflow.Scroll
                         Width: =If(App.Width < 1180, Parent.Width - Parent.PaddingLeft - Parent.PaddingRight, 670)
                       Children:
-                        - SaveFilterButton6:
-                            Control: ModernButton
-                            Properties:
-                              AccessibleLabel: =fxTranslate("SaveCurrentFiltersAsView", "Aktuelle Filter als Ansicht speichern")
-                              Appearance: =ButtonAppearance.Secondary
-                              BasePaletteColor: =RGBA(87, 35, 129, 1)
-                              DisplayMode: |-
-                                =If(
-                                    fxDbdActiveFilterCount > 0
-                                        Or !IsBlank(Trim(varDbdSearchText))
-                                        Or Coalesce(varS6QuickFilter, "all") <> "all"
-                                        Or varS6FiltersDirty,
-                                    DisplayMode.Edit,
-                                    DisplayMode.Disabled
-                                )
-                              Height: =40
-                              Icon: ="Save"
-                              OnSelect: |-
-                                =Set(
-                                    varS6SaveMode,
-                                    If(
-                                        varS6FiltersDirty
-                                            And !IsBlank(varS6SelectedSavedView.ID)
-                                            And (Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email) Or (varS6SelectedSavedView.Scope.Value = fxSavedViewScopeGlobal And fxCanManageGlobalSavedViews)),
-                                        "update",
-                                        "new"
-                                    )
-                                );
-                                Set(varS6SaveNameDefault, If(varS6SaveMode = "update", varS6SelectedSavedView.Title, ""));
-                                Set(varS6SaveAsDefault, If(varS6SaveMode = "update", Coalesce(varS6SelectedSavedView.IsDefault, false), false));
-                                Set(varS6ShowSaveFilterDialog, true);
-                                Set(varS6ShowSavedFilterActions, false);
-                                Reset(SavedFilterNameInput6)
-                              Text: =If(varS6FiltersDirty And !IsBlank(varS6SelectedSavedView.ID) And (Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email) Or (varS6SelectedSavedView.Scope.Value = fxSavedViewScopeGlobal And fxCanManageGlobalSavedViews)), fxTranslate("SaveChanges", "Änderungen speichern"), fxTranslate("SaveFilter", "Filter speichern"))
-                              Width: =145
                         - SavedViewPicker6:
                             Control: ModernCombobox
                             Properties:
@@ -504,6 +468,42 @@ Screens:
                                 )
                               SelectMultiple: =false
                               Width: =170
+                        - SaveFilterButton6:
+                            Control: ModernButton
+                            Properties:
+                              AccessibleLabel: =fxTranslate("SaveCurrentFiltersAsView", "Aktuelle Filter als Ansicht speichern")
+                              Appearance: =ButtonAppearance.Secondary
+                              BasePaletteColor: =RGBA(87, 35, 129, 1)
+                              DisplayMode: |-
+                                =If(
+                                    fxDbdActiveFilterCount > 0
+                                        Or !IsBlank(Trim(varDbdSearchText))
+                                        Or Coalesce(varS6QuickFilter, "all") <> "all"
+                                        Or varS6FiltersDirty,
+                                    DisplayMode.Edit,
+                                    DisplayMode.Disabled
+                                )
+                              Height: =40
+                              Icon: ="Save"
+                              Layout: =ButtonLayout.IconOnly
+                              OnSelect: |-
+                                =Set(
+                                    varS6SaveMode,
+                                    If(
+                                        varS6FiltersDirty
+                                            And !IsBlank(varS6SelectedSavedView.ID)
+                                            And (Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email) Or (varS6SelectedSavedView.Scope.Value = fxSavedViewScopeGlobal And fxCanManageGlobalSavedViews)),
+                                        "update",
+                                        "new"
+                                    )
+                                );
+                                Set(varS6SaveNameDefault, If(varS6SaveMode = "update", varS6SelectedSavedView.Title, ""));
+                                Set(varS6SaveAsDefault, If(varS6SaveMode = "update", Coalesce(varS6SelectedSavedView.IsDefault, false), false));
+                                Set(varS6ShowSaveFilterDialog, true);
+                                Set(varS6ShowSavedFilterActions, false);
+                                Reset(SavedFilterNameInput6)
+                              Text: =If(varS6FiltersDirty And !IsBlank(varS6SelectedSavedView.ID) And (Lower(varS6SelectedSavedView.OwnerEmail) = Lower(fxCurrentUser.Email) Or (varS6SelectedSavedView.Scope.Value = fxSavedViewScopeGlobal And fxCanManageGlobalSavedViews)), fxTranslate("SaveChanges", "Änderungen speichern"), fxTranslate("SaveFilter", "Filter speichern"))
+                              Width: =40
                         - AdvancedFilterToggle6:
                             Control: ModernButton
                             Properties:
@@ -719,7 +719,7 @@ Screens:
                 Properties:
                   BorderColor: =RGBA(229, 231, 235, 1)
                   DropShadow: =DropShadow.None
-                  Fill: =RGBA(248, 249, 252, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
                   FillPortions: =0
                   Height: =If(varS6ShowFilters, If(App.Width >= 1024, 55, If(App.Width >= 800, 120, If(App.Width >= 520, 250, 510))), 0)
                   LayoutGap: =10
@@ -730,8 +730,8 @@ Screens:
                   LayoutMinHeight: =0
                   LayoutMinWidth: =0
                   PaddingBottom: =0
-                  PaddingLeft: =0
-                  PaddingRight: =0
+                  PaddingLeft: =If(App.Width < 640, 16, 40)
+                  PaddingRight: =If(App.Width < 640, 16, 40)
                   PaddingTop: =0
                   RadiusBottomLeft: =8
                   RadiusBottomRight: =8
@@ -985,142 +985,23 @@ Screens:
                                 Set(varS6FiltersDirty, !IsBlank(varS6SelectedSavedView.ID))
                               SelectMultiple: =false
                               Width: =Parent.Width
-            - NotificationsCard6:
-                Control: GroupContainer
-                Variant: AutoLayout
-                Properties:
-                  BorderColor: =RGBA(229, 231, 235, 1)
-                  BorderThickness: =1
-                  DropShadow: =DropShadow.Semilight
-                  Fill: =RGBA(255, 255, 255, 1)
-                  FillPortions: =0
-                  Height: =If(varS6ShowNotifications, 190, 0)
-                  LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =8
-                  LayoutMinHeight: =0
-                  LayoutMinWidth: =16
-                  PaddingBottom: =If(varS6ShowNotifications, 12, 0)
-                  PaddingLeft: =16
-                  PaddingRight: =16
-                  PaddingTop: =If(varS6ShowNotifications, 12, 0)
-                  Visible: =varS6ShowNotifications
-                  Width: =Parent.Width - If(App.Width < 640, 32, 80)
-                Children:
-                  - NotificationsHeader6:
-                      Control: GroupContainer
-                      Variant: AutoLayout
-                      Properties:
-                        DropShadow: =DropShadow.None
-                        FillPortions: =0
-                        Height: =32
-                        LayoutAlignItems: =LayoutAlignItems.Center
-                        LayoutDirection: =LayoutDirection.Horizontal
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
-                        Width: =Parent.Width
-                      Children:
-                        - NotificationsTitle6:
-                            Control: ModernText
-                            Properties:
-                              FillPortions: =1
-                              FontWeight: =FontWeight.Semibold
-                              Height: =28
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
-                              Text: =fxTranslate("NewComments", "Neue Kommentare")
-                        - NotificationsClose6:
-                            Control: ModernButton
-                            Properties:
-                              AccessibleLabel: =fxTranslate("CloseNotifications", "Benachrichtigungen schließen")
-                              Appearance: =ButtonAppearance.Subtle
-                              Icon: ="Dismiss"
-                              Layout: =ButtonLayout.IconOnly
-                              OnSelect: =Set(varS6ShowNotifications, false)
-                              Width: =32
-                  - NotificationsEmpty6:
-                      Control: ModernText
-                      Properties:
-                        Align: =Align.Center
-                        Color: =RGBA(96, 94, 92, 1)
-                        FillPortions: =1
-                        Height: =100
-                        Text: =fxTranslate("NoNewCommentsSinceLastCheck", "Keine neuen Kommentare seit dem letzten Check.")
-                        Visible: =IsEmpty(fxDbdNotifications)
-                        Width: =Parent.Width
-                  - NotificationsGallery6:
-                      Control: Gallery
-                      Variant: Vertical
-                      Properties:
-                        Items: =fxDbdNotifications
-                        LayoutMinHeight: =0
-                        LayoutMinWidth: =0
-                        TemplatePadding: =2
-                        TemplateSize: =48
-                        Visible: =!IsEmpty(fxDbdNotifications)
-                        Width: =Parent.Width
-                      Children:
-                        - NotificationRow6:
-                            Control: GroupContainer
-                            Variant: AutoLayout
-                            Properties:
-                              BorderColor: =RGBA(229, 231, 235, 1)
-                              BorderThickness: =1
-                              DropShadow: =DropShadow.None
-                              Height: =44
-                              LayoutAlignItems: =LayoutAlignItems.Center
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =8
-                              PaddingLeft: =10
-                              PaddingRight: =8
-                              RadiusBottomLeft: =6
-                              RadiusBottomRight: =6
-                              RadiusTopLeft: =6
-                              RadiusTopRight: =6
-                              Width: =Parent.TemplateWidth - 4
-                            Children:
-                              - NotificationText6:
-                                  Control: ModernText
-                                  Properties:
-                                    FillPortions: =1
-                                    Height: =36
-                                    LayoutMinHeight: =0
-                                    LayoutMinWidth: =0
-                                    Text: =Substitute(fxTranslate("TicketNotificationTemplate", "Ticket {0} - neue Aktivität"), "{0}", Text(ThisItem.TicketId))
-                                    Wrap: =false
-                              - NotificationOpen6:
-                                  Control: ModernButton
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("OpenTicket", "Ticket öffnen")
-                                    Appearance: =ButtonAppearance.Subtle
-                                    Icon: ="ArrowRight"
-                                    Layout: =ButtonLayout.IconOnly
-                                    OnSelect: |-
-                                      =Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = ThisItem.TicketId));
-                                      If(
-                                          IsBlank(varCurrentTicket) Or !fxCanViewCurrentTicket,
-                                          Set(varCurrentTicket, Blank());
-                                          Notify(fxTranslate("RelatedTicketOpenFailed", "Das zugehörige Ticket konnte nicht geöffnet werden."), NotificationType.Warning, 3000),
-                                          Set(varTicketLoadedModified, varCurrentTicket.Geändert);
-                                          Set(varS6ShowNotifications, false);
-                                          Navigate(ticket_details_screen, ScreenTransition.CoverRight)
-                                      )
-                                    Width: =32
             - TicketTableCard6:
                 Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(225, 226, 230, 1)
-                  BorderThickness: =1
-                  DropShadow: =DropShadow.Semilight
+                  DropShadow: =DropShadow.None
                   Fill: =RGBA(255, 255, 255, 1)
                   Height: =Max(420, App.Height - TopNav4.Height - TitleBand3.Height - FilterRow2.Height - 72)
                   LayoutDirection: =LayoutDirection.Vertical
                   LayoutMinHeight: =420
                   LayoutMinWidth: =16
-                  RadiusBottomLeft: =8
-                  RadiusBottomRight: =8
-                  RadiusTopLeft: =8
-                  RadiusTopRight: =8
+                  PaddingLeft: =If(App.Width < 640, 16, 40)
+                  PaddingRight: =If(App.Width < 640, 16, 40)
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
                   Width: =Parent.Width - If(App.Width < 640, 32, 80)
                 Children:
                   - TicketTableSummary6:
@@ -1279,8 +1160,34 @@ Screens:
                                           GridTicketId: Coalesce(ticket.TicketId, ticket.Titel, Text(ticket.ID)),
                                           GridTitle: Concatenate(If(!IsBlank(LookUp(fxDbdNotifications, TicketId = ticket.ID)), "* ", ""), Coalesce(ticket.TicketTitel, ticket.Titel, fxTranslate("NoTitle", "Ohne Titel"))),
                                           GridRequester: Text(Coalesce(ticket.RequestedBy.DisplayName, ticket.RequestedBy.Email, "-")),
-                                          GridAssigneeName: Coalesce(ticket.'Zugewiesen an'.DisplayName, ticket.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen")),
-                                          GridStatus: fxTranslate(Coalesce(ticket.Status.Value, ticket.StatusINC.Value, ""), Coalesce(ticket.Status.Value, ticket.StatusINC.Value, fxTranslate("NotSet", "Nicht gesetzt"))),
+                                          GridAssigneeName: Coalesce(
+                                              IfError(
+                                                  With(
+                                                      {
+                                                          assigneeMatches: MatchAll(
+                                                              JSON(ticket.'Zugewiesen an', JSONFormat.Compact & JSONFormat.IgnoreBinaryData),
+                                                              """DisplayName"":""(?<AssigneeName>[^""]+)"""
+                                                          )
+                                                      },
+                                                      Concat(assigneeMatches, AssigneeName, ", ")
+                                                  ),
+                                                  Blank()
+                                              ),
+                                              fxTranslate("NotAssigned", "Nicht zugewiesen")
+                                          ),
+                                          GridStatus: With(
+                                              {statusValue: Coalesce(ticket.Status.Value, ticket.StatusINC.Value, "")},
+                                              Switch(
+                                                  statusValue,
+                                                  "Offen", "○ ",
+                                                  "Zugewiesen", "→ ",
+                                                  "In Bearbeitung", "▶ ",
+                                                  "Warten auf Anforderer", "Ⅱ ",
+                                                  "Gelöst", "✓ ",
+                                                  "Geschlossen", "■ ",
+                                                  "- "
+                                              ) & fxTranslate(statusValue, Coalesce(statusValue, fxTranslate("NotSet", "Nicht gesetzt")))
+                                          ),
                                           GridPriority: fxTranslate(Coalesce(ticket.Priority.Value, ""), Coalesce(ticket.Priority.Value, fxTranslate("NotSet", "Nicht gesetzt"))),
                                           GridUpdated: Text(ticket.Geändert, "[$-de-DE]dd.mm. HH:mm")
                                       }
@@ -1497,7 +1404,22 @@ Screens:
                                   Control: ModernText
                                   Properties:
                                     Size: =12
-                                    Text: =Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen"))
+                                    Text: |-
+                                      =Coalesce(
+                                          IfError(
+                                              With(
+                                                  {
+                                                      assigneeMatches: MatchAll(
+                                                          JSON(ThisItem.'Zugewiesen an', JSONFormat.Compact & JSONFormat.IgnoreBinaryData),
+                                                          """DisplayName"":""(?<AssigneeName>[^""]+)"""
+                                                      )
+                                                  },
+                                                  Concat(assigneeMatches, AssigneeName, ", ")
+                                              ),
+                                              Blank()
+                                          ),
+                                          fxTranslate("NotAssigned", "Nicht zugewiesen")
+                                      )
                                     Visible: =fxIsAgentExperience && App.Width >= 1100
                                     Width: =170
                                     Wrap: =false
@@ -1608,6 +1530,7 @@ Screens:
                   - SavedFilterDialogTitle6:
                       Control: ModernText
                       Properties:
+                        AutoHeight: =true
                         FontWeight: =FontWeight.Bold
                         Size: =20
                         Text: =If(varS6SaveMode = "rename", fxTranslate("RenameFilter", "Filter umbenennen"), If(varS6SaveMode = "update", fxTranslate("SaveChanges", "Änderungen speichern"), fxTranslate("SaveFilter", "Filter speichern")))
@@ -1615,6 +1538,7 @@ Screens:
                   - SavedFilterNameLabel6:
                       Control: ModernText
                       Properties:
+                        AutoHeight: =true
                         FontWeight: =FontWeight.Semibold
                         Height: =20
                         Text: =fxTranslate("ViewName", "Name der Ansicht")
