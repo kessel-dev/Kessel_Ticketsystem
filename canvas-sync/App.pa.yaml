@@ -372,7 +372,12 @@ App:
           false
       );
       fxIsCurrentTicketRequester = !IsBlank(varCurrentTicket) && (varCurrentTicket.RequestedBy.Email = fxCurrentUser.Email Or varCurrentTicket.'Erstellt von'.Email = fxCurrentUser.Email);
-      fxIsCurrentTicketAssignee = !IsBlank(varCurrentTicket) && varCurrentTicket.'Zugewiesen an'.Email = fxCurrentUser.Email;
+      fxIsCurrentTicketAssignee = !IsBlank(varCurrentTicket) && !IsBlank(
+          LookUp(
+              varCurrentTicket.'Zugewiesen an',
+              Lower(Email) = Lower(fxCurrentUser.Email)
+          )
+      );
       fxIsCurrentTicketObserver = !IsBlank(varCurrentTicket) && !IsBlank(
           LookUp(
               varCurrentTicket.Beobachter,
@@ -433,10 +438,15 @@ App:
                   fxIsAgentExperience,
                   ev_sp_list_tickets,
                   Filter(
-                      ev_sp_list_tickets,
-                      RequestedBy.Email = fxCurrentUser.Email
-                          || 'Erstellt von'.Email = fxCurrentUser.Email
-                          || 'Zugewiesen an'.Email = fxCurrentUser.Email
+                      ev_sp_list_tickets As ticket,
+                      ticket.RequestedBy.Email = fxCurrentUser.Email
+                          || ticket.'Erstellt von'.Email = fxCurrentUser.Email
+                          || !IsBlank(
+                              LookUp(
+                                  ticket.'Zugewiesen an',
+                                  Lower(Email) = Lower(fxCurrentUser.Email)
+                              )
+                          )
                   )
               )
           },
@@ -444,7 +454,7 @@ App:
               {
                   scopeTickets: Switch(
                       Coalesce(varDbdScopeFilter.Value, "Alle"),
-                      "Mir zugewiesen", Filter(accessibleTickets, 'Zugewiesen an'.Email = fxCurrentUser.Email),
+                      "Mir zugewiesen", Filter(accessibleTickets As ticket, !IsBlank(LookUp(ticket.'Zugewiesen an', Lower(Email) = Lower(fxCurrentUser.Email)))),
                       "Von mir erstellt", Filter(accessibleTickets, 'Erstellt von'.Email = fxCurrentUser.Email),
                       "Von mir angefordert", Filter(accessibleTickets, RequestedBy.Email = fxCurrentUser.Email),
                       accessibleTickets
@@ -601,7 +611,7 @@ App:
               )
           },
           If(
-              !IsBlank(Param("ticketId")) && !IsBlank(deepLinkTicket) && (fxIsAgentExperience || deepLinkTicket.RequestedBy.Email = fxCurrentUser.Email || deepLinkTicket.'Erstellt von'.Email = fxCurrentUser.Email || deepLinkTicket.'Zugewiesen an'.Email = fxCurrentUser.Email || !IsBlank(
+              !IsBlank(Param("ticketId")) && !IsBlank(deepLinkTicket) && (fxIsAgentExperience || deepLinkTicket.RequestedBy.Email = fxCurrentUser.Email || deepLinkTicket.'Erstellt von'.Email = fxCurrentUser.Email || !IsBlank(LookUp(deepLinkTicket.'Zugewiesen an', Lower(Email) = Lower(fxCurrentUser.Email))) || !IsBlank(
                   LookUp(
                       deepLinkTicket.Beobachter,
                       Email = fxCurrentUser.Email

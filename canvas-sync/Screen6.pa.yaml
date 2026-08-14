@@ -337,20 +337,31 @@ Screens:
                           =With(
                               {countTickets: fxFilteredDashboardTickets},
                               Table(
-                                  {Key: "all", Value: fxTranslate("All", "Alle"), TicketCount: CountRows(countTickets)},
+                                  {
+                                      Key: "all",
+                                      Value: fxTranslate(
+                                          "All",
+                                          "Alle"
+                                      ),
+                                      TicketCount: CountRows(countTickets)
+                                  },
                                   {
                                       Key: "open",
-                                      Value: fxTranslate("Open", "Offen"),
+                                      Value: fxTranslate(
+                                          "Open",
+                                          "Offen"
+                                      ),
                                       TicketCount: CountRows(
                                           Filter(
                                               countTickets As ticket,
                                               IsBlank(
                                                   LookUp(
                                                       ev_sp_list_config_dropdown,
-                                                      FilterName = "ClosedStatus"
-                                                          And TargetList = "Ticket"
-                                                          And Active = true
-                                                          And FilterValue = Coalesce(ticket.Status.Value, ticket.StatusINC.Value, "")
+                                                      FilterName = "ClosedStatus" And TargetList = "Ticket" And Active = true And FilterValue = Coalesce(
+                                                          ticket.Status.Value,
+                                                          ticket.StatusINC.Value,
+                                                          ""
+                                                      )
                                                   )
                                               )
                                           )
@@ -358,13 +369,34 @@ Screens:
                                   },
                                   {
                                       Key: "requested",
-                                      Value: fxTranslate("RequestedByMe", "Von mir"),
-                                      TicketCount: CountRows(Filter(countTickets, RequestedBy.Email = fxCurrentUser.Email Or 'Erstellt von'.Email = fxCurrentUser.Email))
+                                      Value: fxTranslate(
+                                          "RequestedByMe",
+                                          "Von mir"
+                                      ),
+                                      TicketCount: CountRows(
+                                          Filter(
+                                              countTickets,
+                                              RequestedBy.Email = fxCurrentUser.Email Or 'Erstellt von'.Email = fxCurrentUser.Email
+                                          )
+                                      )
                                   },
                                   {
                                       Key: "assigned",
-                                      Value: fxTranslate("AssignedToMe", "Mir zugewiesen"),
-                                      TicketCount: CountRows(Filter(countTickets, 'Zugewiesen an'.Email = fxCurrentUser.Email))
+                                      Value: fxTranslate(
+                                          "AssignedToMe",
+                                          "Mir zugewiesen"
+                                      ),
+                                      TicketCount: CountRows(
+                                          Filter(
+                                              countTickets As ticket,
+                                              !IsBlank(
+                                                  LookUp(
+                                                      ticket.'Zugewiesen an',
+                                                      Lower(Email) = Lower(fxCurrentUser.Email)
+                                                  )
+                                              )
+                                          )
+                                      )
                                   }
                               )
                           )
@@ -512,7 +544,7 @@ Screens:
                               BasePaletteColor: =RGBA(87, 35, 129, 1)
                               Height: =40
                               Icon: ="Filter"
-                              OnSelect: =Set(varS6ShowFilters, !varS6ShowFilters)
+                              OnSelect: =Set(varS6ShowFilters, Not(Coalesce(varS6ShowFilters, false)))
                               Text: =fxTranslate("Filter", "Filter") & If(fxDbdActiveFilterCount > 0, " (" & fxDbdActiveFilterCount & ")", "")
                               Width: =105
             - SavedFilterManagementRow6:
@@ -737,7 +769,7 @@ Screens:
                   RadiusBottomRight: =8
                   RadiusTopLeft: =8
                   RadiusTopRight: =8
-                  Visible: =varS6ShowFilters
+                  Visible: =true
                   Width: =Parent.Width - If(App.Width < 640, 32, 80)
                 Children:
                   - StatusFilterField6:
@@ -1134,21 +1166,39 @@ Screens:
                           =With(
                               {
                                   quickFilteredTickets: Switch(
-                                      Coalesce(varS6QuickFilter, "all"),
-                                      "open", Filter(
+                                      Coalesce(
+                                          varS6QuickFilter,
+                                          "all"
+                                      ),
+                                      "open",
+                                      Filter(
                                           fxFilteredDashboardTickets As ticket,
                                           IsBlank(
                                               LookUp(
                                                   ev_sp_list_config_dropdown,
-                                                  FilterName = "ClosedStatus"
-                                                      And TargetList = "Ticket"
-                                                      And Active = true
-                                                      And FilterValue = Coalesce(ticket.Status.Value, ticket.StatusINC.Value, "")
+                                                  FilterName = "ClosedStatus" And TargetList = "Ticket" And Active = true And FilterValue = Coalesce(
+                                                      ticket.Status.Value,
+                                                      ticket.StatusINC.Value,
+                                                      ""
+                                                  )
                                               )
                                           )
                                       ),
-                                      "requested", Filter(fxFilteredDashboardTickets, RequestedBy.Email = fxCurrentUser.Email Or 'Erstellt von'.Email = fxCurrentUser.Email),
-                                      "assigned", Filter(fxFilteredDashboardTickets, 'Zugewiesen an'.Email = fxCurrentUser.Email),
+                                      "requested",
+                                      Filter(
+                                          fxFilteredDashboardTickets,
+                                          RequestedBy.Email = fxCurrentUser.Email Or 'Erstellt von'.Email = fxCurrentUser.Email
+                                      ),
+                                      "assigned",
+                                       Filter(
+                                           fxFilteredDashboardTickets As ticket,
+                                           !IsBlank(
+                                               LookUp(
+                                                   ticket.'Zugewiesen an',
+                                                   Lower(Email) = Lower(fxCurrentUser.Email)
+                                               )
+                                           )
+                                      ),
                                       fxFilteredDashboardTickets
                                   )
                               },
@@ -1157,39 +1207,100 @@ Screens:
                                       quickFilteredTickets As ticket,
                                       {
                                           GridID: ticket.ID,
-                                          GridTicketId: Coalesce(ticket.TicketId, ticket.Titel, Text(ticket.ID)),
-                                          GridTitle: Concatenate(If(!IsBlank(LookUp(fxDbdNotifications, TicketId = ticket.ID)), "* ", ""), Coalesce(ticket.TicketTitel, ticket.Titel, fxTranslate("NoTitle", "Ohne Titel"))),
-                                          GridRequester: Text(Coalesce(ticket.RequestedBy.DisplayName, ticket.RequestedBy.Email, "-")),
-                                          GridAssigneeName: Coalesce(
-                                              IfError(
-                                                  With(
-                                                      {
-                                                          assigneeMatches: MatchAll(
-                                                              JSON(ticket.'Zugewiesen an', JSONFormat.Compact & JSONFormat.IgnoreBinaryData),
-                                                              """DisplayName"":""(?<AssigneeName>[^""]+)"""
-                                                          )
-                                                      },
-                                                      Concat(assigneeMatches, AssigneeName, ", ")
+                                          GridTicketId: Coalesce(
+                                              ticket.TicketId,
+                                              ticket.Titel,
+                                              Text(ticket.ID)
+                                          ),
+                                          GridTitle: Concatenate(
+                                              If(
+                                                  !IsBlank(
+                                                      LookUp(
+                                                          fxDbdNotifications,
+                                                          TicketId = ticket.ID
+                                                      )
                                                   ),
-                                                  Blank()
+                                                  "* ",
+                                                  ""
                                               ),
-                                              fxTranslate("NotAssigned", "Nicht zugewiesen")
+                                              Coalesce(
+                                                  ticket.TicketTitel,
+                                                  ticket.Titel,
+                                                  fxTranslate(
+                                                      "NoTitle",
+                                                      "Ohne Titel"
+                                                  )
+                                              )
+                                          ),
+                                          GridRequester: Text(
+                                              Coalesce(
+                                                  ticket.RequestedBy.DisplayName,
+                                                  ticket.RequestedBy.Email,
+                                                  "-"
+                                              )
+                                          ),
+                                           GridAssigneeName: Coalesce(
+                                               Concat(
+                                                   ticket.'Zugewiesen an' As assignee,
+                                                   Coalesce(assignee.DisplayName, assignee.Email),
+                                                   ", "
+                                               ),
+                                               fxTranslate(
+                                                  "NotAssigned",
+                                                  "Nicht zugewiesen"
+                                              )
                                           ),
                                           GridStatus: With(
-                                              {statusValue: Coalesce(ticket.Status.Value, ticket.StatusINC.Value, "")},
+                                              {
+                                                  statusValue: Coalesce(
+                                                      ticket.Status.Value,
+                                                      ticket.StatusINC.Value,
+                                                      ""
+                                                  )
+                                              },
                                               Switch(
                                                   statusValue,
-                                                  "Offen", "○ ",
-                                                  "Zugewiesen", "→ ",
-                                                  "In Bearbeitung", "▶ ",
-                                                  "Warten auf Anforderer", "Ⅱ ",
-                                                  "Gelöst", "✓ ",
-                                                  "Geschlossen", "■ ",
+                                                  "Offen",
+                                                  "○ ",
+                                                  "Zugewiesen",
+                                                  "→ ",
+                                                  "In Bearbeitung",
+                                                  "▶ ",
+                                                  "Warten auf Anforderer",
+                                                  "Ⅱ ",
+                                                  "Gelöst",
+                                                  "✓ ",
+                                                  "Geschlossen",
+                                                  "■ ",
                                                   "- "
-                                              ) & fxTranslate(statusValue, Coalesce(statusValue, fxTranslate("NotSet", "Nicht gesetzt")))
+                                              ) & fxTranslate(
+                                                  statusValue,
+                                                  Coalesce(
+                                                      statusValue,
+                                                      fxTranslate(
+                                                          "NotSet",
+                                                          "Nicht gesetzt"
+                                                      )
+                                                  )
+                                              )
                                           ),
-                                          GridPriority: fxTranslate(Coalesce(ticket.Priority.Value, ""), Coalesce(ticket.Priority.Value, fxTranslate("NotSet", "Nicht gesetzt"))),
-                                          GridUpdated: Text(ticket.Geändert, "[$-de-DE]dd.mm. HH:mm")
+                                          GridPriority: fxTranslate(
+                                              Coalesce(
+                                                  ticket.Priority.Value,
+                                                  ""
+                                              ),
+                                              Coalesce(
+                                                  ticket.Priority.Value,
+                                                  fxTranslate(
+                                                      "NotSet",
+                                                      "Nicht gesetzt"
+                                                  )
+                                              )
+                                          ),
+                                          GridUpdated: Text(
+                                              ticket.Geändert,
+                                              "[$-de-DE]dd.mm. HH:mm"
+                                          )
                                       }
                                   ),
                                   "GridID",
@@ -1296,196 +1407,6 @@ Screens:
                               FieldVariantName: ="%DATACARD_FIELD_VARIANT_NAME.ID%"
                               Text: =ThisItem.GridTicketId
                               Width: =120
-                  - TicketsGallery6:
-                      Control: Gallery
-                      Variant: Vertical
-                      Properties:
-                        FillPortions: =0
-                        Height: =0
-                        Items: |-
-                          =With(
-                              {
-                                  accessibleTickets: If(
-                                      fxIsAgentExperience,
-                                      ev_sp_list_tickets,
-                                      Filter(
-                                          ev_sp_list_tickets,
-                                          RequestedBy.Email = fxCurrentUser.Email
-                                              Or 'Erstellt von'.Email = fxCurrentUser.Email
-                                              Or 'Zugewiesen an'.Email = fxCurrentUser.Email
-                                      )
-                                  )
-                              },
-                              With(
-                                  {
-                                      tabTickets: Switch(
-                                          Coalesce(FilterTabs2.Selected.Key, "all"),
-                                          "open", Filter(
-                                              accessibleTickets As ticket,
-                                              IsBlank(
-                                                  LookUp(
-                                                      ev_sp_list_config_dropdown,
-                                                      FilterName = "ClosedStatus"
-                                                          And TargetList = "Ticket"
-                                                          And Active = true
-                                                          And FilterValue = Coalesce(ticket.Status.Value, ticket.StatusINC.Value, "")
-                                                  )
-                                              )
-                                          ),
-                                          "requested", Filter(accessibleTickets, RequestedBy.Email = fxCurrentUser.Email Or 'Erstellt von'.Email = fxCurrentUser.Email),
-                                          "assigned", Filter(accessibleTickets, 'Zugewiesen an'.Email = fxCurrentUser.Email),
-                                          accessibleTickets
-                                      )
-                                  },
-                                  SortByColumns(
-                                      If(
-                                          IsBlank(Trim(SearchInput2.Text)),
-                                          tabTickets,
-                                          Filter(
-                                              tabTickets,
-                                              StartsWith(TicketId, Trim(SearchInput2.Text))
-                                                  Or StartsWith(Titel, Trim(SearchInput2.Text))
-                                                  Or StartsWith(TicketTitel, Trim(SearchInput2.Text))
-                                                  Or StartsWith(RequestedBy.DisplayName, Trim(SearchInput2.Text))
-                                          )
-                                      ),
-                                      "ID",
-                                      SortOrder.Descending
-                                  )
-                              )
-                          )
-                        LayoutMinHeight: =120
-                        LayoutMinWidth: =0
-                        TemplatePadding: =0
-                        TemplateSize: =48
-                        Visible: =false
-                        Width: =Parent.Width
-                      Children:
-                        - TicketRow6:
-                            Control: GroupContainer
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              Fill: =If(ThisItem.ID = varLastViewedTicketId, RGBA(246, 241, 249, 1), If(Coalesce(ThisItem.SlaBreached, false), RGBA(254, 242, 242, 1), RGBA(255, 255, 255, 1)))
-                              Height: =47
-                              LayoutAlignItems: =LayoutAlignItems.Center
-                              LayoutDirection: =LayoutDirection.Horizontal
-                              LayoutGap: =8
-                              PaddingLeft: =16
-                              PaddingRight: =16
-                              Width: =Parent.TemplateWidth
-                            Children:
-                              - TicketId6:
-                                  Control: ModernText
-                                  Properties:
-                                    FontWeight: =FontWeight.Semibold
-                                    Size: =12
-                                    Text: =Coalesce(ThisItem.TicketId, ThisItem.Titel, Text(ThisItem.ID))
-                                    Width: =If(App.Width < 640, 78, 110)
-                                    Wrap: =false
-                              - TicketTitle6:
-                                  Control: ModernText
-                                  Properties:
-                                    FillPortions: =1
-                                    FontWeight: =If(!IsBlank(LookUp(fxDbdNotifications, TicketId = ThisItem.ID)), FontWeight.Bold, FontWeight.Semibold)
-                                    LayoutMinWidth: =100
-                                    Size: =12
-                                    Text: =Concatenate(If(!IsBlank(LookUp(fxDbdNotifications, TicketId = ThisItem.ID)), "* ", ""), Coalesce(ThisItem.TicketTitel, ThisItem.Titel, fxTranslate("NoTitle", "Ohne Titel")))
-                                    Wrap: =false
-                              - TicketRequester6:
-                                  Control: ModernText
-                                  Properties:
-                                    Size: =12
-                                    Text: =Coalesce(ThisItem.RequestedBy.DisplayName, ThisItem.RequestedBy.Email, "-")
-                                    Visible: =App.Width >= 850
-                                    Width: =170
-                                    Wrap: =false
-                              - TicketAssignee6:
-                                  Control: ModernText
-                                  Properties:
-                                    Size: =12
-                                    Text: |-
-                                      =Coalesce(
-                                          IfError(
-                                              With(
-                                                  {
-                                                      assigneeMatches: MatchAll(
-                                                          JSON(ThisItem.'Zugewiesen an', JSONFormat.Compact & JSONFormat.IgnoreBinaryData),
-                                                          """DisplayName"":""(?<AssigneeName>[^""]+)"""
-                                                      )
-                                                  },
-                                                  Concat(assigneeMatches, AssigneeName, ", ")
-                                              ),
-                                              Blank()
-                                          ),
-                                          fxTranslate("NotAssigned", "Nicht zugewiesen")
-                                      )
-                                    Visible: =fxIsAgentExperience && App.Width >= 1100
-                                    Width: =170
-                                    Wrap: =false
-                              - TicketStatus6:
-                                  Control: ModernText
-                                  Properties:
-                                    Align: =Align.Center
-                                    Color: =Switch(Coalesce(ThisItem.Status.Value, ThisItem.StatusINC.Value, ""), "Offen", RGBA(32, 91, 160, 1), "In Bearbeitung", RGBA(126, 85, 0, 1), "Gelöst", RGBA(31, 105, 63, 1), "Geschlossen", RGBA(31, 105, 63, 1), RGBA(70, 70, 75, 1))
-                                    Fill: =Switch(Coalesce(ThisItem.Status.Value, ThisItem.StatusINC.Value, ""), "Offen", RGBA(224, 238, 255, 1), "In Bearbeitung", RGBA(255, 242, 204, 1), "Gelöst", RGBA(224, 242, 232, 1), "Geschlossen", RGBA(224, 242, 232, 1), RGBA(238, 238, 240, 1))
-                                    FontWeight: =FontWeight.Semibold
-                                    Height: =24
-                                    RadiusBottomLeft: =4
-                                    RadiusBottomRight: =4
-                                    RadiusTopLeft: =4
-                                    RadiusTopRight: =4
-                                    Size: =10
-                                    Text: =fxTranslate(Coalesce(ThisItem.Status.Value, ThisItem.StatusINC.Value, ""), Coalesce(ThisItem.Status.Value, ThisItem.StatusINC.Value, fxTranslate("NotSet", "Nicht gesetzt")))
-                                    Width: =If(App.Width < 640, 92, 130)
-                                    Wrap: =false
-                              - TicketPriority6:
-                                  Control: ModernText
-                                  Properties:
-                                    Align: =Align.Center
-                                    Color: =Switch(Coalesce(ThisItem.Priority.Value, ""), "Hoch", RGBA(139, 0, 0, 1), "Mittel", RGBA(126, 85, 0, 1), "Niedrig", RGBA(42, 89, 150, 1), RGBA(100, 100, 108, 1))
-                                    Fill: =Switch(Coalesce(ThisItem.Priority.Value, ""), "Hoch", RGBA(255, 232, 232, 1), "Mittel", RGBA(255, 242, 204, 1), "Niedrig", RGBA(226, 238, 255, 1), RGBA(238, 238, 240, 1))
-                                    FontWeight: =FontWeight.Semibold
-                                    Height: =24
-                                    RadiusBottomLeft: =4
-                                    RadiusBottomRight: =4
-                                    RadiusTopLeft: =4
-                                    RadiusTopRight: =4
-                                    Size: =10
-                                    Text: =fxTranslate(Coalesce(ThisItem.Priority.Value, ""), Coalesce(ThisItem.Priority.Value, fxTranslate("NotSet", "Nicht gesetzt")))
-                                    Visible: =App.Width >= 1000
-                                    Width: =100
-                                    Wrap: =false
-                              - TicketUpdated6:
-                                  Control: ModernText
-                                  Properties:
-                                    Size: =11
-                                    Text: =Text(ThisItem.Geändert, "[$-de-DE]dd.mm. HH:mm")
-                                    Visible: =App.Width >= 900
-                                    Width: =120
-                                    Wrap: =false
-                              - TicketOpen6:
-                                  Control: ModernButton
-                                  Properties:
-                                    AccessibleLabel: =Substitute(fxTranslate("OpenTicketTemplate", "Ticket {0} öffnen"), "{0}", Coalesce(ThisItem.TicketId, ThisItem.Titel, Text(ThisItem.ID)))
-                                    Appearance: =ButtonAppearance.Subtle
-                                    Icon: ="ArrowRight"
-                                    Layout: =ButtonLayout.IconOnly
-                                    OnSelect: |-
-                                      =Set(varCurrentTicket, LookUp(ev_sp_list_tickets, ID = ThisItem.ID));
-                                      Set(varLastViewedTicketId, ThisItem.ID);
-                                      Set(varTicketLoadedModified, varCurrentTicket.Geändert);
-                                      Navigate(ticket_details_screen, ScreenTransition.None)
-                                    Width: =36
-                        - TicketRowDivider6:
-                            Control: GroupContainer
-                            Variant: ManualLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              Fill: =RGBA(231, 232, 235, 1)
-                              Height: =1
-                              Width: =Parent.TemplateWidth
-                              Y: =Parent.TemplateHeight - 1
                   - TicketsEmpty6:
                       Control: ModernText
                       Properties:
