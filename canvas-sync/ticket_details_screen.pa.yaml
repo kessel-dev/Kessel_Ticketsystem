@@ -17,6 +17,7 @@ Screens:
             Set(varTicketListSearchText, "")
         );
         Set(varShowTicketAttachmentUpload, false);
+        Set(varShowCommentAttachmentTray, false);
         Set(varTicketAttachmentSubmitting, false);
         Set(
             varTicketRefreshing,
@@ -153,7 +154,7 @@ Screens:
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
-            Fill: =RGBA(247, 248, 250, 1)
+            Fill: =RGBA(255, 255, 255, 1)
             Height: =Parent.Height
             LayoutAlignItems: =LayoutAlignItems.Stretch
             LayoutDirection: =LayoutDirection.Vertical
@@ -251,7 +252,6 @@ Screens:
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(226, 232, 240, 1)
-                  BorderThickness: =0
                   DropShadow: =DropShadow.None
                   Fill: =RGBA(255, 255, 255, 1)
                   FillPortions: =0
@@ -469,11 +469,11 @@ Screens:
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(226, 232, 240, 1)
-                  BorderThickness: =1
-                  DropShadow: =DropShadow.Semilight
+                  BorderThickness: =0
+                  DropShadow: =DropShadow.None
                   Fill: =RGBA(255, 255, 255, 1)
                   FillPortions: =0
-                  Height: =If(App.Width >= 1180, 156, If(App.Width >= 600, 216, 198))
+                  Height: =If(App.Width >= 1180, 132, If(App.Width >= 600, 188, 184))
                   LayoutDirection: =LayoutDirection.Vertical
                   LayoutGap: =4
                   PaddingBottom: =8
@@ -493,7 +493,7 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         FillPortions: =0
-                        Height: =If(App.Width < 600, 54, 72)
+                        Height: =If(App.Width < 600, 48, 52)
                         LayoutAlignItems: =LayoutAlignItems.Center
                         LayoutDirection: =LayoutDirection.Horizontal
                         LayoutGap: =12
@@ -510,9 +510,9 @@ Screens:
                               FillPortions: =1
                               Font: =Font.Arial
                               FontWeight: =FontWeight.Bold
-                              Height: =68
+                              Height: =50
                               LayoutMinWidth: =If(App.Width < 600, 155, 260)
-                              Size: =If(App.Width < 600, 18, If(App.Width < 900, 20, 22))
+                              Size: =If(App.Width < 600, 17, If(App.Width < 900, 18, 20))
                               Text: |-
                                 =Coalesce(varCurrentTicket.TicketId, varCurrentTicket.Titel, Text(varCurrentTicket.ID)) &
                                 Char(10) &
@@ -529,7 +529,7 @@ Screens:
                               LayoutGap: =10
                               LayoutJustifyContent: =LayoutJustifyContent.End
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =If(App.Width < 600, 132, If(App.Width < 900, 300, 520))
+                              LayoutMinWidth: =If(App.Width < 600, 132, 320)
                               Visible: =locTicketMode <> "Edit"
                             Children:
                               - btn_back:
@@ -850,7 +850,7 @@ Screens:
                                     RadiusTopLeft: =6
                                     RadiusTopRight: =6
                                     Tooltip: =fxTranslate("RefreshTicketData", "Ticketdaten aktualisieren")
-                                    Visible: =App.Width >= 600
+                                    Visible: =false
                                     Width: =42
                               - tds_language_selector:
                                   Control: ModernDropdown
@@ -865,7 +865,7 @@ Screens:
                                     LayoutMinHeight: =0
                                     LayoutMinWidth: =0
                                     OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
-                                    Visible: =App.Width >= 600
+                                    Visible: =false
                                     Width: =72
                   - hdr_meta_row:
                       Control: GroupContainer
@@ -873,26 +873,131 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         FillPortions: =0
-                        Height: =If(App.Width >= 1180, 60, 120)
-                        LayoutGap: =8
-                        LayoutGridColumnMinWidth: =0
+                        Height: =If(App.Width >= 1180, 56, 112)
                         LayoutGridColumns: =If(App.Width >= 1180, 8, If(App.Width >= 600, 4, 2))
-                        LayoutGridRowMinHeight: =60
+                        LayoutGridRowMinHeight: =56
                         LayoutGridRows: =If(App.Width >= 1180, 1, 2)
                         LayoutMinHeight: =0
                         LayoutMinWidth: =0
                         Width: =Parent.Width
                       Children:
+                        - meta_assignee_cell:
+                            Control: GroupContainer
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =56
+                              LayoutDirection: =LayoutDirection.Vertical
+                              PaddingBottom: =3
+                              PaddingLeft: =8
+                              PaddingRight: =8
+                              PaddingTop: =3
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Visible: =App.Width >= 600 && !IsBlank(varCurrentTicket)
+                            Children:
+                              - lbl_role_label:
+                                  Control: ModernText
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("Assignee", "Bearbeiter")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AutoHeight: =true
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =16
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Assignee", "Bearbeiter")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - row_assignee_value:
+                                  Control: GroupContainer
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =1
+                                    Height: =34
+                                    LayoutAlignItems: =LayoutAlignItems.Center
+                                    LayoutDirection: =LayoutDirection.Horizontal
+                                    LayoutGap: =4
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    Width: =Parent.Width
+                                  Children:
+                                    - lbl_role_value:
+                                        Control: ModernText
+                                        Properties:
+                                          AccessibleLabel: |-
+                                            =fxTranslate("Assignee", "Bearbeiter") & ": " & Coalesce(Concat(varCurrentTicket.'Zugewiesen an' As assignee, Coalesce(assignee.DisplayName, assignee.Email), ", "), "-")
+                                          Color: =RGBA(15, 23, 42, 1)
+                                          FillPortions: =1
+                                          FontWeight: =FontWeight.Bold
+                                          LayoutMinHeight: =22
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =13
+                                          Text: =Coalesce(Concat(varCurrentTicket.'Zugewiesen an' As assignee, Coalesce(assignee.DisplayName, assignee.Email), ", "), "-")
+                                          Wrap: =false
+                                    - btn_assign_to_me:
+                                        Control: ModernButton
+                                        Properties:
+                                          AccessibleLabel: =fxTranslate("AssignToMe", "Mir zuweisen")
+                                          Appearance: =ButtonAppearance.Subtle
+                                          DisplayMode: =If(Coalesce(varAssigningTicketToSelf, false), DisplayMode.Disabled, DisplayMode.Edit)
+                                          Height: =28
+                                          OnSelect: |-
+                                            =If(
+                                                fxIsAgentExperience && !fxIsCurrentTicketClosed && !fxIsCurrentTicketAssignee,
+                                                Set(varAssigningTicketToSelf, true);
+                                                ClearCollect(colTicketAssigneesToSave, varCurrentTicket.'Zugewiesen an');
+                                                Collect(
+                                                    colTicketAssigneesToSave,
+                                                    {
+                                                        Claims: fxCurrentUser.Claims,
+                                                        DisplayName: fxCurrentUser.FullName,
+                                                        Email: fxCurrentUser.Email,
+                                                        Department: "",
+                                                        JobTitle: "",
+                                                        Picture: Blank()
+                                                    }
+                                                );
+                                                IfError(
+                                                    Set(
+                                                        varCurrentTicket,
+                                                        Patch(
+                                                            ev_sp_list_tickets,
+                                                            varCurrentTicket,
+                                                            {'Zugewiesen an': colTicketAssigneesToSave}
+                                                        )
+                                                    );
+                                                    Set(varTicketLoadedModified, varCurrentTicket.Geändert);
+                                                    Notify(fxTranslate("AssignedToMeSuccess", "Ticket wurde dir zugewiesen."), NotificationType.Success, 2000),
+                                                    Notify(fxTranslate("AssignedToMeFailed", "Ticket konnte dir nicht zugewiesen werden."), NotificationType.Error, 4000)
+                                                );
+                                                Clear(colTicketAssigneesToSave);
+                                                Set(varAssigningTicketToSelf, false)
+                                            )
+                                          Text: =fxTranslate("AssignToMe", "Mir zuweisen")
+                                          Tooltip: =fxTranslate("AssignToMe", "Mir zuweisen")
+                                          Visible: =fxIsAgentExperience && !fxIsCurrentTicketClosed && !fxIsCurrentTicketAssignee
+                                          Width: =92
                         - meta_status_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
                               Fill: =If(App.Width < 600, RGBA(240, 253, 244, 1), RGBA(0, 0, 0, 0))
-                              Height: =60
+                              Height: =56
                               LayoutDirection: =LayoutDirection.Vertical
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -906,6 +1011,8 @@ Screens:
                                   Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Status", "Status")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AutoHeight: =true
                                     Color: =RGBA(51, 65, 85, 1)
                                     Font: =Font.Arial
                                     FontWeight: =FontWeight.Semibold
@@ -919,25 +1026,6 @@ Screens:
                                     Text: =fxTranslate("Status", "Status")
                                     Width: =Parent.Width
                                     Wrap: =false
-                              - lbl_chip_status_dot:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("Status", "Status")
-                                    Align: =Align.Center
-                                    AlignInContainer: =AlignInContainer.Stretch
-                                    Color: =RGBA(34, 197, 94, 1)
-                                    FontWeight: =FontWeight.Bold
-                                    Height: =24
-                                    LayoutMaxWidth: =12
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =12
-                                    Text: ="●"
-                                    Visible: =false
-                                    Width: =12
                               - lbl_chip_status_value:
                                   Control: ModernText
                                   Properties:
@@ -956,293 +1044,13 @@ Screens:
                                     Size: =14
                                     Text: =Coalesce(fxCurrentTicketStatus, "Nicht gesetzt")
                                     Wrap: =false
-                        - meta_priority_cell:
-                            Control: GroupContainer
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              Fill: =If(App.Width < 600, RGBA(255, 247, 237, 1), RGBA(0, 0, 0, 0))
-                              Height: =60
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
-                              PaddingBottom: =3
-                              PaddingLeft: =8
-                              PaddingRight: =8
-                              PaddingTop: =3
-                              RadiusBottomLeft: =6
-                              RadiusBottomRight: =6
-                              RadiusTopLeft: =6
-                              RadiusTopRight: =6
-                            Children:
-                              - lbl_chip_prio_label:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("Priorität", "Priorität")
-                                    Color: =RGBA(51, 65, 85, 1)
-                                    FontWeight: =FontWeight.Semibold
-                                    Height: =16
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =12
-                                    Text: =fxTranslate("Priorität", "Priorität")
-                                    Width: =Parent.Width
-                                    Wrap: =false
-                              - lbl_chip_prio_dot:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("Priorität", "Priorität")
-                                    AlignInContainer: =AlignInContainer.Center
-                                    Color: =RGBA(245, 158, 11, 1)
-                                    Height: =20
-                                    LayoutMaxWidth: =12
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =12
-                                    Text: ="●"
-                                    Visible: =false
-                                    Width: =12
-                              - lbl_chip_prio_value:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: |-
-                                      =fxTranslate("Priorität", "Priorität") & ": " & Coalesce(varCurrentTicket.Priority.Value, "Mittel")
-                                    Color: =RGBA(15, 23, 42, 1)
-                                    FillPortions: =1
-                                    FontWeight: =FontWeight.Bold
-                                    LayoutMinHeight: =22
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =14
-                                    Text: =Coalesce(varCurrentTicket.Priority.Value, "Mittel")
-                                    Wrap: =false
-                        - meta_opened_cell:
-                            Control: GroupContainer
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              Fill: =If(App.Width < 600, RGBA(248, 250, 252, 1), RGBA(0, 0, 0, 0))
-                              Height: =60
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
-                              PaddingBottom: =3
-                              PaddingLeft: =8
-                              PaddingRight: =8
-                              PaddingTop: =3
-                              RadiusBottomLeft: =6
-                              RadiusBottomRight: =6
-                              RadiusTopLeft: =6
-                              RadiusTopRight: =6
-                            Children:
-                              - lbl_chip_open_label:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("Opened", "Geöffnet")
-                                    Color: =RGBA(51, 65, 85, 1)
-                                    FontWeight: =FontWeight.Semibold
-                                    Height: =16
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =12
-                                    Text: =fxTranslate("Opened", "Geöffnet")
-                                    Width: =Parent.Width
-                              - lbl_chip_open_icon:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("Opened", "Geöffnet")
-                                    AlignInContainer: =AlignInContainer.Center
-                                    AutoHeight: =true
-                                    Color: =RGBA(71, 85, 105, 1)
-                                    Height: =20
-                                    LayoutMaxWidth: =12
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =12
-                                    Text: ="◷"
-                                    Visible: =false
-                                    Width: =12
-                              - lbl_chip_open_value:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: |-
-                                      =fxTranslate("Opened", "Geöffnet") & ": " & If(IsBlank(varCurrentTicket.Erstellt), "-", Text(varCurrentTicket.Erstellt, "[$-de-DE]dd.mm.yyyy"))
-                                    Color: =RGBA(15, 23, 42, 1)
-                                    FillPortions: =1
-                                    FontWeight: =FontWeight.Bold
-                                    LayoutMinHeight: =22
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =14
-                                    Text: =If(IsBlank(varCurrentTicket.Erstellt), "-", Text(varCurrentTicket.Erstellt, "[$-de-DE]dd.mm.yyyy"))
-                                    Wrap: =false
-                        - meta_assignee_cell:
-                            Control: GroupContainer
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              Height: =60
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
-                              PaddingBottom: =3
-                              PaddingLeft: =8
-                              PaddingRight: =8
-                              PaddingTop: =3
-                              RadiusBottomLeft: =6
-                              RadiusBottomRight: =6
-                              RadiusTopLeft: =6
-                              RadiusTopRight: =6
-                              Visible: =App.Width >= 600 && !IsBlank(varCurrentTicket)
-                            Children:
-                              - lbl_role_label:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("Assignee", "Bearbeiter")
-                                    Color: =RGBA(51, 65, 85, 1)
-                                    FontWeight: =FontWeight.Semibold
-                                    Height: =16
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =12
-                                    Text: =fxTranslate("Assignee", "Bearbeiter")
-                                    Width: =Parent.Width
-                                    Wrap: =false
-                              - lbl_role_dot:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("Assignee", "Bearbeiter")
-                                    Align: =Align.Center
-                                    AlignInContainer: =AlignInContainer.Start
-                                    Color: =RGBA(111, 66, 193, 1)
-                                    Height: =24
-                                    LayoutMaxWidth: =12
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =13
-                                    Text: ="●"
-                                    Visible: =false
-                                    Width: =12
-                              - lbl_role_value:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: |-
-                                      =fxTranslate("Assignee", "Bearbeiter") & ": " & Coalesce(Concat(varCurrentTicket.'Zugewiesen an' As assignee, Coalesce(assignee.DisplayName, assignee.Email), ", "), "-")
-                                    Color: =RGBA(15, 23, 42, 1)
-                                    FillPortions: =1
-                                    FontWeight: =FontWeight.Bold
-                                    LayoutMinHeight: =22
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =14
-                                    Text: =Coalesce(Concat(varCurrentTicket.'Zugewiesen an' As assignee, Coalesce(assignee.DisplayName, assignee.Email), ", "), "-")
-                                    Wrap: =false
-                        - meta_category_cell:
-                            Control: GroupContainer
-                            Variant: AutoLayout
-                            Properties:
-                              DropShadow: =DropShadow.None
-                              Height: =60
-                              LayoutDirection: =LayoutDirection.Vertical
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
-                              PaddingBottom: =3
-                              PaddingLeft: =8
-                              PaddingRight: =8
-                              PaddingTop: =3
-                              RadiusBottomLeft: =6
-                              RadiusBottomRight: =6
-                              RadiusTopLeft: =6
-                              RadiusTopRight: =6
-                              Visible: =App.Width >= 600
-                            Children:
-                              - lbl_chip_category_label:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("Kategorie", "Kategorie")
-                                    Color: =RGBA(51, 65, 85, 1)
-                                    FontWeight: =FontWeight.Semibold
-                                    Height: =16
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =12
-                                    Text: =fxTranslate("Kategorie", "Kategorie")
-                                    Width: =Parent.Width
-                                    Wrap: =false
-                              - lbl_chip_category_dot:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: =fxTranslate("Kategorie", "Kategorie")
-                                    Align: =Align.Center
-                                    AlignInContainer: =AlignInContainer.Stretch
-                                    Color: =RGBA(37, 99, 235, 1)
-                                    Height: =20
-                                    LayoutMaxWidth: =12
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =12
-                                    Text: ="●"
-                                    Visible: =false
-                                    Width: =12
-                              - lbl_chip_category_value:
-                                  Control: ModernText
-                                  Properties:
-                                    AccessibleLabel: |-
-                                      =fxTranslate("Kategorie", "Kategorie") & ": " & Coalesce(varCurrentTicket.Category.Value, varCurrentTicket.CategoryINC.Value, "-")
-                                    Color: =RGBA(15, 23, 42, 1)
-                                    FillPortions: =1
-                                    FontWeight: =FontWeight.Bold
-                                    LayoutMinHeight: =22
-                                    LayoutMinWidth: =0
-                                    PaddingBottom: =0
-                                    PaddingLeft: =0
-                                    PaddingRight: =0
-                                    PaddingTop: =0
-                                    Size: =14
-                                    Text: =Coalesce(varCurrentTicket.Category.Value, varCurrentTicket.CategoryINC.Value, "-")
-                                    Wrap: =false
                         - meta_subcategory_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
-                              Height: =60
+                              Height: =56
                               LayoutDirection: =LayoutDirection.Vertical
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1257,6 +1065,7 @@ Screens:
                                   Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Subcategory", "Unterkategorie")
+                                    AlignInContainer: =AlignInContainer.Stretch
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
                                     Height: =20
@@ -1286,15 +1095,119 @@ Screens:
                                     Size: =14
                                     Text: =Coalesce(varCurrentTicket.Subcategory.Value, varCurrentTicket.SubcategoryINC.Value, "-")
                                     Wrap: =false
+                        - meta_priority_cell:
+                            Control: GroupContainer
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =If(App.Width < 600, RGBA(255, 247, 237, 1), RGBA(0, 0, 0, 0))
+                              Height: =56
+                              LayoutDirection: =LayoutDirection.Vertical
+                              PaddingBottom: =3
+                              PaddingLeft: =8
+                              PaddingRight: =8
+                              PaddingTop: =3
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                            Children:
+                              - lbl_chip_prio_label:
+                                  Control: ModernText
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("Priorität", "Priorität")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AutoHeight: =true
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =16
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Priorität", "Priorität")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - lbl_chip_prio_value:
+                                  Control: ModernText
+                                  Properties:
+                                    AccessibleLabel: |-
+                                      =fxTranslate("Priorität", "Priorität") & ": " & Coalesce(varCurrentTicket.Priority.Value, "Mittel")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Color: =RGBA(15, 23, 42, 1)
+                                    FillPortions: =1
+                                    FontWeight: =FontWeight.Bold
+                                    LayoutMinHeight: =22
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =14
+                                    Text: =Coalesce(varCurrentTicket.Priority.Value, "Mittel")
+                                    Wrap: =false
+                        - meta_category_cell:
+                            Control: GroupContainer
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Height: =56
+                              LayoutDirection: =LayoutDirection.Vertical
+                              PaddingBottom: =3
+                              PaddingLeft: =8
+                              PaddingRight: =8
+                              PaddingTop: =3
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                              Visible: =App.Width >= 600
+                            Children:
+                              - lbl_chip_category_label:
+                                  Control: ModernText
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("Kategorie", "Kategorie")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AutoHeight: =true
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =16
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Kategorie", "Kategorie")
+                                    Width: =Parent.Width
+                                    Wrap: =false
+                              - lbl_chip_category_value:
+                                  Control: ModernText
+                                  Properties:
+                                    AccessibleLabel: |-
+                                      =fxTranslate("Kategorie", "Kategorie") & ": " & Coalesce(varCurrentTicket.Category.Value, varCurrentTicket.CategoryINC.Value, "-")
+                                    Color: =RGBA(15, 23, 42, 1)
+                                    FillPortions: =1
+                                    Font: =Font.Arial
+                                    FontWeight: =FontWeight.Bold
+                                    LayoutMinHeight: =22
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =14
+                                    Text: =Coalesce(varCurrentTicket.Category.Value, varCurrentTicket.CategoryINC.Value, "-")
+                                    Wrap: =false
                         - meta_recorded_by_cell:
                             Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
-                              Height: =60
+                              Height: =56
                               LayoutDirection: =LayoutDirection.Vertical
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1309,6 +1222,8 @@ Screens:
                                   Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("CreatedBy", "Erfasst von")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AutoHeight: =true
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
                                     Height: =20
@@ -1328,6 +1243,7 @@ Screens:
                                       =fxTranslate("CreatedBy", "Erfasst von") & ": " & Coalesce(varCurrentTicket.'Erstellt von'.DisplayName, varCurrentTicket.RequestedBy.DisplayName, "-")
                                     Color: =RGBA(15, 23, 42, 1)
                                     FillPortions: =1
+                                    Font: =Font.Arial
                                     FontWeight: =FontWeight.Bold
                                     LayoutMinHeight: =22
                                     LayoutMinWidth: =0
@@ -1343,10 +1259,8 @@ Screens:
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
-                              Height: =60
+                              Height: =56
                               LayoutDirection: =LayoutDirection.Vertical
-                              LayoutMinHeight: =0
-                              LayoutMinWidth: =0
                               PaddingBottom: =3
                               PaddingLeft: =8
                               PaddingRight: =8
@@ -1361,6 +1275,8 @@ Screens:
                                   Control: ModernText
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Watchers", "Beobachter")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AutoHeight: =true
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
                                     Height: =20
@@ -1377,11 +1293,11 @@ Screens:
                                   Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =fxTranslate("Watchers", "Beobachter")
-                                    AllowExternalSelectedItems: =true
-                                    Appearance: =Appearance.Outline
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    Appearance: =Appearance.FilledLighter
                                     DefaultSelectedItems: =varCurrentTicket.Beobachter
                                     DisplayMode: =If(fxCanEditCurrentTicket && !fxIsCurrentTicketClosed, DisplayMode.Edit, DisplayMode.View)
-                                    Height: =32
+                                    Font: =Font.Arial
                                     InputTextPlaceholder: =If(IsEmpty(varCurrentTicket.Beobachter), fxTranslate("NoWatchersAddPlaceholder", "Beobachter hinzufügen..."), fxTranslate("AddWatcherPlaceholder", "Weitere hinzufügen..."))
                                     ItemDisplayText: =ThisItem.DisplayName
                                     Items: |-
@@ -1418,7 +1334,6 @@ Screens:
                                           "DisplayName",
                                           SortOrder.Ascending
                                       )
-                                    LayoutMinHeight: =32
                                     LayoutMinWidth: =0
                                     OnChange: |-
                                       =If(
@@ -1429,8 +1344,58 @@ Screens:
                                               Notify(fxTranslate("WatchersSaveFailed", "Beobachter konnten nicht gespeichert werden."), NotificationType.Error, 3000)
                                           )
                                       )
-                                    SelectMultiple: =true
                                     Width: =Parent.Width
+                        - meta_opened_cell:
+                            Control: GroupContainer
+                            Variant: AutoLayout
+                            Properties:
+                              DropShadow: =DropShadow.None
+                              Fill: =If(App.Width < 600, RGBA(248, 250, 252, 1), RGBA(0, 0, 0, 0))
+                              Height: =56
+                              LayoutDirection: =LayoutDirection.Vertical
+                              PaddingBottom: =3
+                              PaddingLeft: =8
+                              PaddingRight: =8
+                              PaddingTop: =3
+                              RadiusBottomLeft: =6
+                              RadiusBottomRight: =6
+                              RadiusTopLeft: =6
+                              RadiusTopRight: =6
+                            Children:
+                              - lbl_chip_open_label:
+                                  Control: ModernText
+                                  Properties:
+                                    AccessibleLabel: =fxTranslate("Opened", "Geöffnet")
+                                    AlignInContainer: =AlignInContainer.Stretch
+                                    AutoHeight: =true
+                                    Color: =RGBA(51, 65, 85, 1)
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =16
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =fxTranslate("Opened", "Geöffnet")
+                                    Width: =Parent.Width
+                              - lbl_chip_open_value:
+                                  Control: ModernText
+                                  Properties:
+                                    AccessibleLabel: |-
+                                      =fxTranslate("Opened", "Geöffnet") & ": " & If(IsBlank(varCurrentTicket.Erstellt), "-", Text(varCurrentTicket.Erstellt, "[$-de-DE]dd.mm.yyyy"))
+                                    Color: =RGBA(15, 23, 42, 1)
+                                    FillPortions: =1
+                                    FontWeight: =FontWeight.Bold
+                                    LayoutMinHeight: =22
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =14
+                                    Text: =If(IsBlank(varCurrentTicket.Erstellt), "-", Text(varCurrentTicket.Erstellt, "[$-de-DE]dd.mm.yyyy"))
+                                    Wrap: =false
             - line_header:
                 Control: GroupContainer
                 Variant: AutoLayout
@@ -1700,7 +1665,6 @@ Screens:
                                   Properties:
                                     AccessibleLabel: =Parent.DisplayName
                                     Appearance: =Appearance.Outline
-                                    AllowExternalSelectedItems: =true
                                     DefaultSelectedItems: =varCurrentTicket.'Zugewiesen an'
                                     Height: =40
                                     ItemDisplayText: =ThisItem.DisplayName
@@ -1738,7 +1702,6 @@ Screens:
                                           "DisplayName",
                                           SortOrder.Ascending
                                       )
-                                    SelectMultiple: =true
                                     Width: =Parent.Width - 32
                                     X: =16
                                     Y: =dck_assignedto.Y + dck_assignedto.Height + 4
@@ -2317,7 +2280,6 @@ Screens:
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(229, 231, 235, 1)
-                              BorderThickness: =0
                               DropShadow: =DropShadow.None
                               Fill: =RGBA(248, 249, 252, 1)
                               FillPortions: =0
@@ -2325,7 +2287,7 @@ Screens:
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutGap: =8
                               LayoutMinHeight: =0
-                              LayoutMinWidth: =If(App.Width < 1180, 0, 220)
+                              LayoutMinWidth: =If(App.Width < 1180, 0, 260)
                               PaddingBottom: =10
                               PaddingLeft: =10
                               PaddingRight: =10
@@ -2335,13 +2297,12 @@ Screens:
                               RadiusTopLeft: =8
                               RadiusTopRight: =8
                               Visible: =fxIsAgentExperience && App.Width >= 1180
-                              Width: =If(App.Width < 1180, Parent.Width, 220)
+                              Width: =If(App.Width < 1180, Parent.Width, 260)
                             Children:
                               - lbl_ticket_list_title:
                                   Control: ModernText
                                   Properties:
                                     Color: =RGBA(15, 23, 42, 1)
-                                    FillPortions: =0
                                     FontWeight: =FontWeight.Bold
                                     Height: =24
                                     Size: =16
@@ -2615,7 +2576,7 @@ Screens:
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
-                              FillPortions: =If(App.Width < 1180, 0, 55)
+                              FillPortions: =If(App.Width < 1180, 0, 48)
                               Height: |-
                                 =If(
                                     App.Width < 600,
@@ -2656,7 +2617,6 @@ Screens:
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(229, 231, 235, 1)
-                                    BorderThickness: =0
                                     DropShadow: =DropShadow.None
                                     Fill: =RGBA(255, 255, 255, 1)
                                     FillPortions: =0
@@ -2664,15 +2624,29 @@ Screens:
                                       =If(
                                           App.Width < 600,
                                           160,
-                                          Max(
-                                              280,
-                                              Parent.Height - card_attachments.Height - Parent.LayoutGap
+                                          If(
+                                              varDescriptionEditMode,
+                                              360,
+                                              If(
+                                                  IsBlank(varCurrentTicket.Description),
+                                                  100,
+                                                  Min(
+                                                      420,
+                                                      Max(
+                                                          132,
+                                                          68 + html_description.Height
+                                                              + If(txt_description_image_processing.Visible, txt_description_image_processing.Height + 12, 0)
+                                                              + If(gal_description_screenshots.Visible, gal_description_screenshots.Height + 12, 0)
+                                                      )
+                                                  )
+                                              )
                                           )
                                       )
                                     LayoutDirection: =LayoutDirection.Vertical
                                     LayoutGap: =12
-                                    LayoutMinHeight: =If(App.Width < 600, 160, 280)
+                                    LayoutMinHeight: =If(App.Width < 600, 160, 100)
                                     LayoutMinWidth: =0
+                                    LayoutOverflowY: =LayoutOverflow.Scroll
                                     PaddingBottom: =12
                                     PaddingLeft: =12
                                     PaddingRight: =12
@@ -2791,8 +2765,9 @@ Screens:
                                         Control: HtmlViewer
                                         Properties:
                                           AlignInContainer: =AlignInContainer.Stretch
+                                          AutoHeight: =true
                                           DisplayMode: =DisplayMode.View
-                                          FillPortions: =1
+                                          FillPortions: =0
                                           HtmlText: =Coalesce(varCurrentTicket.Description, "")
                                           PaddingBottom: =12
                                           PaddingLeft: =12
@@ -2808,7 +2783,6 @@ Screens:
                                           LayoutAlignItems: =LayoutAlignItems.Center
                                           LayoutDirection: =LayoutDirection.Vertical
                                           LayoutGap: =12
-                                          LayoutJustifyContent: =LayoutJustifyContent.Start
                                           LayoutMinHeight: =0
                                           LayoutMinWidth: =0
                                           Visible: =!varDescriptionEditMode && IsBlank(varCurrentTicket.Description)
@@ -2855,7 +2829,6 @@ Screens:
                                           - lbl_empty_description:
                                               Control: ModernText
                                               Properties:
-                                                Align: =Align.Left
                                                 AlignInContainer: =AlignInContainer.Stretch
                                                 Color: =RGBA(100, 116, 139, 1)
                                                 Height: =24
@@ -2920,7 +2893,6 @@ Screens:
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(226, 232, 240, 1)
-                                    BorderThickness: =0
                                     DropShadow: =DropShadow.None
                                     Fill: =RGBA(255, 255, 255, 1)
                                     Height: |-
@@ -2971,12 +2943,24 @@ Screens:
                                                 Height: =24
                                                 Size: =14
                                                 Text: =fxTranslate("Anlagen", "Anhänge")
+                                          - btn_add_ticket_attachment:
+                                              Control: ModernButton
+                                              Properties:
+                                                AccessibleLabel: =fxTranslate("AddAttachment", "Datei hinzufügen")
+                                                Appearance: =ButtonAppearance.Subtle
+                                                DisplayMode: =If(fxCanEditCurrentTicket && !fxIsCurrentTicketClosed, DisplayMode.Edit, DisplayMode.Disabled)
+                                                Height: =28
+                                                Icon: ="Attach"
+                                                Layout: =ButtonLayout.IconBefore
+                                                OnSelect: =Set(varShowTicketAttachmentUpload, true)
+                                                Text: =fxTranslate("AddAttachment", "Datei hinzufügen")
+                                                Visible: =fxCanEditCurrentTicket && !fxIsCurrentTicketClosed && !varShowTicketAttachmentUpload
+                                                Width: =130
                                     - con_attachment_body:
                                         Control: GroupContainer
                                         Variant: AutoLayout
                                         Properties:
                                           BorderColor: =RGBA(226, 232, 240, 1)
-                                          BorderThickness: =0
                                           DropShadow: =DropShadow.None
                                           Fill: =RGBA(255, 255, 255, 1)
                                           Height: =Max(24, Parent.Height - row_attach_title.Height - Parent.LayoutGap - Parent.PaddingTop - Parent.PaddingBottom)
@@ -3088,10 +3072,9 @@ Screens:
                             Variant: AutoLayout
                             Properties:
                               BorderColor: =RGBA(229, 231, 235, 1)
-                              BorderThickness: =0
                               DropShadow: =DropShadow.None
                               Fill: =RGBA(255, 255, 255, 1)
-                              FillPortions: =If(App.Width < 1180, 0, 45)
+                              FillPortions: =If(App.Width < 1180, 0, 52)
                               Height: =If(App.Width < 600, If(varActivityExpanded, Min(560, App.Height - 96), 52), If(App.Width < 1180, Min(620, Max(500, App.Height - 180)), Parent.Height))
                               LayoutDirection: =LayoutDirection.Vertical
                               LayoutGap: =8
@@ -3112,7 +3095,7 @@ Screens:
                                   Variant: AutoLayout
                                   Properties:
                                     DropShadow: =DropShadow.None
-                                    Fill: =RGBA(248, 250, 252, 1)
+                                    Fill: =RGBA(255, 255, 255, 1)
                                     FillPortions: =0
                                     Height: =36
                                     LayoutAlignItems: =LayoutAlignItems.Center
@@ -3197,6 +3180,7 @@ Screens:
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ActivityHistory", "Aktivitätsverlauf")
                                     Fill: =RGBA(255, 255, 255, 1)
+                                    FillPortions: =1
                                     Height: =Max(110, Parent.Height - con_message_composer.Height - row_activity_title.Height - 28)
                                     Items: |-
                                       =SortByColumns(
@@ -3217,11 +3201,23 @@ Screens:
                                           SortOrder.Ascending
                                       )
                                     TabIndex: =0
+                                    LayoutMinHeight: =110
                                     TemplatePadding: =If(App.Width < 600, 6, 6)
                                     TemplateSize: =If(App.Width < 600, 104, 126)
                                     Visible: =(App.Width >= 600 || varActivityExpanded) && !IsEmpty(gal_activity.AllItems)
                                     Width: =Parent.Width
                                   Children:
+                                    - line_activity_timeline:
+                                        Control: GroupContainer
+                                        Variant: ManualLayout
+                                        Properties:
+                                          DropShadow: =DropShadow.None
+                                          Fill: =RGBA(203, 213, 225, 1)
+                                          Height: =Parent.TemplateHeight - 40
+                                          Visible: =App.Width >= 600
+                                          Width: =2
+                                          X: =24
+                                          Y: =44
                                     - lbl_timeline_dot:
                                         Control: ModernText
                                         Properties:
@@ -3266,7 +3262,6 @@ Screens:
                                                     RGBA(226, 232, 240, 1)
                                                 )
                                             )
-                                          BorderThickness: =0
                                           DropShadow: =DropShadow.None
                                           Fill: |-
                                             =If(
@@ -3384,11 +3379,12 @@ Screens:
                                   Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
-                                    BorderColor: =RGBA(226, 232, 240, 1)
+                                    BorderColor: =RGBA(0, 0, 0, 0)
                                     BorderStyle: =BorderStyle.None
                                     BorderThickness: =1
                                     DropShadow: =DropShadow.None
                                     Fill: =RGBA(248, 250, 252, 1)
+                                    FillPortions: =0
                                     Height: =If(varShowCommentAttachmentTray Or !IsEmpty(att_comment_upload.Attachments), 222, 152)
                                     LayoutDirection: =LayoutDirection.Vertical
                                     LayoutGap: =4
@@ -3729,14 +3725,15 @@ Screens:
                                                 DisplayMode: =If(fxCanCommentOnCurrentTicket && !varCommentSubmitting, DisplayMode.Edit, DisplayMode.Disabled)
                                                 Height: =36
                                                 Icon: ="Attach"
-                                                Layout: =ButtonLayout.IconBefore
+                                                Layout: =If(App.Width < 760, ButtonLayout.IconOnly, ButtonLayout.IconBefore)
                                                 OnSelect: =Set(varShowCommentAttachmentTray, true)
                                                 RadiusBottomLeft: =6
                                                 RadiusBottomRight: =6
                                                 RadiusTopLeft: =6
                                                 RadiusTopRight: =6
+                                                Text: =fxTranslate("AttachDocument", "Dokument anhängen")
                                                 Tooltip: =fxTranslate("AddAttachment", "Anhang hinzufügen")
-                                                Width: =36
+                                                Width: =If(App.Width < 760, 36, 150)
                                           - btn_send_comment:
                                               Control: ModernButton
                                               Properties:
@@ -3744,7 +3741,7 @@ Screens:
                                                 DisplayMode: =If(fxCanCommentOnCurrentTicket && !varCommentSubmitting && (!IsBlank(Trim(inp_comment.Text)) || !IsEmpty(att_comment_upload.Attachments)), DisplayMode.Edit, DisplayMode.Disabled)
                                                 Height: =36
                                                 Icon: ="Send"
-                                                Layout: =ButtonLayout.IconOnly
+                                                Layout: =If(App.Width < 760, ButtonLayout.IconOnly, ButtonLayout.IconBefore)
                                                 OnSelect: |-
                                                   =If(
                                                       !fxCanCommentOnCurrentTicket,
@@ -3762,7 +3759,7 @@ Screens:
                                                 RadiusTopRight: =6
                                                 Text: =fxTranslate("Reply", "Antwort")
                                                 Tooltip: =fxTranslate("Send", "Senden")
-                                                Width: =110
+                                                Width: =If(App.Width < 760, 36, 110)
                         - mobile_attachments_bottom:
                             Control: GroupContainer
                             Variant: AutoLayout
