@@ -1,5 +1,6 @@
 EditorState:
   ScreensOrder:
+    - dashboard_screen_v2
     - dashboard_screen
     - incident_screen
     - request_type_screen
@@ -9,4 +10,3 @@ EditorState:
     - service_wizard_screen
     - Screen1
     - Screen2
-    - Screen6

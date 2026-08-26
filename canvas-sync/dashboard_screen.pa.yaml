@@ -275,9 +275,9 @@ Screens:
                                     RadiusTopLeft: =9
                                     RadiusTopRight: =9
                                     Size: =9
-                                    Text: =fxTranslate("Neu", "Neu")
-                                    Visible: =!IsEmpty(fxDbdNotifications)
-                                    Width: =20
+                                    Text: =If(dbd_notifications_flyout_gallery.AllItemsCount > 99, "99+", Text(dbd_notifications_flyout_gallery.AllItemsCount))
+                                    Visible: =dbd_notifications_flyout_gallery.AllItemsCount > 0
+                                    Width: =If(dbd_notifications_flyout_gallery.AllItemsCount > 9, 24, 18)
                                     X: =20
                                     Y: =-2
                         - dbd_user_menu:
@@ -1926,17 +1926,16 @@ Screens:
                                           LayoutMinHeight: =0
                                           LayoutMinWidth: =0
                                           OnSelect: |-
-                                            =If(
-                                                IsBlank(fxCurrentMember),
-                                                Notify(fxTranslate("UserProfileNotFound", "Dein Benutzerprofil konnte nicht gefunden werden."), NotificationType.Error, 5000),
-                                                Set(varNotificationReadAt, Now());
-                                                IfError(
-                                                     UpdateIf(ev_sp_list_notifications, RecipientEmail = fxCurrentUser.Email && IsRead = false, {IsRead: true, ReadAt: Today()});
-                                                    Patch(ev_sp_list_config_members, fxCurrentMember, {LastNotificationRead: varNotificationReadAt});
-                                                    Set(varShowNotifications, false);
-                                                    Notify(fxTranslate("NotificationsMarkedAsRead", "Benachrichtigungen als gelesen markiert."), NotificationType.Success, 2500),
-                                                    Notify(Substitute(fxTranslate("NotificationsMarkReadFailed", "Benachrichtigungen konnten nicht als gelesen markiert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
-                                                )
+                                            =Set(varNotificationReadAt, Now());
+                                            IfError(
+                                                UpdateIf(
+                                                    ev_sp_list_notifications,
+                                                    RecipientEmail = fxCurrentUser.Email && IsRead = false && Created <= varNotificationReadAt,
+                                                    {IsRead: true, ReadAt: varNotificationReadAt}
+                                                );
+                                                Refresh(ev_sp_list_notifications);
+                                                Notify(fxTranslate("NotificationsMarkedAsRead", "Benachrichtigungen als gelesen markiert."), NotificationType.Success, 2500),
+                                                Notify(Substitute(fxTranslate("NotificationsMarkReadFailed", "Benachrichtigungen konnten nicht als gelesen markiert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
                                             )
                                           Size: =12
                                           Text: =fxTranslate("MarkAsRead", "Als gelesen markieren")
@@ -1955,7 +1954,7 @@ Screens:
                                     PaddingRight: =0
                                     PaddingTop: =0
                                     Size: =13
-                                    Text: =fxTranslate("NoNewCommentsSinceLastCheck", "Keine neuen Kommentare seit dem letzten Check.")
+                                    Text: =fxTranslate("NotificationsUpToDate", "Alles aktuell") & Char(10) & fxTranslate("NoOpenNotifications", "Du hast momentan keine offenen Benachrichtigungen.")
                                     Visible: =IsEmpty(fxDbdNotifications)
                               - dbd_notifications_gallery:
                                   Control: Gallery
@@ -2054,7 +2053,23 @@ Screens:
                                                       PaddingRight: =0
                                                       PaddingTop: =0
                                                       Size: =12
-                                                      Text: =If(ThisItem.NotificationType = "Internal", fxTranslate("NewInternalNote", "Neue interne Notiz"), fxTranslate("NewTicketActivity", "Neue Ticketaktivität"))
+                                                      Text: |-
+                                                        =With(
+                                                            {notificationComment: LookUp(ev_sp_list_comments, ID = ThisItem.CommentId)},
+                                                            Switch(
+                                                                ThisItem.NotificationType,
+                                                                "Chat", fxTranslate("NewComment", "Neuer Kommentar"),
+                                                                "Internal", fxTranslate("NewInternalNote", "Neue interne Notiz"),
+                                                                "Internal Note", fxTranslate("NewInternalNote", "Neue interne Notiz"),
+                                                                "System Information", fxTranslate("TicketUpdated", "Ticket aktualisiert"),
+                                                                "TicketCreated", fxTranslate("TicketCreated", "Ticket erstellt"),
+                                                                fxTranslate("NewTicketActivity", "Neue Ticketaktivität")
+                                                            ) & If(
+                                                                IsBlank(notificationComment.Comment),
+                                                                "",
+                                                                " · " & Left(Trim(Substitute(Substitute(notificationComment.Comment, Char(13), " "), Char(10), " ")), 120)
+                                                            )
+                                                        )
                                           - dbd_notification_open:
                                               Control: ModernButton
                                               Properties:
@@ -2233,13 +2248,13 @@ Screens:
                                     Fill: =RGBA(255, 255, 255, 1)
                                     Items: |-
                                       =With(
-                                           {accessibleTickets: If(fxIsAgentExperience, ev_sp_list_tickets, Filter(ev_sp_list_tickets, RequestedBy.Email = fxCurrentUser.Email Or 'Zugewiesen an'.Email = fxCurrentUser.Email))},
+                                           {accessibleTickets: If(fxIsAgentExperience, ev_sp_list_tickets, Filter(ev_sp_list_tickets, RequestedBy.Email = fxCurrentUser.Email Or First('Zugewiesen an').Email = fxCurrentUser.Email))},
                                           With(
                                               {scopeTickets: If(
                                                   fxIsAgentExperience,
                                                   Switch(
                                                       Coalesce(varDbdScopeFilter.Value, "Alle"),
-                                                      "Mir zugewiesen", Filter(accessibleTickets, 'Zugewiesen an'.Email = fxCurrentUser.Email),
+                                                       "Mir zugewiesen", Filter(accessibleTickets, First('Zugewiesen an').Email = fxCurrentUser.Email),
                                                       "Von mir erstellt", Filter(accessibleTickets, RequestedBy.Email = fxCurrentUser.Email),
                                                       "Von mir angefordert", Filter(accessibleTickets, RequestedBy.Email = fxCurrentUser.Email),
                                                       accessibleTickets
@@ -2387,9 +2402,9 @@ Screens:
                                                 - dbd_row_assigned_photo:
                                                     Control: Image
                                                     Properties:
-                                                      AccessibleLabel: =Substitute(fxTranslate("ProfilePictureTemplate", "Profilbild {0}"), "{0}", Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen")))
+                                                      AccessibleLabel: =Substitute(fxTranslate("ProfilePictureTemplate", "Profilbild {0}"), "{0}", Coalesce(First(ThisItem.'Zugewiesen an').DisplayName, First(ThisItem.'Zugewiesen an').Email, fxTranslate("NotAssigned", "Nicht zugewiesen")))
                                                       Height: =24
-                                                      Image: =IfError(ThisItem.'Zugewiesen an'.Picture, Blank())
+                                                      Image: =IfError(First(ThisItem.'Zugewiesen an').Picture, Blank())
                                                       ImagePosition: =ImagePosition.Fill
                                                       RadiusBottomLeft: =12
                                                       RadiusBottomRight: =12
@@ -2400,9 +2415,9 @@ Screens:
                                                 - dbd_row_assigned_avatar:
                                                     Control: Avatar
                                                     Properties:
-                                                      AccessibleLabel: =Substitute(fxTranslate("AvatarTemplate", "Avatar {0}"), "{0}", Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen")))
+                                                      AccessibleLabel: =Substitute(fxTranslate("AvatarTemplate", "Avatar {0}"), "{0}", Coalesce(First(ThisItem.'Zugewiesen an').DisplayName, First(ThisItem.'Zugewiesen an').Email, fxTranslate("NotAssigned", "Nicht zugewiesen")))
                                                       Height: =24
-                                                      Name: =Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, "?")
+                                                      Name: =Coalesce(First(ThisItem.'Zugewiesen an').DisplayName, First(ThisItem.'Zugewiesen an').Email, "?")
                                                       Visible: =false
                                                       Width: =24
                                                 - dbd_row_assigned_name:
@@ -2412,7 +2427,7 @@ Screens:
                                                       Height: =Parent.Height
                                                       LayoutMinWidth: =0
                                                       Size: =If(App.Width < 1100, 11, 13)
-                                                      Text: =Coalesce(ThisItem.'Zugewiesen an'.DisplayName, ThisItem.'Zugewiesen an'.Email, fxTranslate("NotAssigned", "Nicht zugewiesen"))
+                                                      Text: =Coalesce(First(ThisItem.'Zugewiesen an').DisplayName, First(ThisItem.'Zugewiesen an').Email, fxTranslate("NotAssigned", "Nicht zugewiesen"))
                                                       Width: =Parent.Width
                                                       Wrap: =false
                                           - dbd_row_status:
@@ -2612,19 +2627,19 @@ Screens:
                   BorderThickness: =1
                   DropShadow: =DropShadow.Regular
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =300
+                  Height: =Min(460, Parent.Height - 66)
                   LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =8
-                  PaddingBottom: =12
-                  PaddingLeft: =12
-                  PaddingRight: =12
-                  PaddingTop: =10
-                  RadiusBottomLeft: =10
-                  RadiusBottomRight: =10
-                  RadiusTopLeft: =10
-                  RadiusTopRight: =10
-                  Width: =Min(430, Parent.Width - 32)
-                  X: =Max(16, Parent.Width - Self.Width - 112)
+                  LayoutGap: =10
+                  PaddingBottom: =14
+                  PaddingLeft: =14
+                  PaddingRight: =14
+                  PaddingTop: =12
+                  RadiusBottomLeft: =14
+                  RadiusBottomRight: =14
+                  RadiusTopLeft: =14
+                  RadiusTopRight: =14
+                  Width: =Min(460, Parent.Width - 24)
+                  X: =Max(12, Parent.Width - Self.Width - 96)
                   Y: =50
                 Children:
                   - dbd_notifications_flyout_header:
@@ -2633,7 +2648,7 @@ Screens:
                       Properties:
                         DropShadow: =DropShadow.None
                         FillPortions: =0
-                        Height: =36
+                        Height: =40
                         LayoutAlignItems: =LayoutAlignItems.Center
                         LayoutDirection: =LayoutDirection.Horizontal
                         LayoutGap: =8
@@ -2644,6 +2659,7 @@ Screens:
                         - dbd_notifications_flyout_title:
                             Control: ModernText
                             Properties:
+                              AccessibleLabel: =fxTranslate("NewUpdates", "Neue Updates")
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(17, 24, 39, 1)
                               FillPortions: =1
@@ -2654,56 +2670,59 @@ Screens:
                               PaddingLeft: =0
                               PaddingRight: =0
                               PaddingTop: =0
+                              Size: =16
                               Text: =fxTranslate("NewUpdates", "Neue Updates")
                               Wrap: =false
                         - dbd_notifications_flyout_count:
                             Control: ModernText
                             Properties:
                               Align: =Align.Center
-                              Color: =RGBA(87, 35, 129, 1)
-                              Fill: =RGBA(245, 240, 250, 1)
-                              FontWeight: =FontWeight.Semibold
-                              Height: =38
+                              AccessibleLabel: =Substitute(fxTranslate("UnreadNotificationsCount", "{0} ungelesene Benachrichtigungen"), "{0}", Text(dbd_notifications_flyout_gallery.AllItemsCount))
+                              Color: =RGBA(255, 255, 255, 1)
+                              Fill: =RGBA(87, 35, 129, 1)
+                              FontWeight: =FontWeight.Bold
+                              Height: =26
                               LayoutMinHeight: =0
                               LayoutMinWidth: =0
                               PaddingBottom: =0
-                              PaddingLeft: =6
-                              PaddingRight: =6
+                              PaddingLeft: =5
+                              PaddingRight: =5
                               PaddingTop: =0
-                              RadiusBottomLeft: =12
-                              RadiusBottomRight: =12
-                              RadiusTopLeft: =12
-                              RadiusTopRight: =12
-                              Size: =11
-                              Text: =fxTranslate("Neu", "Neu")
-                              Width: =38
+                              RadiusBottomLeft: =13
+                              RadiusBottomRight: =13
+                              RadiusTopLeft: =13
+                              RadiusTopRight: =13
+                              Size: =10
+                              Text: =If(dbd_notifications_flyout_gallery.AllItemsCount > 99, "99+", Text(dbd_notifications_flyout_gallery.AllItemsCount))
+                              Width: =If(dbd_notifications_flyout_gallery.AllItemsCount > 99, 38, 30)
                         - dbd_notifications_flyout_mark_read:
                             Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("MarkAllNotificationsAsRead", "Alle Benachrichtigungen als gelesen markieren")
-                              Appearance: =ButtonAppearance.Secondary
+                              Appearance: =ButtonAppearance.Subtle
+                              DisplayMode: =If(dbd_notifications_flyout_gallery.AllItemsCount = 0, DisplayMode.Disabled, DisplayMode.Edit)
                               Icon: ="CheckmarkCircle"
                               LayoutMinHeight: =0
                               LayoutMinWidth: =0
                               OnSelect: |-
-                                =If(
-                                    IsBlank(fxCurrentMember),
-                                    Notify(fxTranslate("UserProfileNotFound", "Dein Benutzerprofil konnte nicht gefunden werden."), NotificationType.Error, 5000),
-                                    Set(varNotificationReadAt, Now());
-                                    IfError(
-                                         UpdateIf(ev_sp_list_notifications, RecipientEmail = fxCurrentUser.Email && IsRead = false, {IsRead: true, ReadAt: Today()});
-                                        Patch(ev_sp_list_config_members, fxCurrentMember, {LastNotificationRead: varNotificationReadAt});
-                                        Set(varShowNotifications, false);
-                                        Notify(fxTranslate("NotificationsMarkedAsRead", "Benachrichtigungen als gelesen markiert."), NotificationType.Success, 2500),
-                                        Notify(Substitute(fxTranslate("NotificationsMarkReadFailed", "Benachrichtigungen konnten nicht als gelesen markiert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
-                                    )
+                                =Set(varNotificationReadAt, Now());
+                                IfError(
+                                    UpdateIf(
+                                        ev_sp_list_notifications,
+                                        RecipientEmail = fxCurrentUser.Email && IsRead = false && Created <= varNotificationReadAt,
+                                        {IsRead: true, ReadAt: varNotificationReadAt}
+                                    );
+                                    Refresh(ev_sp_list_notifications);
+                                    Notify(fxTranslate("NotificationsMarkedAsRead", "Benachrichtigungen als gelesen markiert."), NotificationType.Success, 2500),
+                                    Notify(Substitute(fxTranslate("NotificationsMarkReadFailed", "Benachrichtigungen konnten nicht als gelesen markiert werden: {0}"), "{0}", FirstError.Message), NotificationType.Error, 5000)
                                 )
                               Size: =11
                               Text: =fxTranslate("AllRead", "Alle gelesen")
-                              Width: =118
+                              Width: =112
                   - dbd_notifications_flyout_empty:
                       Control: ModernText
                       Properties:
+                        AccessibleLabel: =fxTranslate("NotificationsUpToDate", "Alles aktuell")
                         Align: =Align.Center
                         AlignInContainer: =AlignInContainer.Stretch
                         Color: =RGBA(100, 116, 139, 1)
@@ -2715,7 +2734,7 @@ Screens:
                         PaddingRight: =0
                         PaddingTop: =0
                         Size: =12
-                        Text: =fxTranslate("NoNewComments", "Keine neuen Kommentare.")
+                        Text: =fxTranslate("NotificationsUpToDate", "Alles aktuell") & Char(10) & fxTranslate("NoOpenNotifications", "Du hast momentan keine offenen Benachrichtigungen.")
                         Visible: =!varDbdNotificationsLoading && IsEmpty(fxDbdNotifications)
                   - dbd_notifications_flyout_gallery:
                       Control: Gallery
@@ -2727,57 +2746,212 @@ Screens:
                         LayoutMinWidth: =0
                         TabIndex: =0
                         TemplatePadding: =3
-                        TemplateSize: =61
+                        TemplateSize: =84
                         Visible: =!varDbdNotificationsLoading && !IsEmpty(fxDbdNotifications)
                         Width: =Parent.Width
                       Children:
                         - dbd_notifications_flyout_item:
-                            Control: ModernButton
+                            Control: GroupContainer
+                            Variant: AutoLayout
                             Properties:
-                              AccessibleLabel: =Substitute(fxTranslate("OpenTicketNotificationTemplate", "Benachrichtigung zu Ticket {0} öffnen"), "{0}", Text(ThisItem.TicketId))
-                              Align: =Align.Left
-                              Appearance: =ButtonAppearance.Subtle
-                              BorderColor: =RGBA(229, 231, 235, 1)
-                              BorderThickness: =1
-                              Color: =RGBA(31, 41, 55, 1)
-                              FontWeight: =""
-                              Height: =55
-                              Icon: ="ArrowRight"
-                              Layout: =ButtonLayout.IconAfter
-                              OnSelect: |-
-                                =IfError(
-                                    Patch(ev_sp_list_notifications, ThisItem, {IsRead: true, ReadAt: Today()});
-                                    If(!IsBlank(fxCurrentMember), Patch(ev_sp_list_config_members, fxCurrentMember, {LastNotificationRead: Now()})),
-                                    Notify(fxTranslate("NotificationMarkReadFailed", "Benachrichtigung konnte nicht als gelesen markiert werden."), NotificationType.Warning, 3000)
-                                );
-                                Set(
-                                    varCurrentTicket,
-                                    LookUp(
-                                        ev_sp_list_tickets,
-                                        ID = ThisItem.TicketId
-                                    )
-                                );
-                                If(
-                                    IsBlank(varCurrentTicket) Or !fxCanViewCurrentTicket,
-                                    Set(varCurrentTicket, Blank());
-                                    Notify(fxTranslate("RelatedTicketOpenFailed", "Das zugehörige Ticket konnte nicht geöffnet werden."), NotificationType.Warning, 3000),
-                                    Set(varTicketLoadedModified, varCurrentTicket.Geändert);
-                                    Set(varActivityFilter, "Alle");
-                                    Set(varShowNotifications, false);
-                                    Navigate(ticket_details_screen, ScreenTransition.CoverRight)
+                              BorderColor: |-
+                                =Switch(
+                                    ThisItem.NotificationType,
+                                    "Internal", RGBA(245, 158, 11, 0.35),
+                                    "Internal Note", RGBA(245, 158, 11, 0.35),
+                                    "System Information", RGBA(59, 130, 246, 0.3),
+                                    RGBA(139, 92, 246, 0.24)
                                 )
-                              PaddingBottom: =7
+                              BorderThickness: =1
+                              DropShadow: =DropShadow.None
+                              Fill: |-
+                                =Switch(
+                                    ThisItem.NotificationType,
+                                    "Internal", RGBA(255, 251, 235, 1),
+                                    "Internal Note", RGBA(255, 251, 235, 1),
+                                    "System Information", RGBA(239, 246, 255, 1),
+                                    RGBA(250, 248, 252, 1)
+                                )
+                              Height: =78
+                              LayoutAlignItems: =LayoutAlignItems.Center
+                              LayoutDirection: =LayoutDirection.Horizontal
+                              LayoutGap: =10
+                              PaddingBottom: =9
                               PaddingLeft: =10
-                              PaddingRight: =10
-                              PaddingTop: =7
-                              RadiusBottomLeft: =7
-                              RadiusBottomRight: =7
-                              RadiusTopLeft: =7
-                              RadiusTopRight: =7
-                              Size: =11
-                              Text: =Substitute(Substitute(fxTranslate("TicketNotificationTemplate", "Ticket {0} - {1}"), "{0}", Text(ThisItem.TicketId)), "{1}", Text(ThisItem.Created, "[$-de-DE]dd.mm. HH:mm")) & Char(10) & If(ThisItem.NotificationType = "Internal", fxTranslate("NewInternalNote", "Neue interne Notiz"), fxTranslate("NewTicketActivity", "Neue Ticketaktivität"))
-                              VerticalAlign: =VerticalAlign.Middle
+                              PaddingRight: =8
+                              PaddingTop: =9
+                              RadiusBottomLeft: =9
+                              RadiusBottomRight: =9
+                              RadiusTopLeft: =9
+                              RadiusTopRight: =9
                               Width: =Parent.TemplateWidth - 6
+                            Children:
+                              - dbd_notification_flyout_type:
+                                  Control: ModernText
+                                  Properties:
+                                    AccessibleLabel: |-
+                                      =Switch(
+                                          ThisItem.NotificationType,
+                                          "Internal", fxTranslate("NewInternalNote", "Neue interne Notiz"),
+                                          "Internal Note", fxTranslate("NewInternalNote", "Neue interne Notiz"),
+                                          "System Information", fxTranslate("TicketUpdated", "Ticket aktualisiert"),
+                                          "TicketCreated", fxTranslate("TicketCreated", "Ticket erstellt"),
+                                          fxTranslate("NewComment", "Neuer Kommentar")
+                                      )
+                                    Align: =Align.Center
+                                    Color: |-
+                                      =Switch(
+                                          ThisItem.NotificationType,
+                                          "Internal", RGBA(146, 64, 14, 1),
+                                          "Internal Note", RGBA(146, 64, 14, 1),
+                                          "System Information", RGBA(30, 64, 175, 1),
+                                          RGBA(87, 35, 129, 1)
+                                      )
+                                    Fill: |-
+                                      =Switch(
+                                          ThisItem.NotificationType,
+                                          "Internal", RGBA(254, 243, 199, 1),
+                                          "Internal Note", RGBA(254, 243, 199, 1),
+                                          "System Information", RGBA(219, 234, 254, 1),
+                                          RGBA(237, 233, 254, 1)
+                                      )
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =34
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    RadiusBottomLeft: =17
+                                    RadiusBottomRight: =17
+                                    RadiusTopLeft: =17
+                                    RadiusTopRight: =17
+                                    Size: =11
+                                    Text: |-
+                                      =Switch(
+                                          ThisItem.NotificationType,
+                                          "Internal", "I",
+                                          "Internal Note", "I",
+                                          "System Information", "S",
+                                          "TicketCreated", "T",
+                                          "C"
+                                      )
+                                    Width: =34
+                              - dbd_notification_flyout_content:
+                                  Control: GroupContainer
+                                  Variant: AutoLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.None
+                                    FillPortions: =1
+                                    Height: =60
+                                    LayoutDirection: =LayoutDirection.Vertical
+                                    LayoutGap: =2
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                  Children:
+                                    - dbd_notification_flyout_meta:
+                                        Control: ModernText
+                                        Properties:
+                                          AccessibleLabel: =Self.Text
+                                          Color: =RGBA(100, 116, 139, 1)
+                                          Height: =16
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =10
+                                          Text: |-
+                                            =Switch(
+                                                ThisItem.NotificationType,
+                                                "Internal", fxTranslate("NewInternalNote", "Neue interne Notiz"),
+                                                "Internal Note", fxTranslate("NewInternalNote", "Neue interne Notiz"),
+                                                "System Information", fxTranslate("TicketUpdated", "Ticket aktualisiert"),
+                                                "TicketCreated", fxTranslate("TicketCreated", "Ticket erstellt"),
+                                                fxTranslate("NewComment", "Neuer Kommentar")
+                                            ) & "  ·  " & Text(ThisItem.Created, "[$-de-DE]dd.mm.yyyy HH:mm")
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                                    - dbd_notification_flyout_ticket:
+                                        Control: ModernText
+                                        Properties:
+                                          AccessibleLabel: =Self.Text
+                                          Color: =RGBA(30, 41, 59, 1)
+                                          FontWeight: =FontWeight.Semibold
+                                          Height: =20
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =12
+                                          Text: =Coalesce(ThisItem.Title, "Ticket " & Text(ThisItem.TicketId))
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                                    - dbd_notification_flyout_preview:
+                                        Control: ModernText
+                                        Properties:
+                                          AccessibleLabel: =Self.Text
+                                          Color: =RGBA(71, 85, 105, 1)
+                                          Height: =18
+                                          LayoutMinHeight: =0
+                                          LayoutMinWidth: =0
+                                          PaddingBottom: =0
+                                          PaddingLeft: =0
+                                          PaddingRight: =0
+                                          PaddingTop: =0
+                                          Size: =10
+                                          Text: |-
+                                            =With(
+                                                {notificationComment: LookUp(ev_sp_list_comments, ID = ThisItem.CommentId)},
+                                                With(
+                                                    {notificationPreview: Trim(Substitute(Substitute(Coalesce(notificationComment.Comment, ""), Char(13), " "), Char(10), " "))},
+                                                    Coalesce(notificationComment.CommentBy, fxTranslate("TicketSystem", "Ticketsystem")) &
+                                                    If(
+                                                        IsBlank(notificationPreview),
+                                                        "",
+                                                        ": " & If(Len(notificationPreview) > 86, Left(notificationPreview, 83) & "...", notificationPreview)
+                                                    )
+                                                )
+                                            )
+                                          Width: =Parent.Width
+                                          Wrap: =false
+                              - dbd_notification_flyout_open:
+                                  Control: ModernButton
+                                  Properties:
+                                    AccessibleLabel: =Substitute(fxTranslate("OpenTicketNotificationTemplate", "Benachrichtigung zu Ticket {0} öffnen"), "{0}", Text(ThisItem.TicketId))
+                                    Appearance: =ButtonAppearance.Transparent
+                                    Height: =36
+                                    Icon: ="ArrowRight"
+                                    Layout: =ButtonLayout.IconOnly
+                                    LayoutMinHeight: =0
+                                    LayoutMinWidth: =0
+                                    OnSelect: |-
+                                      =Set(
+                                          varCurrentTicket,
+                                          LookUp(
+                                              ev_sp_list_tickets,
+                                              ID = ThisItem.TicketId
+                                          )
+                                      );
+                                      If(
+                                          IsBlank(varCurrentTicket) Or !fxCanViewCurrentTicket,
+                                          Set(varCurrentTicket, Blank());
+                                          Notify(fxTranslate("RelatedTicketOpenFailed", "Das zugehörige Ticket konnte nicht geöffnet werden."), NotificationType.Warning, 3000),
+                                          IfError(
+                                              Patch(ev_sp_list_notifications, ThisItem, {IsRead: true, ReadAt: Now()}),
+                                              Notify(fxTranslate("NotificationMarkReadFailed", "Benachrichtigung konnte nicht als gelesen markiert werden."), NotificationType.Warning, 3000)
+                                          );
+                                          Set(varTicketLoadedModified, varCurrentTicket.Geändert);
+                                          Set(varActivityFilter, "Alle");
+                                          Set(varShowNotifications, false);
+                                          Navigate(ticket_details_screen, ScreenTransition.CoverRight)
+                                      )
+                                    Tooltip: =fxTranslate("OpenTicket", "Ticket öffnen")
+                                    Width: =36
                   - dbd_notifications_flyout_loading:
                       Control: Spinner
                       Properties:

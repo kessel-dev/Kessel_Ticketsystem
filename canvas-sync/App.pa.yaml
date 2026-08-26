@@ -553,23 +553,18 @@ App:
           "Title",
           SortOrder.Ascending
       );
-      fxDbdNotifications = SortByColumns(
-          Filter(
-              ev_sp_list_notifications,
-              RecipientEmail = fxCurrentUser.Email && Author.Email <> fxCurrentUser.Email && (IsRead = false Or Created > Coalesce(
-                  fxCurrentMember.LastNotificationRead,
-                  DateAdd(
-                      Today(),
-                      -365,
-                      TimeUnit.Days
-                  )
-              ))
-          ),
-          "ID",
-          SortOrder.Descending
-      );
+       fxDbdNotifications = SortByColumns(
+           Filter(
+               ev_sp_list_notifications,
+               RecipientEmail = fxCurrentUser.Email && IsRead = false
+           ),
+           "Created",
+           SortOrder.Descending
+       );
     OnStart: |-
       =Set(varEmbed, Param("embed") = "1");
+      Set(varIncidentValidationAttempted, false);
+      Set(varTicketValidationAttempted, false);
       Set(varCurrentLanguage, If(IsBlank(varCurrentLanguage) Or varCurrentLanguage = "", "de", varCurrentLanguage));
        ClearCollect(colTranslations, ev_sp_list_config_translations);
        Refresh(ev_sp_list_config_members);
@@ -630,10 +625,10 @@ App:
                   service_catalog_screen,
                   "service-wizard",
                   service_wizard_screen,
-                  "dashboard",
-                  dashboard_screen,
-                  "ai-handoff",
-                  dashboard_screen
+                   "dashboard",
+                   dashboard_screen_v2,
+                   "ai-handoff",
+                   dashboard_screen_v2
               )
           )
       )

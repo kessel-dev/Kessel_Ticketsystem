@@ -58,6 +58,7 @@ Screens:
                               FontWeight: =FontWeight.Semibold
                               LayoutMinHeight: =0
                               LayoutMinWidth: =0
+                              OnSelect: =Navigate(dashboard_screen_v2)
                               PaddingBottom: =0
                               PaddingLeft: =0
                               PaddingRight: =0
@@ -106,8 +107,18 @@ Screens:
                         LayoutMinHeight: =0
                         LayoutMinWidth: =0
                         PaddingRight: =fxDbdPagePadding
-                        Width: =236
+                        Width: =420
                       Children:
+                        - rts_overview_button:
+                            Control: ModernButton
+                            Properties:
+                              AccessibleLabel: =fxTranslate("BackToOverview", "Zurück zur Übersicht")
+                              Appearance: =ButtonAppearance.Secondary
+                              Height: =36
+                              Icon: ="Home"
+                              OnSelect: =Navigate(dashboard_screen_v2, ScreenTransition.Fade)
+                              Text: =fxTranslate("BackToOverview", "Zurück zur Übersicht")
+                              Width: =190
                         - rts_language_selector:
                             Control: ModernDropdown
                             Properties:
@@ -250,7 +261,14 @@ Screens:
                               Image: ='1147337301'
                               LayoutMinHeight: =0
                               LayoutMinWidth: =0
-                              OnSelect: =Set(varRequestType, "Incident")
+                              OnSelect: |-
+                                =If(
+                                    varLastRequestTypeClick = "Incident" && DateDiff(varLastRequestTypeClickAt, Now(), TimeUnit.Milliseconds) < 700,
+                                    Navigate(incident_screen, ScreenTransition.CoverRight),
+                                    Set(varRequestType, "Incident");
+                                    Set(varLastRequestTypeClick, "Incident");
+                                    Set(varLastRequestTypeClickAt, Now())
+                                )
                               Subtitle: =If(varRequestType = "Incident", fxTranslate("Selected", "AUSGEWÄHLT"), fxTranslate("IncidentOrError", "STÖRUNG ODER FEHLER"))
                               SubtitleColor: =If(varRequestType = "Incident", RGBA(236, 219, 249, 1), RGBA(87, 35, 129, 1))
                               SubtitleSize: =12
@@ -273,7 +291,14 @@ Screens:
                               Image: ='901627692'
                               LayoutMinHeight: =0
                               LayoutMinWidth: =0
-                              OnSelect: =Set(varRequestType, "Change")
+                              OnSelect: |-
+                                =If(
+                                    varLastRequestTypeClick = "Change" && DateDiff(varLastRequestTypeClickAt, Now(), TimeUnit.Milliseconds) < 700,
+                                    Navigate(ticket_screen, ScreenTransition.CoverRight),
+                                    Set(varRequestType, "Change");
+                                    Set(varLastRequestTypeClick, "Change");
+                                    Set(varLastRequestTypeClickAt, Now())
+                                )
                               Subtitle: =If(varRequestType = "Change", fxTranslate("Selected", "AUSGEWÄHLT"), fxTranslate("PlannedChange", "GEPLANTE ÄNDERUNG"))
                               SubtitleColor: =If(varRequestType = "Change", RGBA(236, 219, 249, 1), RGBA(87, 35, 129, 1))
                               SubtitleSize: =12
@@ -327,9 +352,9 @@ Screens:
                         Appearance: =ButtonAppearance.Secondary
                         Height: =40
                         Icon: ="ChevronLeft"
-                        OnSelect: =Navigate(dashboard_screen, ScreenTransition.CoverRight)
-                        Text: =fxTranslate("Zurück", "Zurück")
-                        Width: =120
+                        OnSelect: =Navigate(dashboard_screen_v2, ScreenTransition.Fade)
+                        Text: =fxTranslate("BackToOverview", "Zurück zur Übersicht")
+                        Width: =190
                   - rts_footer_actions:
                       Control: GroupContainer
                       Variant: AutoLayout
@@ -340,17 +365,10 @@ Screens:
                         LayoutAlignItems: =LayoutAlignItems.Center
                         LayoutDirection: =LayoutDirection.Horizontal
                         LayoutGap: =12
+                        LayoutJustifyContent: =LayoutJustifyContent.End
                         LayoutMinHeight: =40
                         Width: =300
                       Children:
-                        - rts_cancel_button:
-                            Control: ModernButton
-                            Properties:
-                              Appearance: =ButtonAppearance.Secondary
-                              Height: =40
-                              OnSelect: =Navigate(dashboard_screen, ScreenTransition.CoverRight)
-                              Text: =fxTranslate("Cancel", "Abbrechen")
-                              Width: =120
                         - rts_next_button:
                             Control: ModernButton
                             Properties:
