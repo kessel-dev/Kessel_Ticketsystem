@@ -1,0 +1,263 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "kse_cnref_sharepoint"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "ev_sp_site": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String"
+        },
+        "ev_sp_list_tickets": {
+          "defaultValue": "e4f994ec-26c7-4943-94b8-fb5c6c663b0b",
+          "type": "String"
+        },
+        "ev_sp_list_notifications": {
+          "defaultValue": "36f3c645-5d5e-4963-8062-d4fb779013f8",
+          "type": "String"
+        }
+      },
+      "triggers": {
+        "When_a_ticket_is_updated": {
+          "recurrence": {
+            "interval": 1,
+            "frequency": "Minute"
+          },
+          "splitOn": "@triggerOutputs()?['body/value']",
+          "metadata": {
+            "operationMetadataId": "a8777ddc-393d-459e-afe7-823c9b201653"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetOnUpdatedItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site')",
+              "table": "@parameters('ev_sp_list_tickets')"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "runs": 1
+            }
+          }
+        }
+      },
+      "actions": {
+        "Get_Ticket_Changes": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "2e4c8928-fddb-4caa-be88-252b82d047ae"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItemChanges",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site')",
+              "table": "@parameters('ev_sp_list_tickets')",
+              "id": "@triggerBody()?['ID']",
+              "since": "@triggerBody()?['{TriggerWindowStartToken}']",
+              "includeDrafts": false
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_Ticket": {
+          "runAfter": {
+            "Get_Ticket_Changes": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b30b835a-2530-4395-8709-398d6f9c323a"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site')",
+              "table": "@parameters('ev_sp_list_tickets')",
+              "id": "@triggerBody()?['ID']"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Notify_Closure": {
+          "actions": {
+            "Notify_Requester": {
+              "actions": {
+                "Create_Requester_Notification": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "39fe30c1-e827-4397-9c71-de71bf1a0373"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PostItem",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                    },
+                    "parameters": {
+                      "dataset": "@parameters('ev_sp_site')",
+                      "table": "@parameters('ev_sp_list_notifications')",
+                      "item/Title": "@concat('Ticket geschlossen: ', body('Get_Ticket')?['Title'])",
+                      "item/RecipientEmail": "@body('Get_Ticket')?['RequestedBy']?['Email']",
+                      "item/TicketId": "@body('Get_Ticket')?['ID']",
+                      "item/CreatedAt": "@utcNow()",
+                      "item/IsRead": false
+                    }
+                  }
+                }
+              },
+              "runAfter": {},
+              "else": {
+                "actions": {}
+              },
+              "expression": {
+                "not": {
+                  "empty": [
+                    "@body('Get_Ticket')?['RequestedBy']?['Email']"
+                  ]
+                }
+              },
+              "metadata": {
+                "operationMetadataId": "51c32f83-3ebb-4061-ae04-58e5edf7c066"
+              },
+              "type": "If"
+            },
+            "Apply_to_each_observer": {
+              "foreach": "@coalesce(body('Get_Ticket')?['Beobachter'], json('[]'))",
+              "actions": {
+                "Notify_Observer": {
+                  "actions": {
+                    "Create_Observer_Notification": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "9f179144-1c3d-4007-b32b-56f052302d7f"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "PostItem",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                        },
+                        "parameters": {
+                          "dataset": "@parameters('ev_sp_site')",
+                          "table": "@parameters('ev_sp_list_notifications')",
+                          "item/Title": "@concat('Ticket geschlossen: ', body('Get_Ticket')?['Title'])",
+                          "item/RecipientEmail": "@items('Apply_to_each_observer')?['Email']",
+                          "item/TicketId": "@body('Get_Ticket')?['ID']",
+                          "item/CreatedAt": "@utcNow()",
+                          "item/IsRead": false
+                        }
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "else": {
+                    "actions": {}
+                  },
+                  "expression": {
+                    "and": [
+                      {
+                        "not": {
+                          "empty": [
+                            "@items('Apply_to_each_observer')?['Email']"
+                          ]
+                        }
+                      },
+                      {
+                        "not": {
+                          "equals": [
+                            "@items('Apply_to_each_observer')?['Email']",
+                            "@body('Get_Ticket')?['RequestedBy']?['Email']"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "88a65d5a-0618-49ca-9520-6d44a571939c"
+                  },
+                  "type": "If"
+                }
+              },
+              "runAfter": {
+                "Notify_Requester": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "906811e6-a1c5-4270-a503-132f12ef0b1d"
+              },
+              "type": "Foreach"
+            }
+          },
+          "runAfter": {
+            "Get_Ticket": [
+              "Succeeded"
+            ]
+          },
+          "expression": {
+            "and": [
+              {
+                "equals": [
+                  "@outputs('Get_Ticket_Changes')?['body/ColumnHasChanged/Status']",
+                  true
+                ]
+              },
+              {
+                "equals": [
+                  "@body('Get_Ticket')?['Status']?['Value']",
+                  "Geschlossen"
+                ]
+              }
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c1bb6ebf-e317-4dd7-8c38-9830405db1ae"
+          },
+          "type": "If"
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

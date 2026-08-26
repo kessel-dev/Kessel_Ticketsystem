@@ -1,0 +1,404 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "kse_cnref_sharepoint"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "ev_sp_lib_ticket_attachments (kse_ev_sp_lib_ticket_attachments)": {
+          "defaultValue": "86fc2cc5-99d6-4d30-94d8-c856d56b109f",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_lib_ticket_attachments"
+          }
+        },
+        "ev_sp_site_ticketsystem (kse_ev_sp_site)": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_site"
+          }
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "f5ccf191-827e-4cd1-a9de-3d8a526da597"
+          },
+          "type": "Request",
+          "kind": "PowerAppV2",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ticketId": {
+                  "title": "ticketId",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Ticket SharePoint item ID",
+                  "x-ms-content-hint": "TEXT"
+                },
+                "html": {
+                  "title": "html",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Screenshot payload JSON from Canvas",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Parse_JSON": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "01ea7b14-657c-4bfe-8c9e-82ffab5a6628"
+          },
+          "type": "ParseJson",
+          "inputs": {
+            "content": "@json(triggerBody()?['html'])",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "schemaVersion": {
+                  "type": "integer"
+                },
+                "richTextHtml": {
+                  "type": "string"
+                },
+                "screenshots": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "dataUri": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "dataUri"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "schemaVersion",
+                "richTextHtml",
+                "screenshots"
+              ]
+            }
+          }
+        },
+        "Initialize_html": {
+          "runAfter": {
+            "Parse_JSON": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "f192fb2f-8185-4a05-974d-050efbcdbf5e"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "html",
+                "type": "string",
+                "value": "@body('Parse_JSON')?['richTextHtml']"
+              }
+            ]
+          }
+        },
+        "Initialize_imageIndex": {
+          "runAfter": {
+            "Initialize_html": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "72a3c957-a9af-4f2a-a94b-1b4594a25e0e"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "imageIndex",
+                "type": "integer",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "If_description_has_inline_images": {
+          "actions": {
+            "Process_images": {
+              "foreach": "@body('Parse_JSON')?['screenshots']",
+              "actions": {
+                "Compose_data_uri": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "2dc22c37-c79f-4fcb-8ac4-79015863bdae"
+                  },
+                  "type": "Compose",
+                  "inputs": "@items('Process_images')?['dataUri']"
+                },
+                "Compose_mime": {
+                  "runAfter": {
+                    "Compose_data_uri": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "1c6c69ad-6c08-4626-bbbf-9bde974a94e6"
+                  },
+                  "type": "Compose",
+                  "inputs": "@first(split(replace(outputs('Compose_data_uri'), 'data:image/', ''), ';base64,'))"
+                },
+                "Compose_extension": {
+                  "runAfter": {
+                    "Compose_mime": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "07755471-baca-482d-a7c9-d840d04f485e"
+                  },
+                  "type": "Compose",
+                  "inputs": "@if(or(equals(outputs('Compose_mime'), 'jpeg'), equals(outputs('Compose_mime'), 'jpg')), 'jpg', 'png')"
+                },
+                "Compose_file_name": {
+                  "runAfter": {
+                    "Compose_extension": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "be2adfee-d3be-4c4a-afbe-65b14e0d1bc9"
+                  },
+                  "type": "Compose",
+                  "inputs": "@concat('ticket-', triggerBody()?['ticketId'], '-description-', add(variables('imageIndex'), 1), '-', substring(guid(), 0, 6), '.', outputs('Compose_extension'))"
+                },
+                "Create_file": {
+                  "runAfter": {
+                    "Compose_file_name": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "6b6574a0-c2f2-46b7-97b8-d65ce6e4ff02"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "CreateFile",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                    },
+                    "parameters": {
+                      "dataset": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+                      "folderPath": "/TicketAnhnge",
+                      "name": "@outputs('Compose_file_name')",
+                      "body": "@dataUriToBinary(outputs('Compose_data_uri'))"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                },
+                "Compose_replaced_html": {
+                  "runAfter": {
+                    "Create_file": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "b4af33a5-c5e3-4b55-85b9-a0056316f96b"
+                  },
+                  "type": "Compose",
+                  "inputs": "@replace(variables('html'), outputs('Compose_data_uri'), concat('https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem/TicketAnhnge/', outputs('Compose_file_name')))"
+                },
+                "Set_html_to_replaced_html": {
+                  "runAfter": {
+                    "Compose_replaced_html": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "ba489125-4148-4250-87d1-620d53ac08e0"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "html",
+                    "value": "@outputs('Compose_replaced_html')"
+                  }
+                },
+                "Increment_imageIndex": {
+                  "runAfter": {
+                    "Set_html_to_replaced_html": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "d6900bff-3a91-4409-8827-efc89617a9a1"
+                  },
+                  "type": "IncrementVariable",
+                  "inputs": {
+                    "name": "imageIndex",
+                    "value": 1
+                  }
+                },
+                "Element_aktualisieren": {
+                  "runAfter": {
+                    "Increment_imageIndex": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "70fb8cca-2159-43ae-84b8-2a60adbfc0ac"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_sharepointonline",
+                      "operationId": "PatchItem",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                    },
+                    "parameters": {
+                      "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+                      "table": "@parameters('ev_sp_lib_ticket_attachments (kse_ev_sp_lib_ticket_attachments)')",
+                      "id": "@outputs('Create_file')?['body/ItemId']",
+                      "item/TicketID": "@triggerBody()?['ticketId']",
+                      "item/Category/Value": "Inline Description Image"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "3007ef2c-a797-4cc4-9790-e263e14a93c5"
+              },
+              "type": "Foreach",
+              "runtimeConfiguration": {
+                "concurrency": {
+                  "repetitions": 1
+                }
+              }
+            },
+            "Update_ticket_description": {
+              "runAfter": {
+                "Process_images": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "a750eb81-065a-4023-9ef0-0235b7757492"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PatchItem",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "parameters": {
+                  "dataset": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+                  "table": "e4f994ec-26c7-4943-94b8-fb5c6c663b0b",
+                  "id": "@triggerBody()?['ticketId']",
+                  "item/Description": "@variables('html')"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "Initialize_imageIndex": [
+              "Succeeded"
+            ]
+          },
+          "else": {
+            "actions": {
+              "Update_ticket_description_without_images": {
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "0488bafe-1623-41c5-bd72-b1dc2298f39f"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "PatchItem",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+                    "table": "e4f994ec-26c7-4943-94b8-fb5c6c663b0b",
+                    "id": "@triggerBody()?['ticketId']",
+                    "item/Description": "@variables('html')"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            }
+          },
+          "expression": {
+            "contains": [
+              "@variables('html')",
+              "data:image/"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8ae7bc53-8a90-4eb1-862a-30a1d69929f2"
+          },
+          "type": "If"
+        },
+        "Respond_to_a_PowerApp_or_flow": {
+          "runAfter": {
+            "If_description_has_inline_images": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "49b71570-c4b9-4f01-bbb4-4e5ba7b9255d"
+          },
+          "type": "Response",
+          "kind": "PowerApp",
+          "inputs": {
+            "statusCode": 200,
+            "body": {},
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

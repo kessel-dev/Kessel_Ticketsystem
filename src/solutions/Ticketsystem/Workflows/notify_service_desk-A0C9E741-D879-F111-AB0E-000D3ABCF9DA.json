@@ -1,0 +1,103 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_teams_1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "kse_cnref_teams_ticketsystem"
+        },
+        "api": {
+          "name": "shared_teams"
+        }
+      },
+      "shared_sharepointonline_1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "kse_cnref_sharepoint"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "ev_sp_site (kse_ev_sp_site)": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_site"
+          }
+        },
+        "ev_sp_list_tickets (kse_ev_sp_list_tickets)": {
+          "defaultValue": "e4f994ec-26c7-4943-94b8-fb5c6c663b0b",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_tickets"
+          }
+        }
+      },
+      "triggers": {
+        "Wenn_ein_Element_erstellt_wird": {
+          "recurrence": {
+            "interval": 1,
+            "frequency": "Minute"
+          },
+          "splitOn": "@triggerOutputs()?['body/value']",
+          "metadata": {
+            "operationMetadataId": "f80a4053-1e88-4e13-a747-af556e774509"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline_1",
+              "operationId": "GetOnNewItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_tickets (kse_ev_sp_list_tickets)')"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Adaptive_Karte_veröffentlichen_und_auf_eine_Antwort_warten": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "d256313c-015d-4909-8322-2417e8737199"
+          },
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_teams_1",
+              "operationId": "PostCardAndWaitForResponse",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams"
+            },
+            "parameters": {
+              "poster": "Flow bot",
+              "location": "Channel",
+              "body/body/messageBody": "{\n  \"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n  \"type\": \"AdaptiveCard\",\n  \"version\": \"1.4\",\n  \"body\": [\n    {\n      \"type\": \"ColumnSet\",\n      \"columns\": [\n        {\n          \"type\": \"Column\",\n          \"width\": \"auto\",\n          \"items\": [\n            {\n              \"type\": \"Image\",\n              \"url\": \"https://cdn.jsdelivr.net/gh/microsoft/fluentui-emoji@main/icons/Warning%20Color/Warning%20Color.svg\",\n              \"size\": \"Medium\",\n              \"altText\": \"New Incident\"\n            }\n          ]\n        },\n        {\n          \"type\": \"Column\",\n          \"width\": \"stretch\",\n          \"items\": [\n            {\n              \"type\": \"TextBlock\",\n              \"text\": \"Neuer Incident\",\n              \"weight\": \"Bolder\",\n              \"size\": \"Large\",\n              \"color\": \"Accent\"\n            },\n            {\n              \"type\": \"TextBlock\",\n              \"text\": \"@{triggerOutputs()?['body/Name']}\",\n              \"weight\": \"Semibold\",\n              \"size\": \"Medium\",\n              \"wrap\": true,\n              \"spacing\": \"Small\",\n              \"isSubtle\": true\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"type\": \"FactSet\",\n      \"facts\": [\n        {\n          \"title\": \"Ticketnummer\",\n          \"value\": \"@{triggerOutputs()?['body/Title']}\"\n        },\n        {\n          \"title\": \"Priorität\",\n          \"value\": \"@{triggerOutputs()?['body/Priority/Value']}\"\n        },\n        {\n          \"title\": \"Kategorie\",\n          \"value\": \"@{triggerOutputs()?['body/Category/Value']}\"\n        },\n        {\n          \"title\": \"Fachbereich\",\n          \"value\": \"@{triggerOutputs()?['body/Department/Value']}\"\n        },\n        {\n          \"title\": \"Anforderer\",\n          \"value\": \"@{triggerOutputs()?['body/RequestedBy/DisplayName']}\"\n        },\n        {\n          \"title\": \"Erstellt\",\n          \"value\": \"@{formatDateTime(triggerOutputs()?['body/Created'], 'dd.MM.yyyy HH:mm')}\"\n        }\n      ],\n      \"spacing\": \"Medium\"\n    }\n  ],\n  \"actions\": [\n    {\n      \"type\": \"Action.OpenUrl\",\n      \"title\": \"Im Portal öffnen\",\n      \"url\": \"https://apps.powerapps.com/play/e/feb1ba32-a1dc-eb45-be98-d17dd057f440/a/33a1afb1-1ce5-48d0-bc21-2072d2757bb3?tenantId=f7eb5dc9-e7d8-4a6b-b456-7a76589e5aff&ticketId=@{triggerOutputs()?['body/ID']}\"\n    }\n  ]\n}",
+              "body/body/recipient/groupId": "d1256bd7-6dc4-4d3d-8abc-e6d2bd00bdbe",
+              "body/body/recipient/channelId": "19:041cd06854164106952e4b02e24622b1@thread.tacv2"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

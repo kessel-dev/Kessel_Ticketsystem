@@ -1,0 +1,344 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "kse_cnref_sharepoint"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "ev_sp_list_config_transitions (kse_ev_sp_list_config_transitions)": {
+          "defaultValue": "cd225817-bfda-48ee-9115-f5836d51b174",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_config_transitions"
+          }
+        },
+        "ev_sp_list_config_transition_requests (kse_ev_sp_list_config_transition_requests)": {
+          "defaultValue": "d1286b34-c0e9-4b26-8e8f-0bbd70a8a921",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_config_transition_requests"
+          }
+        },
+        "ev_sp_list_comments (kse_ev_sp_list_comments)": {
+          "defaultValue": "6cf22d82-e9ed-4d53-95d4-0d84dcb119cd",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_comments"
+          }
+        },
+        "ev_sp_list_tickets (kse_ev_sp_list_tickets)": {
+          "defaultValue": "e4f994ec-26c7-4943-94b8-fb5c6c663b0b",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_tickets"
+          }
+        },
+        "ev_sp_site_ticketsystem (kse_ev_sp_site)": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_site"
+          }
+        }
+      },
+      "triggers": {
+        "Wenn_ein_Element_erstellt_wird": {
+          "recurrence": {
+            "interval": 1,
+            "frequency": "Minute"
+          },
+          "splitOn": "@triggerOutputs()?['body/value']",
+          "metadata": {
+            "operationMetadataId": "b8845a3e-60f3-4934-a250-220324fb0045"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetOnNewItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_config_transition_requests (kse_ev_sp_list_config_transition_requests)')"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "runs": 1
+            }
+          }
+        }
+      },
+      "actions": {
+        "Change_Status_To_Processing": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "d46ba0be-4672-4eaa-9e78-4b04a7a58f69"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "PatchItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_config_transition_requests (kse_ev_sp_list_config_transition_requests)')",
+              "id": "@triggerOutputs()?['body/ID']",
+              "item/RequestStatus": "Processing"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_Ticket_Information": {
+          "runAfter": {
+            "Change_Status_To_Processing": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d27b252e-c395-43c7-8da3-c899bd075347"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_tickets (kse_ev_sp_list_tickets)')",
+              "id": "@triggerOutputs()?['body/TicketID']"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_Transition_Information": {
+          "runAfter": {
+            "Get_Ticket_Information": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "4e65971a-1760-4c29-8a3b-9330ef40075d"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_config_transitions (kse_ev_sp_list_config_transitions)')",
+              "id": "@triggerOutputs()?['body/TransitionID']"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Validate_Transition": {
+          "actions": {
+            "Update_Ticket": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "d5c660c4-aed4-40ca-87dc-d4eaec2393e7"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PatchItem",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "parameters": {
+                  "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+                  "table": "@parameters('ev_sp_list_tickets (kse_ev_sp_list_tickets)')",
+                  "id": "@triggerOutputs()?['body/TicketID']",
+                  "item/Status/Value": "@outputs('Get_Transition_Information')?['body/ToStatus']",
+                  "item/TicketType/Value": "@if(empty(outputs('Get_Transition_Information')?['body/TargetTicketType']), outputs('Get_Ticket_Information')?['body/TicketType/Value'], outputs('Get_Transition_Information')?['body/TargetTicketType'])"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "Create_System_Comment": {
+              "runAfter": {
+                "Update_Ticket": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "89346ee5-b516-4212-9fb6-a68bd6a5365b"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PostItem",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "parameters": {
+                  "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+                  "table": "@parameters('ev_sp_list_comments (kse_ev_sp_list_comments)')",
+                  "item/Title": "@triggerOutputs()?['body/TicketNumber']",
+                  "item/TicketNumber": "@triggerOutputs()?['body/TicketNumber']",
+                  "item/Comment": "@if(empty(outputs('Get_Transition_Information')?['body/SystemCommentTemplate']), concat(outputs('Get_Transition_Information')?['body/Title'], ' ausgeführt. Neuer Status: ', outputs('Get_Transition_Information')?['body/ToStatus']), outputs('Get_Transition_Information')?['body/SystemCommentTemplate'])",
+                  "item/CommentBy": "Ticketsystem",
+                  "item/CommentType/Value": "System Information"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "Change_Status_To_Done": {
+              "runAfter": {
+                "Create_System_Comment": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "b467468a-f16a-43b8-8d29-43d5acc1a928"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_sharepointonline",
+                  "operationId": "PatchItem",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "parameters": {
+                  "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+                  "table": "@parameters('ev_sp_list_config_transition_requests (kse_ev_sp_list_config_transition_requests)')",
+                  "id": "@triggerOutputs()?['body/ID']",
+                  "item/RequestStatus": "Done",
+                  "item/ErrorMessage": "",
+                  "item/ProcessedAt": "@utcNow()"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "Get_Transition_Information": [
+              "Succeeded"
+            ]
+          },
+          "else": {
+            "actions": {
+              "Change_Status_To_Failed_Validation": {
+                "runAfter": {},
+                "metadata": {
+                  "operationMetadataId": "0fa0ab5a-4dc2-4496-a6e3-1d9afaa82761"
+                },
+                "type": "OpenApiConnection",
+                "inputs": {
+                  "host": {
+                    "connectionName": "shared_sharepointonline",
+                    "operationId": "PatchItem",
+                    "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                  },
+                  "parameters": {
+                    "dataset": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+                    "table": "d1286b34-c0e9-4b26-8e8f-0bbd70a8a921",
+                    "id": "@triggerOutputs()?['body/ID']",
+                    "item/RequestStatus": "Failed",
+                    "item/ErrorMessage": "@concat('Validation failed. TicketType=', outputs('Get_Ticket_Information')?['body/TicketType/Value'], '; Status=', outputs('Get_Ticket_Information')?['body/Status/Value'], '; Transition EntityType=', outputs('Get_Transition_Information')?['body/EntityType'], '; FromStatus=', outputs('Get_Transition_Information')?['body/FromStatus'], '; ToStatus=', outputs('Get_Transition_Information')?['body/ToStatus'])",
+                    "item/ProcessedAt": "@utcNow()"
+                  },
+                  "authentication": "@parameters('$authentication')"
+                }
+              }
+            }
+          },
+          "expression": {
+            "and": [
+              {
+                "or": [
+                  {
+                    "equals": [
+                      "@outputs('Get_Transition_Information')?['body/EntityType']",
+                      "Common"
+                    ]
+                  },
+                  {
+                    "equals": [
+                      "@outputs('Get_Ticket_Information')?['body/TicketType/Value']",
+                      "@outputs('Get_Transition_Information')?['body/EntityType']"
+                    ]
+                  }
+                ]
+              },
+              {
+                "equals": [
+                  "@outputs('Get_Ticket_Information')?['body/Status/Value']",
+                  "@outputs('Get_Transition_Information')?['body/FromStatus']"
+                ]
+              },
+              {
+                "equals": [
+                  "@triggerOutputs()?['body/NewStatus']",
+                  "@outputs('Get_Transition_Information')?['body/ToStatus']"
+                ]
+              }
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "3244eebd-a2a0-4fcb-9cc5-7a26e276cbe7"
+          },
+          "type": "If"
+        },
+        "Change_Status_To_Failed_Runtime": {
+          "runAfter": {
+            "Validate_Transition": [
+              "Failed",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "a2c01bb2-e56e-40fd-b20b-f5675cdb821d"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "PatchItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_config_transition_requests (kse_ev_sp_list_config_transition_requests)')",
+              "id": "@triggerOutputs()?['body/ID']",
+              "item/RequestStatus": "Failed",
+              "item/ErrorMessage": "Transition processing failed. Check the flow run history for details.",
+              "item/ProcessedAt": "@utcNow()"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}
