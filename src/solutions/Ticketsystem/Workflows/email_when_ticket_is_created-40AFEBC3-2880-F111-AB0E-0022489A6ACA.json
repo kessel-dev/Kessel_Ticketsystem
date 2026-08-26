@@ -1,0 +1,626 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "kse_cnref_sharepoint"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "ev_sp_site": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String"
+        },
+        "ev_sp_list_events": {
+          "defaultValue": "49e6ae7f-46a8-474a-953a-78ce30662138",
+          "type": "String"
+        },
+        "ev_sp_list_tickets": {
+          "defaultValue": "e4f994ec-26c7-4943-94b8-fb5c6c663b0b",
+          "type": "String"
+        },
+        "ev_sp_list_notifications": {
+          "defaultValue": "36f3c645-5d5e-4963-8062-d4fb779013f8",
+          "type": "String"
+        },
+        "ev_sp_list_comments (kse_ev_sp_list_comments)": {
+          "defaultValue": "6cf22d82-e9ed-4d53-95d4-0d84dcb119cd",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_comments"
+          }
+        },
+        "ev_sp_site_ticketsystem (kse_ev_sp_site)": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_site"
+          }
+        },
+        "ev_sp_list_config_members": {
+          "defaultValue": "773b59c7-ac46-41a4-b8aa-a8be6e01d5aa",
+          "type": "String"
+        }
+      },
+      "triggers": {
+        "When_a_ticket_event_is_created": {
+          "recurrence": {
+            "interval": 1,
+            "frequency": "Minute"
+          },
+          "splitOn": "@triggerOutputs()?['body/value']",
+          "metadata": {
+            "operationMetadataId": "4c5a6c17-6e0b-4b07-9f93-c89cd8a889d1"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetOnNewItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_comments (kse_ev_sp_list_comments)')"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "runtimeConfiguration": {
+            "concurrency": {
+              "runs": 1
+            }
+          }
+        }
+      },
+      "actions": {
+        "Get_Ticket": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "1fb7582b-fb37-49aa-afd4-e7a21d8b94a4"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItem",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site')",
+              "table": "@parameters('ev_sp_list_tickets')",
+              "id": "@triggerOutputs()?['body/TicketNumber']"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Option": {
+          "runAfter": {
+            "Initialize_Notification_Audience": [
+              "Succeeded"
+            ]
+          },
+          "cases": {
+            "Chat": {
+              "case": "Chat",
+              "actions": {
+                "Set_Public_Chat_Audience": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "329d64df-ce77-433a-ac26-bb3fd15341a4"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "varNotificationAudience",
+                    "value": "Public"
+                  }
+                }
+              }
+            },
+            "System_Information": {
+              "case": "System Information",
+              "actions": {
+                "Set_Public_System_Audience": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "99ae012a-e3e1-4d80-baa4-4d147cf0b305"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "varNotificationAudience",
+                    "value": "Public"
+                  }
+                }
+              }
+            },
+            "Internal_Note": {
+              "case": "Internal Note",
+              "actions": {
+                "Set_Internal_Note_Audience": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "357ebd7f-f119-46bd-bd3a-9581888047c5"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "varNotificationAudience",
+                    "value": "Internal"
+                  }
+                }
+              }
+            },
+            "Internal": {
+              "case": "Internal",
+              "actions": {
+                "Set_Internal_Alias_Audience": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "73c67c4a-86c9-4a4b-9683-d0306dc4b80b"
+                  },
+                  "type": "SetVariable",
+                  "inputs": {
+                    "name": "varNotificationAudience",
+                    "value": "Internal"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "actions": {}
+          },
+          "expression": "@triggerOutputs()?['body/CommentType/Value']",
+          "metadata": {
+            "operationMetadataId": "3d4f423e-fa45-4c8c-af9a-749c7b5becb1"
+          },
+          "type": "Switch"
+        },
+        "Get_Active_Members": {
+          "runAfter": {
+            "Get_Ticket": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "028a47ae-9d80-498b-a8c3-1c03b72b0e3e"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site')",
+              "table": "@parameters('ev_sp_list_config_members')",
+              "$filter": "Active eq 1",
+              "$top": 500
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Filter_Notification_Agents": {
+          "runAfter": {
+            "Get_Active_Members": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "814f62ae-822f-4d10-a93f-f04920b530e3"
+          },
+          "type": "Query",
+          "inputs": {
+            "from": "@outputs('Get_Active_Members')?['body/value']",
+            "where": "@or(equals(item()?['Role']?['Value'], 'Admin'), equals(item()?['Role']?['Value'], 'IT-Agent'))"
+          }
+        },
+        "Initialize_Notification_Recipients": {
+          "runAfter": {
+            "Filter_Notification_Agents": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "90ee8d22-259c-4428-a032-96ff63542099"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varNotificationRecipients",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "Initialize_Notification_Audience": {
+          "runAfter": {
+            "Initialize_Notification_Recipients": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8a6730c6-af20-4c5e-b586-f3d2ff599f2c"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varNotificationAudience",
+                "type": "string",
+                "value": "Ignore"
+              }
+            ]
+          }
+        },
+        "Audience_Is_Supported": {
+          "actions": {
+            "Add_Requester_For_Public_Notifications": {
+              "actions": {
+                "Append_Requester": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "5506dcf2-6e45-410c-8b7d-8d23227c5482"
+                  },
+                  "type": "AppendToArrayVariable",
+                  "inputs": {
+                    "name": "varNotificationRecipients",
+                    "value": "@coalesce(body('Get_Ticket')?['RequestedBy']?['Email'], '')"
+                  }
+                }
+              },
+              "runAfter": {},
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@variables('varNotificationAudience')",
+                      "Public"
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "29f1fe83-2ecb-4127-b841-e4183ac5b550"
+              },
+              "type": "If"
+            },
+            "Add_Assignees_For_Public_Notifications": {
+              "actions": {
+                "Apply_to_each_assignee": {
+                  "foreach": "@coalesce(body('Get_Ticket')?['Zugewiesenan'], json('[]'))",
+                  "actions": {
+                    "Append_Assignee": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "ca3923af-ccab-4d9c-ab24-8ac52074ce4f"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varNotificationRecipients",
+                        "value": "@coalesce(items('Apply_to_each_assignee')?['Email'], '')"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "5a3a0ae7-6a0f-46f0-a842-db1a775861c3"
+                  },
+                  "type": "Foreach",
+                  "runtimeConfiguration": {
+                    "concurrency": {
+                      "repetitions": 1
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Add_Requester_For_Public_Notifications": [
+                  "Succeeded"
+                ]
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@variables('varNotificationAudience')",
+                      "Public"
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "eb0d0db0-b7d9-4833-a153-35763726e6d7"
+              },
+              "type": "If"
+            },
+            "Add_Observers_For_Public_Notifications": {
+              "actions": {
+                "Apply_to_each_observer": {
+                  "foreach": "@coalesce(body('Get_Ticket')?['Beobachter'], json('[]'))",
+                  "actions": {
+                    "Append_Observer": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "999f45ce-cf77-4286-b951-4e02a23a3f2a"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varNotificationRecipients",
+                        "value": "@coalesce(items('Apply_to_each_observer')?['Email'], '')"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "d26b3d1d-1798-4389-86ce-0ad68368245e"
+                  },
+                  "type": "Foreach",
+                  "runtimeConfiguration": {
+                    "concurrency": {
+                      "repetitions": 1
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Add_Assignees_For_Public_Notifications": [
+                  "Succeeded"
+                ]
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@variables('varNotificationAudience')",
+                      "Public"
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "5f27c004-41c8-4e70-88e0-b5a2a8fdbad3"
+              },
+              "type": "If"
+            },
+            "Add_Agents_For_Internal_Or_Unassigned": {
+              "actions": {
+                "Apply_to_each_notification_agent": {
+                  "foreach": "@body('Filter_Notification_Agents')",
+                  "actions": {
+                    "Append_Notification_Agent": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "014b7d57-2761-4011-a7c7-5e0bdc9d0d32"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varNotificationRecipients",
+                        "value": "@coalesce(items('Apply_to_each_notification_agent')?['Title'], '')"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "c551eba0-123d-43d3-ac84-26b7da3e027a"
+                  },
+                  "type": "Foreach",
+                  "runtimeConfiguration": {
+                    "concurrency": {
+                      "repetitions": 1
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Add_Observers_For_Public_Notifications": [
+                  "Succeeded"
+                ]
+              },
+              "expression": {
+                "or": [
+                  {
+                    "equals": [
+                      "@variables('varNotificationAudience')",
+                      "Internal"
+                    ]
+                  },
+                  {
+                    "and": [
+                      {
+                        "equals": [
+                          "@variables('varNotificationAudience')",
+                          "Public"
+                        ]
+                      },
+                      {
+                        "equals": [
+                          "@length(coalesce(body('Get_Ticket')?['Zugewiesenan'], json('[]')))",
+                          0
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "cdfbe848-436a-4311-aff0-5d3de74b0b09"
+              },
+              "type": "If"
+            },
+            "Unique_Notification_Recipients": {
+              "runAfter": {
+                "Add_Agents_For_Internal_Or_Unassigned": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "fd49d78c-9631-4e54-ba03-50c7a80f59a0"
+              },
+              "type": "Compose",
+              "inputs": "@union(variables('varNotificationRecipients'), variables('varNotificationRecipients'))"
+            },
+            "Apply_to_each_notification_recipient": {
+              "foreach": "@outputs('Unique_Notification_Recipients')",
+              "actions": {
+                "Recipient_Is_Valid": {
+                  "actions": {
+                    "Get_Existing_Notification": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "3b0044e2-7882-4d7f-bcc7-c4742b996eb3"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_sharepointonline",
+                          "operationId": "GetItems",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                        },
+                        "parameters": {
+                          "dataset": "@parameters('ev_sp_site')",
+                          "table": "@parameters('ev_sp_list_notifications')",
+                          "$filter": "@concat('TicketId eq ', string(body('Get_Ticket')?['ID']), ' and CommentId eq ', string(triggerOutputs()?['body/ID']), ' and RecipientEmail eq ''', replace(toLower(trim(string(items('Apply_to_each_notification_recipient')))), '''', ''''''), '''')",
+                          "$top": 1
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    },
+                    "Notification_Does_Not_Exist": {
+                      "actions": {
+                        "Create_Notification": {
+                          "runAfter": {},
+                          "metadata": {
+                            "operationMetadataId": "caa8e9e1-594f-4416-b871-708e6e4d0cfd"
+                          },
+                          "type": "OpenApiConnection",
+                          "inputs": {
+                            "host": {
+                              "connectionName": "shared_sharepointonline",
+                              "operationId": "PostItem",
+                              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                            },
+                            "parameters": {
+                              "dataset": "@parameters('ev_sp_site')",
+                              "table": "@parameters('ev_sp_list_notifications')",
+                              "item/Title": "@if(equals(variables('varNotificationAudience'), 'Internal'), concat('Interne Notiz zu Ticket ', coalesce(body('Get_Ticket')?['Title'], string(body('Get_Ticket')?['ID']))), if(equals(triggerOutputs()?['body/CommentType/Value'], 'System Information'), concat('Ticket aktualisiert: ', coalesce(body('Get_Ticket')?['Title'], string(body('Get_Ticket')?['ID']))), concat('Kommentar zu Ticket ', coalesce(body('Get_Ticket')?['Title'], string(body('Get_Ticket')?['ID'])))))",
+                              "item/RecipientEmail": "@toLower(trim(string(items('Apply_to_each_notification_recipient'))))",
+                              "item/TicketId": "@body('Get_Ticket')?['ID']",
+                              "item/CommentId": "@triggerOutputs()?['body/ID']",
+                              "item/CreatedAt": "@formatDateTime(coalesce(triggerOutputs()?['body/Created'], utcNow()), 'yyyy-MM-dd')",
+                              "item/NotificationType": "@if(equals(triggerOutputs()?['body/CommentType/Value'], 'Internal'), 'Internal Note', triggerOutputs()?['body/CommentType/Value'])",
+                              "item/IsRead": false
+                            },
+                            "authentication": "@parameters('$authentication')"
+                          }
+                        }
+                      },
+                      "runAfter": {
+                        "Get_Existing_Notification": [
+                          "Succeeded"
+                        ]
+                      },
+                      "expression": {
+                        "and": [
+                          {
+                            "equals": [
+                              "@length(body('Get_Existing_Notification')?['value'])",
+                              0
+                            ]
+                          }
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "91b093f0-8c32-4591-ae06-c44e75baed6d"
+                      },
+                      "type": "If"
+                    }
+                  },
+                  "runAfter": {},
+                  "expression": {
+                    "and": [
+                      {
+                        "not": {
+                          "equals": [
+                            "@trim(string(items('Apply_to_each_notification_recipient')))",
+                            ""
+                          ]
+                        }
+                      },
+                      {
+                        "not": {
+                          "equals": [
+                            "@toLower(trim(string(items('Apply_to_each_notification_recipient'))))",
+                            "@toLower(if(equals(coalesce(triggerOutputs()?['body/CommentBy'], ''), 'Ticketsystem'), '', coalesce(triggerOutputs()?['body/Author/Email'], '')))"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "562e6608-f88a-44d3-a956-50ef0b3a9189"
+                  },
+                  "type": "If"
+                }
+              },
+              "runAfter": {
+                "Unique_Notification_Recipients": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "7b6bc963-afa7-41d6-8495-5bf2ddba7a32"
+              },
+              "type": "Foreach",
+              "runtimeConfiguration": {
+                "concurrency": {
+                  "repetitions": 1
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Option": [
+              "Succeeded"
+            ]
+          },
+          "expression": {
+            "and": [
+              {
+                "not": {
+                  "equals": [
+                    "@variables('varNotificationAudience')",
+                    "Ignore"
+                  ]
+                }
+              }
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "5afe3e85-f519-4b6f-a3c2-71a6dfab1a03"
+          },
+          "type": "If"
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

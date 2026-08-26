@@ -1,0 +1,66 @@
+name: Export Power Platform Solution
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  SOLUTION_NAME: ${{ vars.PP_SOLUTION_NAME }}
+  DEV_URL: ${{ vars.PP_DEV_URL }}
+
+jobs:
+  export-solution:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Verify connection to DEV
+        uses: microsoft/powerplatform-actions/who-am-i@v1
+        with:
+          environment-url: ${{ env.DEV_URL }}
+          user-name: ${{ secrets.PP_USERNAME }}
+          password-secret: ${{ secrets.PP_PASSWORD }}
+
+      - name: Prepare folders
+        run: |
+          mkdir -p out
+          mkdir -p "src/solutions/${SOLUTION_NAME}"
+
+      - name: Export unmanaged solution
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ env.DEV_URL }}
+          user-name: ${{ secrets.PP_USERNAME }}
+          password-secret: ${{ secrets.PP_PASSWORD }}
+          solution-name: ${{ env.SOLUTION_NAME }}
+          solution-output-file: "out/${{ env.SOLUTION_NAME }}.zip"
+          managed: false
+
+      - name: Unpack solution
+        uses: microsoft/powerplatform-actions/unpack-solution@v1
+        with:
+          solution-file: "out/${{ env.SOLUTION_NAME }}.zip"
+          solution-folder: "src/solutions/${{ env.SOLUTION_NAME }}"
+          solution-type: Unmanaged
+          overwrite-files: true
+
+      - name: Commit solution changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add src/solutions
+
+          if git diff --cached --quiet; then
+            echo "No solution changes detected."
+          else
+            git commit -m "chore: export ${SOLUTION_NAME} from DEV"
+            git push
+          fi

@@ -1,0 +1,156 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline_1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "kse_cnref_sharepoint"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "ev_sp_list_tickets (kse_ev_sp_list_tickets)": {
+          "defaultValue": "e4f994ec-26c7-4943-94b8-fb5c6c663b0b",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_tickets"
+          }
+        },
+        "ev_sp_site_ticketsystem (kse_ev_sp_site)": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_site"
+          }
+        }
+      },
+      "triggers": {
+        "When_an_item_is_created": {
+          "recurrence": {
+            "interval": 1,
+            "frequency": "Minute"
+          },
+          "splitOn": "@triggerOutputs()?['body/value']",
+          "metadata": {
+            "operationMetadataId": "3897ec1c-be6a-4148-8e94-e2921bc5ec58"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline_1",
+              "operationId": "GetOnNewItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_tickets (kse_ev_sp_list_tickets)')"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Option": {
+          "runAfter": {
+            "Verzögern": [
+              "Succeeded"
+            ]
+          },
+          "cases": {
+            "isTicket": {
+              "case": "Incident",
+              "actions": {
+                "Update_item": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "cdbb85cf-ef19-49a6-8e2c-59b9dbf3ab33"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_sharepointonline_1",
+                      "operationId": "PatchItem",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                    },
+                    "parameters": {
+                      "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+                      "table": "@parameters('ev_sp_list_tickets (kse_ev_sp_list_tickets)')",
+                      "id": "@triggerOutputs()?['body/ID']",
+                      "item/Title": "@concat('INC-', formatDateTime(utcNow(), 'yyyy'), '-', formatNumber(int(triggerOutputs()?['body/ID']), '00000'))"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              }
+            },
+            "isChange": {
+              "case": "Change",
+              "actions": {
+                "Element_aktualisieren": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "0ea5048d-e6cf-4f87-a6af-c071e8cc8199"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_sharepointonline_1",
+                      "operationId": "PatchItem",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                    },
+                    "parameters": {
+                      "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+                      "table": "@parameters('ev_sp_list_tickets (kse_ev_sp_list_tickets)')",
+                      "id": "@triggerOutputs()?['body/ID']",
+                      "item/Title": "@concat('CHG-', formatDateTime(utcNow(), 'yyyy'), '-', formatNumber(int(triggerOutputs()?['body/ID']), '00000'))",
+                      "item/Priority/Value": "Hoch",
+                      "item/SlaBreached": false
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "actions": {}
+          },
+          "expression": "@triggerOutputs()?['body/TicketType/Value']",
+          "metadata": {
+            "operationMetadataId": "2d949224-bb3a-48b2-b392-eb3c6062a420"
+          },
+          "type": "Switch"
+        },
+        "Verzögern": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "19b1c081-4c7e-4b57-8788-961d3e914714"
+          },
+          "type": "Wait",
+          "inputs": {
+            "interval": {
+              "count": 15,
+              "unit": "Second"
+            }
+          }
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

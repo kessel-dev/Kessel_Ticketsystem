@@ -1,0 +1,305 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline_1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "kse_cnref_sharepoint"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "ev_sp_site": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String"
+        },
+        "ev_sp_list_tickets": {
+          "defaultValue": "e4f994ec-26c7-4943-94b8-fb5c6c663b0b",
+          "type": "String"
+        },
+        "ev_sp_list_comments": {
+          "defaultValue": "6cf22d82-e9ed-4d53-95d4-0d84dcb119cd",
+          "type": "String"
+        },
+        "ev_sp_list_config_members": {
+          "defaultValue": "773b59c7-ac46-41a4-b8aa-a8be6e01d5aa",
+          "type": "String"
+        },
+        "ev_sp_list_comments (kse_ev_sp_list_comments)": {
+          "defaultValue": "6cf22d82-e9ed-4d53-95d4-0d84dcb119cd",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_comments"
+          }
+        },
+        "ev_sp_site_ticketsystem (kse_ev_sp_site)": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_site"
+          }
+        }
+      },
+      "triggers": {
+        "When_a_ticket_comment_is_created": {
+          "recurrence": {
+            "interval": 1,
+            "frequency": "Minute"
+          },
+          "splitOn": "@triggerOutputs()?['body/value']",
+          "metadata": {
+            "operationMetadataId": "0e1b81e8-beeb-4f02-9c46-bce603bc9f19"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline_1",
+              "operationId": "GetOnNewItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site')",
+              "table": "@parameters('ev_sp_list_comments')"
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "conditions": [
+            {
+              "expression": "@or(equals(triggerBody()?['CommentType/Value'], 'Chat'), equals(triggerBody()?['CommentType/Value'], 'Internal'))"
+            }
+          ],
+          "runtimeConfiguration": {
+            "concurrency": {
+              "runs": 1
+            }
+          }
+        }
+      },
+      "actions": {
+        "Get_Tickets": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "307092ff-09ad-40a6-9f99-b95c19a2a577"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline_1",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site')",
+              "table": "@parameters('ev_sp_list_tickets')",
+              "$filter": "ID eq @{triggerBody()?['TicketNumber']}",
+              "$top": 1
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_Comment_Author_Member": {
+          "runAfter": {
+            "Get_Tickets": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "3c9b6aa7-1475-4e13-922b-53c9c3d3a2d2"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline_1",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site')",
+              "table": "@parameters('ev_sp_list_config_members')",
+              "$filter": "@concat('Title eq ''', replace(coalesce(triggerBody()?['Author/Email'], ''), '''', ''''''), ''' and Active eq 1')",
+              "$top": 1
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Get_Ticket_Comments": {
+          "runAfter": {
+            "Get_Comment_Author_Member": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "bac5b444-1ab5-4066-b59b-5b8f9772fd8d"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline_1",
+              "operationId": "GetItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site_ticketsystem (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_comments (kse_ev_sp_list_comments)')",
+              "$filter": "TicketNumber eq @{triggerOutputs()?['body/TicketNumber']}",
+              "$top": 2
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Auf_alle_anwenden_2": {
+          "foreach": "@outputs('Get_Ticket_Comments')?['body/value']",
+          "actions": {
+            "Set_Initial_Status_To_In_Progress": {
+              "actions": {
+                "Create_Status_System_Comment": {
+                  "runAfter": {
+                    "Auf_alle_anwenden": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "e28ba5f7-d121-489b-89a8-0304ae6d6703"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_sharepointonline_1",
+                      "operationId": "PostItem",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                    },
+                    "parameters": {
+                      "dataset": "@parameters('ev_sp_site')",
+                      "table": "@parameters('ev_sp_list_comments')",
+                      "item/Title": "@triggerBody()?['TicketNumber']",
+                      "item/TicketNumber": "@triggerBody()?['TicketNumber']",
+                      "item/Comment": "Status automatisch auf In Bearbeitung gesetzt: erster Kommentar eines IT-Mitarbeiters bei zugewiesenem Ticket (Lifecycle).",
+                      "item/IsInternal": false,
+                      "item/CommentBy": "Ticketsystem",
+                      "item/CommentType/Value": "System Information"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                },
+                "Auf_alle_anwenden": {
+                  "foreach": "@outputs('Get_Ticket_Comments')?['body/value']",
+                  "actions": {
+                    "Update_Ticket_Status": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "12e4bd83-8724-42e9-a055-42585d62470f"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_sharepointonline_1",
+                          "operationId": "PatchItem",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                        },
+                        "parameters": {
+                          "dataset": "@parameters('ev_sp_site')",
+                          "table": "@parameters('ev_sp_list_tickets')",
+                          "id": "@first(body('Get_Tickets')?['value'])?['ID']",
+                          "item/Status/Value": "In Bearbeitung",
+                          "item/Zugewiesenan/Claims": "@items('Auf_alle_anwenden')?['CommentByClaims']"
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "aa3a6113-2a56-4cf3-9ab2-efdd7bc54d78"
+                  },
+                  "type": "Foreach"
+                }
+              },
+              "runAfter": {},
+              "else": {
+                "actions": {
+                  "Status_Not_Changed": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "8c602d0f-748d-4b37-aa62-71fca37ab8a9"
+                    },
+                    "type": "Compose",
+                    "inputs": "Status wurde nicht geändert, da die Bedingungen für den initialen Statuswechsel nicht erfüllt sind."
+                  }
+                }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@length(body('Get_Ticket_Comments')?['value'])",
+                      1
+                    ]
+                  },
+                  {
+                    "equals": [
+                      "@triggerOutputs()?['body/IsInternal']",
+                      "@true"
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "f40c3aae-88e8-4371-bc4d-bcd800c3bbf5"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "isInternal": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7e99d706-0e26-4b3b-944f-528d711dbb8a"
+          },
+          "type": "Foreach"
+        },
+        "Comment_count": {
+          "runAfter": {
+            "Get_Ticket_Comments": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "c38d2098-9a91-42a9-b224-8ffb2addd524"
+          },
+          "type": "Compose",
+          "inputs": "@length(body('Get_Ticket_Comments')?['value'])"
+        },
+        "isInternal": {
+          "runAfter": {
+            "Comment_count": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "d254404c-a900-4754-a379-aa1ba381a10b"
+          },
+          "type": "Compose",
+          "inputs": "@triggerOutputs()?['body/IsInternal']"
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

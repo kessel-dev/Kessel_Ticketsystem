@@ -1,0 +1,772 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_sharepointonline_1": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "kse_cnref_sharepoint"
+        },
+        "api": {
+          "name": "shared_sharepointonline"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "ev_sp_site (kse_ev_sp_site)": {
+          "defaultValue": "https://kesselgruppe.sharepoint.com/sites/DEVTicketsystem",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_site"
+          }
+        },
+        "ev_sp_list_tickets (kse_ev_sp_list_tickets)": {
+          "defaultValue": "e4f994ec-26c7-4943-94b8-fb5c6c663b0b",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_tickets"
+          }
+        },
+        "ev_sp_list_comments (kse_ev_sp_list_comments)": {
+          "defaultValue": "6cf22d82-e9ed-4d53-95d4-0d84dcb119cd",
+          "type": "String",
+          "metadata": {
+            "schemaName": "kse_ev_sp_list_comments"
+          }
+        }
+      },
+      "triggers": {
+        "Wenn_ein_Element_geaendert_wird": {
+          "recurrence": {
+            "interval": 1,
+            "frequency": "Minute"
+          },
+          "splitOn": "@triggerOutputs()?['body/value']",
+          "metadata": {
+            "operationMetadataId": "967ecd08-8a78-42c8-9f9f-ce07ef229779"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline_1",
+              "operationId": "GetOnChangedItems",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_tickets (kse_ev_sp_list_tickets)')"
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Aenderungen_abrufen": {
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "b45dfa2d-bcf6-4c41-a891-ea82702c6bf0"
+          },
+          "type": "OpenApiConnection",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_sharepointonline_1",
+              "operationId": "GetItemChanges",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+            },
+            "parameters": {
+              "dataset": "@parameters('ev_sp_site (kse_ev_sp_site)')",
+              "table": "@parameters('ev_sp_list_tickets (kse_ev_sp_list_tickets)')",
+              "id": "@triggerOutputs()?['body/ID']",
+              "since": "@triggerOutputs()?['body/{TriggerWindowStartToken}']",
+              "until": "@triggerOutputs()?['body/{TriggerWindowEndToken}']",
+              "includeDrafts": false
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Variable_ZugewiesenAlt_initialisieren": {
+          "runAfter": {
+            "Aenderungen_abrufen": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "0bfefa57-4693-4a6c-9054-53b701f25566"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varZugewiesenAlt",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "Variable_ZugewiesenNeu_initialisieren": {
+          "runAfter": {
+            "Variable_ZugewiesenAlt_initialisieren": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7fd20368-d6ac-4175-be69-32afddfe13fc"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varZugewiesenNeu",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "Variable_BearbeiterAlt_initialisieren": {
+          "runAfter": {
+            "Variable_ZugewiesenNeu_initialisieren": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "8358faef-f917-4505-82cc-c13cb3795bb9"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varBearbeiterAlt",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "Variable_BearbeiterNeu_initialisieren": {
+          "runAfter": {
+            "Variable_BearbeiterAlt_initialisieren": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "e129c1c9-efde-44d4-9ed6-0a4df7c75317"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varBearbeiterNeu",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "Variable_Aenderungstexte_initialisieren": {
+          "runAfter": {
+            "Variable_BearbeiterNeu_initialisieren": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "299e4fda-bd1c-4ddd-8e51-81d4c7406e98"
+          },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "varAenderungstexte",
+                "type": "array",
+                "value": []
+              }
+            ]
+          }
+        },
+        "Ueberwachte_Felder": {
+          "runAfter": {
+            "Variable_Aenderungstexte_initialisieren": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "0f49c2fb-37a6-4daa-ac1d-966046a03544"
+          },
+          "type": "Compose",
+          "inputs": [
+            {
+              "Spalte": "Titel",
+              "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Title']"
+            },
+            {
+              "Spalte": "Ticket-Typ",
+              "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/TicketType']"
+            },
+            {
+              "Spalte": "Status",
+              "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Status']"
+            },
+            {
+              "Spalte": "Beschreibung",
+              "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Description']"
+            },
+            {
+              "Spalte": "Priorität",
+              "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Priority']"
+            },
+            {
+              "Spalte": "Zugewiesen an",
+              "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Zugewiesenan']"
+            },
+            {
+              "Spalte": "Beobachter",
+              "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Beobachter']"
+            },
+            {
+              "Spalte": "Kategorie",
+              "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Category']"
+            }
+          ]
+        },
+        "Geaenderte_Felder_filtern": {
+          "runAfter": {
+            "Ueberwachte_Felder": [
+              "Succeeded"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7adfe1ec-6223-4e45-9df4-e0bedfd27d7c"
+          },
+          "type": "Query",
+          "inputs": {
+            "from": "@outputs('Ueberwachte_Felder')",
+            "where": "@equals(item()?['Geaendert'], true)"
+          }
+        },
+        "Relevante_Aenderung_vorhanden": {
+          "actions": {
+            "Vorherige_Version_Label": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "5014f723-81f4-4aa5-970d-8f23f9728e16"
+              },
+              "type": "Compose",
+              "inputs": "@concat(string(sub(int(first(split(triggerOutputs()?['body/{VersionNumber}'], '.'))), 1)), '.0')"
+            },
+            "HTTP_Vorherige_Version": {
+              "runAfter": {
+                "Vorherige_Version_Label": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "ce5dbdbf-8e5a-4063-9124-662f6b9e9097"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_sharepointonline_1",
+                  "operationId": "HttpRequest",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                },
+                "parameters": {
+                  "dataset": "@parameters('ev_sp_site (kse_ev_sp_site)')",
+                  "parameters/method": "GET",
+                  "parameters/uri": "@concat('_api/web/lists(guid''', parameters('ev_sp_list_tickets (kse_ev_sp_list_tickets)'), ''')/items(', string(triggerOutputs()?['body/ID']), ')/versions?$select=VersionLabel,Title,TicketType,Status,Description,Priority,Category,ZugewiesenanId,BearbeiterId&$filter=VersionLabel eq ''', outputs('Vorherige_Version_Label'), '''&$top=1')",
+                  "parameters/headers": {
+                    "Accept": "application/json;odata=verbose"
+                  }
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "Vorherige_Version_gefunden": {
+              "actions": {
+                "Aktuelle_Zugewiesene_durchlaufen": {
+                  "foreach": "@coalesce(triggerOutputs()?['body/Zugewiesenan'], json('[]'))",
+                  "actions": {
+                    "Aktuellen_Zugewiesenen_speichern": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "41c2bf3f-0e9c-4a3f-aaeb-cc7434f3ff69"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varZugewiesenNeu",
+                        "value": "@if(empty(items('Aktuelle_Zugewiesene_durchlaufen')?['Email']), coalesce(items('Aktuelle_Zugewiesene_durchlaufen')?['DisplayName'], 'Unbekannt'), concat(coalesce(items('Aktuelle_Zugewiesene_durchlaufen')?['DisplayName'], items('Aktuelle_Zugewiesene_durchlaufen')?['Email']), ' <', items('Aktuelle_Zugewiesene_durchlaufen')?['Email'], '>'))"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "1db01545-75d5-4fed-9ed8-9826de401715"
+                  },
+                  "type": "Foreach",
+                  "runtimeConfiguration": {
+                    "concurrency": {
+                      "repetitions": 1
+                    }
+                  }
+                },
+                "Alte_Zugewiesene_durchlaufen": {
+                  "foreach": "@coalesce(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['ZugewiesenanId']?['results'], json('[]'))",
+                  "actions": {
+                    "HTTP_Alter_Zugewiesener": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "66e2392f-0abc-4c10-9d90-0b8b40000af7"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_sharepointonline_1",
+                          "operationId": "HttpRequest",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                        },
+                        "parameters": {
+                          "dataset": "@parameters('ev_sp_site (kse_ev_sp_site)')",
+                          "parameters/method": "GET",
+                          "parameters/uri": "@concat('_api/web/getuserbyid(', string(items('Alte_Zugewiesene_durchlaufen')), ')?$select=Title,Email')",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata"
+                          }
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    },
+                    "Alten_Zugewiesenen_speichern": {
+                      "runAfter": {
+                        "HTTP_Alter_Zugewiesener": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "2b9545da-b0e6-476d-a3ae-036fc37c1285"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varZugewiesenAlt",
+                        "value": "@if(empty(body('HTTP_Alter_Zugewiesener')?['Email']), coalesce(body('HTTP_Alter_Zugewiesener')?['Title'], 'Unbekannt'), concat(coalesce(body('HTTP_Alter_Zugewiesener')?['Title'], body('HTTP_Alter_Zugewiesener')?['Email']), ' <', body('HTTP_Alter_Zugewiesener')?['Email'], '>'))"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "9fbcc9a5-0fa4-4485-ba3b-8f4e012d5f0e"
+                  },
+                  "type": "Foreach",
+                  "runtimeConfiguration": {
+                    "concurrency": {
+                      "repetitions": 1
+                    }
+                  }
+                },
+                "Aktuelle_Bearbeiter_durchlaufen": {
+                  "foreach": "@coalesce(triggerOutputs()?['body/Bearbeiter'], json('[]'))",
+                  "actions": {
+                    "Aktuellen_Bearbeiter_speichern": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "56aea344-1179-4297-b889-7e6e75243191"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varBearbeiterNeu",
+                        "value": "@if(empty(items('Aktuelle_Bearbeiter_durchlaufen')?['Email']), coalesce(items('Aktuelle_Bearbeiter_durchlaufen')?['DisplayName'], 'Unbekannt'), concat(coalesce(items('Aktuelle_Bearbeiter_durchlaufen')?['DisplayName'], items('Aktuelle_Bearbeiter_durchlaufen')?['Email']), ' <', items('Aktuelle_Bearbeiter_durchlaufen')?['Email'], '>'))"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "c89219a6-4a31-4ccb-9963-00e73216727d"
+                  },
+                  "type": "Foreach",
+                  "runtimeConfiguration": {
+                    "concurrency": {
+                      "repetitions": 1
+                    }
+                  }
+                },
+                "Alte_Bearbeiter_durchlaufen": {
+                  "foreach": "@coalesce(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['BearbeiterId']?['results'], json('[]'))",
+                  "actions": {
+                    "HTTP_Alter_Bearbeiter": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "5e461d06-c4aa-4e4f-af63-3e5c5128371a"
+                      },
+                      "type": "OpenApiConnection",
+                      "inputs": {
+                        "host": {
+                          "connectionName": "shared_sharepointonline_1",
+                          "operationId": "HttpRequest",
+                          "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                        },
+                        "parameters": {
+                          "dataset": "@parameters('ev_sp_site (kse_ev_sp_site)')",
+                          "parameters/method": "GET",
+                          "parameters/uri": "@concat('_api/web/getuserbyid(', string(items('Alte_Bearbeiter_durchlaufen')), ')?$select=Title,Email')",
+                          "parameters/headers": {
+                            "Accept": "application/json;odata=nometadata"
+                          }
+                        },
+                        "authentication": "@parameters('$authentication')"
+                      }
+                    },
+                    "Alten_Bearbeiter_speichern": {
+                      "runAfter": {
+                        "HTTP_Alter_Bearbeiter": [
+                          "Succeeded"
+                        ]
+                      },
+                      "metadata": {
+                        "operationMetadataId": "e57e0f00-1a24-4ac3-bd8b-7810c5801102"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varBearbeiterAlt",
+                        "value": "@if(empty(body('HTTP_Alter_Bearbeiter')?['Email']), coalesce(body('HTTP_Alter_Bearbeiter')?['Title'], 'Unbekannt'), concat(coalesce(body('HTTP_Alter_Bearbeiter')?['Title'], body('HTTP_Alter_Bearbeiter')?['Email']), ' <', body('HTTP_Alter_Bearbeiter')?['Email'], '>'))"
+                      }
+                    }
+                  },
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "c7306ccc-569a-4ead-abaa-93e13fa49aa8"
+                  },
+                  "type": "Foreach",
+                  "runtimeConfiguration": {
+                    "concurrency": {
+                      "repetitions": 1
+                    }
+                  }
+                },
+                "Zugewiesen_Hinzugefuegt": {
+                  "runAfter": {
+                    "Aktuelle_Zugewiesene_durchlaufen": [
+                      "Succeeded"
+                    ],
+                    "Alte_Zugewiesene_durchlaufen": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "24da7a2a-a5f7-40bf-b973-8b054492b037"
+                  },
+                  "type": "Query",
+                  "inputs": {
+                    "from": "@variables('varZugewiesenNeu')",
+                    "where": "@not(contains(variables('varZugewiesenAlt'), item()))"
+                  }
+                },
+                "Zugewiesen_Entfernt": {
+                  "runAfter": {
+                    "Aktuelle_Zugewiesene_durchlaufen": [
+                      "Succeeded"
+                    ],
+                    "Alte_Zugewiesene_durchlaufen": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "73969127-5491-42a9-ab24-a5c4405cc31a"
+                  },
+                  "type": "Query",
+                  "inputs": {
+                    "from": "@variables('varZugewiesenAlt')",
+                    "where": "@not(contains(variables('varZugewiesenNeu'), item()))"
+                  }
+                },
+                "Bearbeiter_Hinzugefuegt": {
+                  "runAfter": {
+                    "Aktuelle_Bearbeiter_durchlaufen": [
+                      "Succeeded"
+                    ],
+                    "Alte_Bearbeiter_durchlaufen": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "cd96ebb8-15cf-4705-8213-802ecd293a1b"
+                  },
+                  "type": "Query",
+                  "inputs": {
+                    "from": "@variables('varBearbeiterNeu')",
+                    "where": "@not(contains(variables('varBearbeiterAlt'), item()))"
+                  }
+                },
+                "Bearbeiter_Entfernt": {
+                  "runAfter": {
+                    "Aktuelle_Bearbeiter_durchlaufen": [
+                      "Succeeded"
+                    ],
+                    "Alte_Bearbeiter_durchlaufen": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "2370ae83-90f0-4f6d-839b-efab4487b909"
+                  },
+                  "type": "Query",
+                  "inputs": {
+                    "from": "@variables('varBearbeiterAlt')",
+                    "where": "@not(contains(variables('varBearbeiterNeu'), item()))"
+                  }
+                },
+                "Aenderungsdetails": {
+                  "runAfter": {
+                    "Zugewiesen_Hinzugefuegt": [
+                      "Succeeded"
+                    ],
+                    "Zugewiesen_Entfernt": [
+                      "Succeeded"
+                    ],
+                    "Bearbeiter_Hinzugefuegt": [
+                      "Succeeded"
+                    ],
+                    "Bearbeiter_Entfernt": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "3b1c6d40-668b-4a7a-9355-82e94decb2a9"
+                  },
+                  "type": "Compose",
+                  "inputs": [
+                    {
+                      "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Title']",
+                      "Text": "@concat('Titel: ', if(empty(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['Title']), '—', string(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['Title'])), ' → ', if(empty(triggerOutputs()?['body/Title']), '—', string(triggerOutputs()?['body/Title'])))"
+                    },
+                    {
+                      "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/TicketType']",
+                      "Text": "@concat('Ticket-Typ: ', if(empty(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['TicketType']), '—', string(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['TicketType'])), ' → ', if(empty(coalesce(triggerOutputs()?['body/TicketType/Value'], triggerOutputs()?['body/TicketType'])), '—', string(coalesce(triggerOutputs()?['body/TicketType/Value'], triggerOutputs()?['body/TicketType']))))"
+                    },
+                    {
+                      "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Status']",
+                      "Text": "@concat('Status: ', if(empty(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['Status']), '—', string(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['Status'])), ' → ', if(empty(coalesce(triggerOutputs()?['body/Status/Value'], triggerOutputs()?['body/Status'])), '—', string(coalesce(triggerOutputs()?['body/Status/Value'], triggerOutputs()?['body/Status']))))"
+                    },
+                    {
+                      "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Description']",
+                      "Text": "Beschreibung wurde geändert."
+                    },
+                    {
+                      "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Priority']",
+                      "Text": "@concat('Priorität: ', if(empty(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['Priority']), '—', string(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['Priority'])), ' → ', if(empty(coalesce(triggerOutputs()?['body/Priority/Value'], triggerOutputs()?['body/Priority'])), '—', string(coalesce(triggerOutputs()?['body/Priority/Value'], triggerOutputs()?['body/Priority']))))"
+                    },
+                    {
+                      "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Category']",
+                      "Text": "@concat('Kategorie: ', if(empty(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['Category']), '—', string(first(body('HTTP_Vorherige_Version')?['d']?['results'])?['Category'])), ' → ', if(empty(coalesce(triggerOutputs()?['body/Category/Value'], triggerOutputs()?['body/Category'])), '—', string(coalesce(triggerOutputs()?['body/Category/Value'], triggerOutputs()?['body/Category']))))"
+                    },
+                    {
+                      "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Zugewiesenan']",
+                      "Text": "@concat('Zugewiesen an:', if(greater(length(body('Zugewiesen_Hinzugefuegt')), 0), concat(decodeUriComponent('%0A'), '+ ', join(body('Zugewiesen_Hinzugefuegt'), concat(decodeUriComponent('%0A'), '+ '))), ''), if(greater(length(body('Zugewiesen_Entfernt')), 0), concat(decodeUriComponent('%0A'), '- ', join(body('Zugewiesen_Entfernt'), concat(decodeUriComponent('%0A'), '- '))), ''))"
+                    },
+                    {
+                      "Geaendert": "@outputs('Aenderungen_abrufen')?['body/ColumnHasChanged/Bearbeiter']",
+                      "Text": "@concat('Bearbeiter:', if(greater(length(body('Bearbeiter_Hinzugefuegt')), 0), concat(decodeUriComponent('%0A'), '+ ', join(body('Bearbeiter_Hinzugefuegt'), concat(decodeUriComponent('%0A'), '+ '))), ''), if(greater(length(body('Bearbeiter_Entfernt')), 0), concat(decodeUriComponent('%0A'), '- ', join(body('Bearbeiter_Entfernt'), concat(decodeUriComponent('%0A'), '- '))), ''))"
+                    }
+                  ]
+                },
+                "Nur_geaenderte_Details": {
+                  "runAfter": {
+                    "Aenderungsdetails": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "94380f0b-7b7b-41ef-b9af-80903e2f2e6f"
+                  },
+                  "type": "Query",
+                  "inputs": {
+                    "from": "@outputs('Aenderungsdetails')",
+                    "where": "@equals(item()?['Geaendert'], true)"
+                  }
+                },
+                "Aenderungstexte_sammeln": {
+                  "foreach": "@body('Nur_geaenderte_Details')",
+                  "actions": {
+                    "Aenderungstext_hinzufuegen": {
+                      "runAfter": {},
+                      "metadata": {
+                        "operationMetadataId": "c8e8e3eb-eb1c-4ccd-8c4e-e027e9fcd988"
+                      },
+                      "type": "AppendToArrayVariable",
+                      "inputs": {
+                        "name": "varAenderungstexte",
+                        "value": "@item()?['Text']"
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Nur_geaenderte_Details": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "e68cb7cb-70f9-46a3-a7b0-3810120a62f6"
+                  },
+                  "type": "Foreach",
+                  "runtimeConfiguration": {
+                    "concurrency": {
+                      "repetitions": 1
+                    }
+                  }
+                },
+                "Kommentartext_erstellen": {
+                  "runAfter": {
+                    "Aenderungstexte_sammeln": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "e4d0f295-ac2d-4748-a667-cc7ff7061bfc"
+                  },
+                  "type": "Compose",
+                  "inputs": "@join(variables('varAenderungstexte'), decodeUriComponent('%0A%0A'))"
+                },
+                "Systemkommentar_erstellen": {
+                  "runAfter": {
+                    "Kommentartext_erstellen": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "451db54f-f2e3-40ca-af44-7dce408c66be"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_sharepointonline_1",
+                      "operationId": "PostItem",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                    },
+                    "parameters": {
+                      "dataset": "@parameters('ev_sp_site (kse_ev_sp_site)')",
+                      "table": "@parameters('ev_sp_list_comments (kse_ev_sp_list_comments)')",
+                      "item/Title": "@triggerOutputs()?['body/Title']",
+                      "item/TicketNumber": "@triggerOutputs()?['body/ID']",
+                      "item/Comment": "@outputs('Kommentartext_erstellen')",
+                      "item/IsInternal": false,
+                      "item/CommentBy": "Ticketsystem",
+                      "item/CommentType/Value": "System Information"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {
+                "HTTP_Vorherige_Version": [
+                  "Succeeded"
+                ]
+              },
+              "else": {
+                "actions": {
+                  "Fallback_Feldnamen_sammeln": {
+                    "foreach": "@body('Geaenderte_Felder_filtern')",
+                    "actions": {
+                      "Fallback_Feld_hinzufuegen": {
+                        "runAfter": {},
+                        "metadata": {
+                          "operationMetadataId": "b9071316-67a6-49e8-b1b6-87ca42312617"
+                        },
+                        "type": "AppendToArrayVariable",
+                        "inputs": {
+                          "name": "varAenderungstexte",
+                          "value": "@item()?['Spalte']"
+                        }
+                      }
+                    },
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "9678d4d1-8a99-4da7-b93d-80911a06cb4b"
+                    },
+                    "type": "Foreach",
+                    "runtimeConfiguration": {
+                      "concurrency": {
+                        "repetitions": 1
+                      }
+                    }
+                  },
+                  "Fallback_Kommentar_erstellen": {
+                    "runAfter": {
+                      "Fallback_Feldnamen_sammeln": [
+                        "Succeeded"
+                      ]
+                    },
+                    "metadata": {
+                      "operationMetadataId": "15048ec3-c5a5-49be-a76d-6f8003c88d48"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_sharepointonline_1",
+                        "operationId": "PostItem",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+                      },
+                      "parameters": {
+                        "dataset": "@parameters('ev_sp_site (kse_ev_sp_site)')",
+                        "table": "@parameters('ev_sp_list_comments (kse_ev_sp_list_comments)')",
+                        "item/Title": "@triggerOutputs()?['body/Title']",
+                        "item/TicketNumber": "@triggerOutputs()?['body/Title']",
+                        "item/Comment": "@concat('Ticket aktualisiert. Geänderte Felder: ', join(variables('varAenderungstexte'), ', '))",
+                        "item/IsInternal": false,
+                        "item/CommentBy": "@coalesce(triggerOutputs()?['body/Editor/DisplayName'], triggerOutputs()?['body/Editor/Email'], 'Ticketsystem')",
+                        "item/CommentType/Value": "System Information"
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "greater": [
+                      "@length(coalesce(body('HTTP_Vorherige_Version')?['d']?['results'], json('[]')))",
+                      0
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "eeaa1a2e-806f-47c0-b549-c711bfbbee14"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Geaenderte_Felder_filtern": [
+              "Succeeded"
+            ]
+          },
+          "expression": {
+            "and": [
+              {
+                "greater": [
+                  "@length(body('Geaenderte_Felder_filtern'))",
+                  0
+                ]
+              }
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "ee961f56-99cf-45c0-9d17-c437bd461cdb"
+          },
+          "type": "If"
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}
