@@ -1,5 +1,6 @@
 .flowagent/
 *.msapp
+!src/solutions/**/CanvasApps/*.msapp
 *.zip
 *.tmp
 *.bak
