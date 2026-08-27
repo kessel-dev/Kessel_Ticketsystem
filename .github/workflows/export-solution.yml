@@ -6,57 +6,111 @@ on:
 permissions:
   contents: write
 
-env:
-  SOLUTION_NAME: ${{ vars.PP_SOLUTION_NAME }}
-  DEV_URL: ${{ vars.PP_DEV_URL }}
+concurrency:
+  group: power-platform-export-dev
+  cancel-in-progress: false
 
 jobs:
   export-solution:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: DEV
+    env:
+      SOLUTION_NAME: ${{ vars.PP_SOLUTION_NAME || 'Ticketsystem' }}
+      DEV_URL: ${{ vars.PP_ENVIRONMENT_URL || vars.PP_DEV_URL }}
+      USER_NAME: ${{ secrets.PP_USERNAME }}
+      USER_PASSWORD: ${{ secrets.PP_PASSWORD }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Power Platform Tools
         uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Validate export configuration
+        shell: bash
+        run: |
+          if [[ -z "${DEV_URL}" ]]; then
+            echo "PP_ENVIRONMENT_URL or PP_DEV_URL is required." >&2
+            exit 1
+          fi
+
+          if [[ -z "${USER_NAME}" || -z "${USER_PASSWORD}" ]]; then
+            echo "PP_USERNAME and PP_PASSWORD are required." >&2
+            exit 1
+          fi
 
       - name: Verify connection to DEV
         uses: microsoft/powerplatform-actions/who-am-i@v1
         with:
           environment-url: ${{ env.DEV_URL }}
-          user-name: ${{ secrets.PP_USERNAME }}
-          password-secret: ${{ secrets.PP_PASSWORD }}
+          user-name: ${{ env.USER_NAME }}
+          password-secret: ${{ env.USER_PASSWORD }}
 
       - name: Prepare folders
+        shell: bash
         run: |
           mkdir -p out
+          rm -rf "src/solutions/${SOLUTION_NAME}"
           mkdir -p "src/solutions/${SOLUTION_NAME}"
 
       - name: Export unmanaged solution
         uses: microsoft/powerplatform-actions/export-solution@v1
         with:
           environment-url: ${{ env.DEV_URL }}
-          user-name: ${{ secrets.PP_USERNAME }}
-          password-secret: ${{ secrets.PP_PASSWORD }}
+          user-name: ${{ env.USER_NAME }}
+          password-secret: ${{ env.USER_PASSWORD }}
           solution-name: ${{ env.SOLUTION_NAME }}
-          solution-output-file: "out/${{ env.SOLUTION_NAME }}.zip"
+          solution-output-file: out/${{ env.SOLUTION_NAME }}.zip
           managed: false
+          overwrite: true
+          run-asynchronously: true
 
-      - name: Unpack solution
+      - name: Export managed solution
+        uses: microsoft/powerplatform-actions/export-solution@v1
+        with:
+          environment-url: ${{ env.DEV_URL }}
+          user-name: ${{ env.USER_NAME }}
+          password-secret: ${{ env.USER_PASSWORD }}
+          solution-name: ${{ env.SOLUTION_NAME }}
+          solution-output-file: out/${{ env.SOLUTION_NAME }}_managed.zip
+          managed: true
+          overwrite: true
+          run-asynchronously: true
+
+      - name: Unpack managed and unmanaged solutions
         uses: microsoft/powerplatform-actions/unpack-solution@v1
         with:
-          solution-file: "out/${{ env.SOLUTION_NAME }}.zip"
-          solution-folder: "src/solutions/${{ env.SOLUTION_NAME }}"
-          solution-type: Unmanaged
+          solution-file: out/${{ env.SOLUTION_NAME }}.zip
+          solution-folder: src/solutions/${{ env.SOLUTION_NAME }}
+          solution-type: Both
           overwrite-files: true
 
+      - name: Verify and repack solution source
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-file: out/${{ env.SOLUTION_NAME }}_repacked.zip
+          solution-folder: src/solutions/${{ env.SOLUTION_NAME }}
+          solution-type: Both
+          use-unmanaged-file-for-missing-managed: true
+
+      - name: Upload exported solutions
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.SOLUTION_NAME }}-dev-export-${{ github.run_number }}
+          path: out/*.zip
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Commit solution changes
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add src/solutions
+          git add -A src/solutions
 
           if git diff --cached --quiet; then
             echo "No solution changes detected."

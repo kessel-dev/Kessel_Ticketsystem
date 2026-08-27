@@ -1,0 +1,124 @@
+name: Deploy Power Platform Solution
+
+on:
+  workflow_dispatch:
+    inputs:
+      target-environment:
+        description: GitHub Environment and Power Platform target
+        required: true
+        type: choice
+        options:
+          - TEST
+          - PROD
+
+permissions:
+  contents: read
+
+env:
+  SOLUTION_NAME: ${{ vars.PP_SOLUTION_NAME || 'Ticketsystem' }}
+
+jobs:
+  deploy-solution:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment: ${{ inputs.target-environment }}
+    concurrency:
+      group: power-platform-deploy-${{ inputs.target-environment }}
+      cancel-in-progress: false
+    env:
+      TARGET_URL: ${{ vars.PP_ENVIRONMENT_URL }}
+      USER_NAME: ${{ secrets.PP_USERNAME }}
+      USER_PASSWORD: ${{ secrets.PP_PASSWORD }}
+      PP_EV_SP_SITE: ${{ vars.PP_EV_SP_SITE }}
+      PP_EV_SP_LIB_TICKET_ATTACHMENTS: ${{ vars.PP_EV_SP_LIB_TICKET_ATTACHMENTS }}
+      PP_EV_SP_LIST_COMMENTS: ${{ vars.PP_EV_SP_LIST_COMMENTS }}
+      PP_EV_SP_LIST_CONFIG_DROPDOWN: ${{ vars.PP_EV_SP_LIST_CONFIG_DROPDOWN }}
+      PP_EV_SP_LIST_CONFIG_MEMBERS: ${{ vars.PP_EV_SP_LIST_CONFIG_MEMBERS }}
+      PP_EV_SP_LIST_CONFIG_SAVED_VIEWS: ${{ vars.PP_EV_SP_LIST_CONFIG_SAVED_VIEWS }}
+      PP_EV_SP_LIST_CONFIG_TRANSITION_REQUESTS: ${{ vars.PP_EV_SP_LIST_CONFIG_TRANSITION_REQUESTS }}
+      PP_EV_SP_LIST_CONFIG_TRANSITIONS: ${{ vars.PP_EV_SP_LIST_CONFIG_TRANSITIONS }}
+      PP_EV_SP_LIST_CONFIG_TRANSLATIONS: ${{ vars.PP_EV_SP_LIST_CONFIG_TRANSLATIONS }}
+      PP_EV_SP_LIST_NOTIFICATIONS: ${{ vars.PP_EV_SP_LIST_NOTIFICATIONS }}
+      PP_EV_SP_LIST_SERVICE_CATALOG: ${{ vars.PP_EV_SP_LIST_SERVICE_CATALOG }}
+      PP_EV_SP_LIST_SERVICE_REQUEST_ANSWERS: ${{ vars.PP_EV_SP_LIST_SERVICE_REQUEST_ANSWERS }}
+      PP_EV_SP_LIST_SERVICEFIELD_DEFINITIONS: ${{ vars.PP_EV_SP_LIST_SERVICEFIELD_DEFINITIONS }}
+      PP_EV_SP_LIST_SERVICEFIELD_OPTIONS: ${{ vars.PP_EV_SP_LIST_SERVICEFIELD_OPTIONS }}
+      PP_EV_SP_LIST_TICKETS: ${{ vars.PP_EV_SP_LIST_TICKETS }}
+      PP_CONNECTION_OUTLOOK_ID: ${{ vars.PP_CONNECTION_OUTLOOK_ID }}
+      PP_CONNECTION_SHAREPOINT_ID: ${{ vars.PP_CONNECTION_SHAREPOINT_ID }}
+      PP_CONNECTION_TEAMS_ID: ${{ vars.PP_CONNECTION_TEAMS_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Validate deployment authentication
+        shell: bash
+        run: |
+          if [[ -z "${TARGET_URL}" ]]; then
+            echo "PP_ENVIRONMENT_URL is required in the selected GitHub Environment." >&2
+            exit 1
+          fi
+
+          if [[ -z "${USER_NAME}" || -z "${USER_PASSWORD}" ]]; then
+            echo "PP_USERNAME and PP_PASSWORD are required." >&2
+            exit 1
+          fi
+
+          if [[ ! -f "src/solutions/${SOLUTION_NAME}/Other/Solution_managed.xml" ]]; then
+            echo "Managed source is missing. Run the DEV export workflow before deploying." >&2
+            exit 1
+          fi
+
+      - name: Prepare output folder
+        run: mkdir -p out
+
+      - name: Pack managed solution
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-file: out/${{ env.SOLUTION_NAME }}_managed.zip
+          solution-folder: src/solutions/${{ env.SOLUTION_NAME }}
+          solution-type: Managed
+          use-unmanaged-file-for-missing-managed: true
+
+      - name: Create deployment settings template
+        shell: bash
+        run: |
+          pac solution create-settings \
+            --solution-zip "out/${SOLUTION_NAME}_managed.zip" \
+            --settings-file out/deployment-settings.json
+
+      - name: Populate and validate deployment settings
+        run: node scripts/create-deployment-settings.mjs out/deployment-settings.json
+
+      - name: Verify target connection
+        uses: microsoft/powerplatform-actions/who-am-i@v1
+        with:
+          environment-url: ${{ env.TARGET_URL }}
+          user-name: ${{ env.USER_NAME }}
+          password-secret: ${{ env.USER_PASSWORD }}
+
+      - name: Import managed solution
+        uses: microsoft/powerplatform-actions/import-solution@v1
+        with:
+          environment-url: ${{ env.TARGET_URL }}
+          user-name: ${{ env.USER_NAME }}
+          password-secret: ${{ env.USER_PASSWORD }}
+          solution-file: out/${{ env.SOLUTION_NAME }}_managed.zip
+          use-deployment-settings-file: true
+          deployment-settings-file: out/deployment-settings.json
+          activate-plugins: true
+          publish-changes: true
+          run-asynchronously: true
+          max-async-wait-time: 60
+
+      - name: Upload deployed solution artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.SOLUTION_NAME }}-${{ inputs.target-environment }}-${{ github.sha }}
+          path: out/${{ env.SOLUTION_NAME }}_managed.zip
+          if-no-files-found: error
+          retention-days: 30

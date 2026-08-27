@@ -1,0 +1,66 @@
+name: Build Power Platform Solution
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - src/solutions/**
+      - .github/workflows/build-solution.yml
+
+permissions:
+  contents: read
+
+env:
+  SOLUTION_NAME: ${{ vars.PP_SOLUTION_NAME || 'Ticketsystem' }}
+
+jobs:
+  build-solution:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install Power Platform Tools
+        uses: microsoft/powerplatform-actions/actions-install@v1
+
+      - name: Detect managed solution source
+        id: managed-source
+        shell: bash
+        run: |
+          if [[ -f "src/solutions/${SOLUTION_NAME}/Other/Solution_managed.xml" ]]; then
+            echo "available=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+            echo "Managed source is not available yet. Run the DEV export workflow to create the dual source."
+          fi
+
+      - name: Prepare output folder
+        run: mkdir -p out
+
+      - name: Pack unmanaged solution
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-file: out/${{ env.SOLUTION_NAME }}_unmanaged.zip
+          solution-folder: src/solutions/${{ env.SOLUTION_NAME }}
+          solution-type: Unmanaged
+
+      - name: Pack managed solution
+        if: steps.managed-source.outputs.available == 'true'
+        uses: microsoft/powerplatform-actions/pack-solution@v1
+        with:
+          solution-file: out/${{ env.SOLUTION_NAME }}_managed.zip
+          solution-folder: src/solutions/${{ env.SOLUTION_NAME }}
+          solution-type: Managed
+          use-unmanaged-file-for-missing-managed: true
+
+      - name: Upload solution artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.SOLUTION_NAME }}-solutions-${{ github.sha }}
+          path: out/*.zip
+          if-no-files-found: error
+          retention-days: 30

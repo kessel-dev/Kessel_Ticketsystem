@@ -1,11 +1,3 @@
-# ************************************************************************************************
-# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
-# Use the maker portal to create and edit your Power Apps.
-# 
-# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
-# 
-# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
-# ************************************************************************************************
 Screens:
   service_catalog_screen:
     Properties:
@@ -24,7 +16,7 @@ Screens:
         Clear(colServiceDraftAnswers)
     Children:
       - src_root:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -34,7 +26,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - src_header:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(226, 232, 240, 1)
@@ -59,7 +51,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - src_back:
-                      Control: ModernButton@1.0.0
+                      Control: ModernButton
                       Properties:
                         AccessibleLabel: =fxTranslate("BackToSelection", "Zurück zur Auswahl")
                         Appearance: =ButtonAppearance.Secondary
@@ -71,7 +63,7 @@ Screens:
                         Text: =fxTranslate("Zurück", "Zurück")
                         Width: =110
                   - src_header_text:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -81,7 +73,7 @@ Screens:
                         LayoutMinWidth: =0
                       Children:
                         - src_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               AutoHeight: =true
@@ -98,7 +90,7 @@ Screens:
                               Text: =fxTranslate("RequestService", "Service anfordern")
                               Wrap: =false
                   - src_manage_services:
-                      Control: ModernButton@1.0.0
+                      Control: ModernButton
                       Properties:
                         AccessibleLabel: =fxTranslate("ManageServices", "Services verwalten")
                         Appearance: =ButtonAppearance.Secondary
@@ -110,7 +102,7 @@ Screens:
                         Visible: =fxIsAgentExperience
                         Width: =170
                   - src_language_selector:
-                      Control: ModernDropdown@1.0.2
+                      Control: ModernDropdown
                       Properties:
                         AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
                         Default: |-
@@ -124,7 +116,7 @@ Screens:
                         OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
                         Width: =72
             - src_body:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -139,7 +131,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - src_catalog_panel:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -162,7 +154,7 @@ Screens:
                         Width: =360
                       Children:
                         - src_catalog_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(17, 24, 39, 1)
                               FontWeight: =FontWeight.Semibold
@@ -177,7 +169,7 @@ Screens:
                               Text: =fxTranslate("ServiceCatalog", "Servicekatalog")
                               Wrap: =false
                         - src_search:
-                            Control: ModernTextInput@1.1.1
+                            Control: ModernTextInput
                             Properties:
                               AccessibleLabel: =fxTranslate("SearchServices", "Services durchsuchen")
                               AlignInContainer: =AlignInContainer.Stretch
@@ -192,7 +184,7 @@ Screens:
                               Type: =TextInputType.Search
                               Width: =Parent.Width
                         - src_service_gallery:
-                            Control: Gallery@2.15.0
+                            Control: Gallery
                             Variant: Vertical
                             Properties:
                               AccessibleLabel: =fxTranslate("AvailableServices", "Verfügbare Services")
@@ -219,7 +211,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - src_service_card:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =If(ThisItem.ServiceCode = varSelectedCatalogService.ServiceCode, RGBA(129, 76, 169, 1), RGBA(226, 232, 240, 1))
@@ -240,7 +232,7 @@ Screens:
                                     Width: =Parent.TemplateWidth - 8
                                   Children:
                                     - src_service_card_title:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(17, 24, 39, 1)
                                           FontWeight: =FontWeight.Semibold
@@ -255,7 +247,7 @@ Screens:
                                           Text: =ThisItem.Title
                                           Wrap: =false
                                     - src_service_card_category:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(87, 35, 129, 1)
                                           Height: =18
@@ -269,7 +261,7 @@ Screens:
                                           Text: =Coalesce(ThisItem.CategoryCode, fxTranslate("NoCategory", "Ohne Kategorie")) & "  |  " & Coalesce(ThisItem.FullfillmentQueueCode, fxTranslate("NoQueue", "Keine Queue"))
                                           Wrap: =false
                                     - src_service_card_sla:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(82, 94, 115, 1)
                                           Height: =18
@@ -284,7 +276,7 @@ Screens:
                                             ="Vorlage: " & Coalesce(ThisItem.FormTemplate, "Generic") & "  |  Priorität: " & Coalesce(ThisItem.DefaultPriority, "Standard")
                                           Wrap: =false
                               - src_service_card_select:
-                                  Control: Button@0.0.45
+                                  Control: Button
                                   Properties:
                                     AccessibleLabel: =Substitute(fxTranslate("SelectServiceTemplate", "{0} auswählen"), "{0}", ThisItem.Title)
                                     Appearance: ='ButtonCanvas.Appearance'.Transparent
@@ -298,7 +290,7 @@ Screens:
                                     X: =4
                                     Y: =4
                   - src_request_panel:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -319,7 +311,7 @@ Screens:
                         RadiusTopRight: =12
                       Children:
                         - src_selected_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(17, 24, 39, 1)
@@ -335,7 +327,7 @@ Screens:
                               Text: =Coalesce(varSelectedCatalogService.Title, fxTranslate("SelectService", "Service auswählen"))
                               Wrap: =false
                         - src_fields_intro:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(51, 65, 85, 1)
@@ -351,7 +343,7 @@ Screens:
                               Text: =fxTranslate("ServiceSpecificDetails", "Servicespezifische Angaben")
                               Wrap: =false
                         - src_field_gallery:
-                            Control: Gallery@2.15.0
+                            Control: Gallery
                             Variant: Vertical
                             Properties:
                               AccessibleLabel: =fxTranslate("DynamicServiceQuestions", "Dynamische Servicefragen")
@@ -364,7 +356,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - src_field_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(17, 24, 39, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -379,7 +371,7 @@ Screens:
                                     X: =4
                                     Y: =4
                               - src_field_help:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(100, 116, 139, 1)
                                     Height: =20
@@ -393,7 +385,7 @@ Screens:
                                     X: =4
                                     Y: =27
                               - src_field_text:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =ThisItem.Title
                                     Default: =Coalesce(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey).Value, "")
@@ -410,7 +402,7 @@ Screens:
                                     X: =4
                                     Y: =56
                               - src_field_longtext:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =ThisItem.Title
                                     Default: =Coalesce(LookUp(colServiceDraftAnswers, FieldKey = ThisItem.FieldKey).Value, "")
@@ -428,7 +420,7 @@ Screens:
                                     X: =4
                                     Y: =56
                               - src_field_person:
-                                  Control: ModernCombobox@1.1.1
+                                  Control: ModernCombobox
                                   Properties:
                                     AccessibleLabel: =ThisItem.Title
                                     Appearance: =Appearance.Outline
@@ -499,7 +491,7 @@ Screens:
                                     X: =4
                                     Y: =56
                               - src_field_choice:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =ThisItem.Title
                                     Height: =38
@@ -516,7 +508,7 @@ Screens:
                                     X: =4
                                     Y: =56
                         - src_fields_empty:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(100, 116, 139, 1)
@@ -534,7 +526,7 @@ Screens:
                               Visible: =IsEmpty(Filter(ev_sp_list_servicefield_definitions, ServiceCode = varSelectedCatalogService.ServiceCode))
                               Width: =Parent.Width
                         - src_submit_mock:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("ReviewServiceRequest", "Serviceanfrage prüfen")
                               Align: =Align.Center

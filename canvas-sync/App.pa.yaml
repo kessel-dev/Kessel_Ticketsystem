@@ -1,11 +1,3 @@
-# ************************************************************************************************
-# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
-# Use the maker portal to create and edit your Power Apps.
-# 
-# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
-# 
-# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
-# ************************************************************************************************
 App:
   Properties:
     Formulas: |-
@@ -380,7 +372,12 @@ App:
           false
       );
       fxIsCurrentTicketRequester = !IsBlank(varCurrentTicket) && (varCurrentTicket.RequestedBy.Email = fxCurrentUser.Email Or varCurrentTicket.'Erstellt von'.Email = fxCurrentUser.Email);
-      fxIsCurrentTicketAssignee = !IsBlank(varCurrentTicket) && varCurrentTicket.'Zugewiesen an'.Email = fxCurrentUser.Email;
+      fxIsCurrentTicketAssignee = !IsBlank(varCurrentTicket) && !IsBlank(
+          LookUp(
+              varCurrentTicket.'Zugewiesen an',
+              Lower(Email) = Lower(fxCurrentUser.Email)
+          )
+      );
       fxIsCurrentTicketObserver = !IsBlank(varCurrentTicket) && !IsBlank(
           LookUp(
               varCurrentTicket.Beobachter,
@@ -421,6 +418,129 @@ App:
       fxDbdCardRadius = 8;
       fxDbdControlGap = 8;
       fxDbdSectionGap = 14;
+      fxDbdActiveFilters = Filter(
+          Table(
+              {Key: "status", Label: fxTranslate("Status", "Status"), Value: Coalesce(varDbdStatusFilter.Value, "Alle")},
+              {Key: "priority", Label: fxTranslate("Priority", "Priorität"), Value: Coalesce(varDbdPriorityFilter.Value, "Alle")},
+              {Key: "scope", Label: fxTranslate("Scope", "Umfang"), Value: Coalesce(varDbdScopeFilter.Value, "Alle")},
+              {Key: "ticketType", Label: fxTranslate("TicketType", "Tickettyp"), Value: Coalesce(varDbdTicketTypeFilter.Value, "Alle")},
+              {Key: "category", Label: fxTranslate("Category", "Kategorie"), Value: Coalesce(varDbdCategoryFilter.Value, "Alle")},
+              {Key: "department", Label: fxTranslate("Department", "Abteilung"), Value: Coalesce(varDbdDepartmentFilter.Value, "Alle")},
+              {Key: "risk", Label: fxTranslate("Risk", "Risiko"), Value: Coalesce(varDbdRiskFilter.Value, "Alle")},
+              {Key: "requester", Label: fxTranslate("Requester", "Anforderer"), Value: Coalesce(varDbdRequesterFilter.DisplayName, varDbdRequesterFilter.Email, "Alle")}
+          ),
+          !IsBlank(Value) && Value <> "Alle"
+      );
+      fxDbdActiveFilterCount = CountRows(fxDbdActiveFilters);
+      fxFilteredDashboardTickets = With(
+          {
+              accessibleTickets: If(
+                  fxIsAgentExperience,
+                  ev_sp_list_tickets,
+                  Filter(
+                      ev_sp_list_tickets As ticket,
+                      ticket.RequestedBy.Email = fxCurrentUser.Email
+                          || ticket.'Erstellt von'.Email = fxCurrentUser.Email
+                          || !IsBlank(
+                              LookUp(
+                                  ticket.'Zugewiesen an',
+                                  Lower(Email) = Lower(fxCurrentUser.Email)
+                              )
+                          )
+                  )
+              )
+          },
+          With(
+              {
+                  scopeTickets: Switch(
+                      Coalesce(varDbdScopeFilter.Value, "Alle"),
+                      "Mir zugewiesen", Filter(accessibleTickets As ticket, !IsBlank(LookUp(ticket.'Zugewiesen an', Lower(Email) = Lower(fxCurrentUser.Email)))),
+                      "Von mir erstellt", Filter(accessibleTickets, 'Erstellt von'.Email = fxCurrentUser.Email),
+                      "Von mir angefordert", Filter(accessibleTickets, RequestedBy.Email = fxCurrentUser.Email),
+                      accessibleTickets
+                  )
+              },
+              With(
+                  {
+                      searchTickets: If(
+                          IsBlank(Trim(varDbdSearchText)),
+                          scopeTickets,
+                          Filter(
+                              scopeTickets,
+                              StartsWith(Titel, Trim(varDbdSearchText))
+                                  || StartsWith(TicketId, Trim(varDbdSearchText))
+                                  || StartsWith(TicketTitel, Trim(varDbdSearchText))
+                                  || StartsWith(RequestedBy.DisplayName, Trim(varDbdSearchText))
+                          )
+                      )
+                  },
+                  With(
+                      {
+                          requesterTickets: If(
+                              IsBlank(varDbdRequesterFilter.Email),
+                              searchTickets,
+                              Filter(searchTickets, RequestedBy.Email = varDbdRequesterFilter.Email)
+                          )
+                      },
+                      With(
+                          {
+                              statusTickets: If(
+                                  Coalesce(varDbdStatusFilter.Value, "Alle") = "Alle",
+                                  requesterTickets,
+                                  Filter(requesterTickets, Coalesce(Status.Value, StatusINC.Value, "") = varDbdStatusFilter.Value)
+                              )
+                          },
+                          With(
+                              {
+                                  priorityTickets: If(
+                                      !fxIsAgentExperience || Coalesce(varDbdPriorityFilter.Value, "Alle") = "Alle",
+                                      statusTickets,
+                                      Filter(statusTickets, Priority.Value = varDbdPriorityFilter.Value)
+                                  )
+                              },
+                              With(
+                                  {
+                                      typeTickets: If(
+                                          Coalesce(varDbdTicketTypeFilter.Value, "Alle") = "Alle",
+                                          priorityTickets,
+                                          Filter(priorityTickets, TicketType.Value = varDbdTicketTypeFilter.Value)
+                                      )
+                                  },
+                                  With(
+                                      {
+                                          categoryTickets: If(
+                                              !fxIsAgentExperience || Coalesce(varDbdCategoryFilter.Value, "Alle") = "Alle",
+                                              typeTickets,
+                                              Filter(typeTickets, Coalesce(Category.Value, CategoryINC.Value, "") = varDbdCategoryFilter.Value)
+                                          )
+                                      },
+                                      With(
+                                          {
+                                              departmentTickets: If(
+                                                  !fxIsAgentExperience || Coalesce(varDbdDepartmentFilter.Value, "Alle") = "Alle",
+                                                  categoryTickets,
+                                                  Filter(categoryTickets, Department.Value = varDbdDepartmentFilter.Value)
+                                              )
+                                          },
+                                          With(
+                                              {
+                                                  riskTickets: If(
+                                                      !fxIsAgentExperience || Coalesce(varDbdRiskFilter.Value, "Alle") = "Alle",
+                                                      departmentTickets,
+                                                      Filter(departmentTickets, Risk.Value = varDbdRiskFilter.Value)
+                                                  )
+                                              },
+                                              SortByColumns(riskTickets, "ID", SortOrder.Descending)
+                                          )
+                                      )
+                                  )
+                              )
+                          )
+                      )
+                  )
+              )
+          )
+      );
       fxCanManageGlobalSavedViews = Coalesce(
           fxIsAdmin,
           false
@@ -433,23 +553,18 @@ App:
           "Title",
           SortOrder.Ascending
       );
-      fxDbdNotifications = SortByColumns(
-          Filter(
-              ev_sp_list_notifications,
-              RecipientEmail = fxCurrentUser.Email && Author.Email <> fxCurrentUser.Email && (IsRead = false Or Created > Coalesce(
-                  fxCurrentMember.LastNotificationRead,
-                  DateAdd(
-                      Today(),
-                      -365,
-                      TimeUnit.Days
-                  )
-              ))
-          ),
-          "ID",
-          SortOrder.Descending
-      );
+       fxDbdNotifications = SortByColumns(
+           Filter(
+               ev_sp_list_notifications,
+               RecipientEmail = fxCurrentUser.Email && IsRead = false
+           ),
+           "Created",
+           SortOrder.Descending
+       );
     OnStart: |-
       =Set(varEmbed, Param("embed") = "1");
+      Set(varIncidentValidationAttempted, false);
+      Set(varTicketValidationAttempted, false);
       Set(varCurrentLanguage, If(IsBlank(varCurrentLanguage) Or varCurrentLanguage = "", "de", varCurrentLanguage));
        ClearCollect(colTranslations, ev_sp_list_config_translations);
        Refresh(ev_sp_list_config_members);
@@ -491,7 +606,7 @@ App:
               )
           },
           If(
-              !IsBlank(Param("ticketId")) && !IsBlank(deepLinkTicket) && (fxIsAgentExperience || deepLinkTicket.RequestedBy.Email = fxCurrentUser.Email || deepLinkTicket.'Erstellt von'.Email = fxCurrentUser.Email || deepLinkTicket.'Zugewiesen an'.Email = fxCurrentUser.Email || !IsBlank(
+              !IsBlank(Param("ticketId")) && !IsBlank(deepLinkTicket) && (fxIsAgentExperience || deepLinkTicket.RequestedBy.Email = fxCurrentUser.Email || deepLinkTicket.'Erstellt von'.Email = fxCurrentUser.Email || !IsBlank(LookUp(deepLinkTicket.'Zugewiesen an', Lower(Email) = Lower(fxCurrentUser.Email))) || !IsBlank(
                   LookUp(
                       deepLinkTicket.Beobachter,
                       Email = fxCurrentUser.Email
@@ -510,10 +625,10 @@ App:
                   service_catalog_screen,
                   "service-wizard",
                   service_wizard_screen,
-                  "dashboard",
-                  dashboard_screen,
-                  "ai-handoff",
-                  dashboard_screen
+                   "dashboard",
+                   dashboard_screen_v2,
+                   "ai-handoff",
+                   dashboard_screen_v2
               )
           )
       )

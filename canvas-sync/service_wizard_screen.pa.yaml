@@ -1,11 +1,3 @@
-# ************************************************************************************************
-# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
-# Use the maker portal to create and edit your Power Apps.
-# 
-# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
-# 
-# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
-# ************************************************************************************************
 Screens:
   service_wizard_screen:
     Properties:
@@ -24,7 +16,7 @@ Screens:
         Clear(colServiceWizardOptions)
     Children:
       - sws_root:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -34,7 +26,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - sws_header:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(226, 232, 240, 1)
@@ -59,7 +51,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - sws_header_back:
-                      Control: ModernButton@1.0.0
+                      Control: ModernButton
                       Properties:
                         AccessibleLabel: =fxTranslate("BackToServiceCatalog", "Zurück zum Servicekatalog")
                         Appearance: =ButtonAppearance.Secondary
@@ -71,7 +63,7 @@ Screens:
                         Text: =fxTranslate("Back", "Zurück")
                         Width: =128
                   - sws_header_title:
-                      Control: ModernText@1.0.0
+                      Control: ModernText
                       Properties:
                         AutoHeight: =true
                         Color: =RGBA(17, 24, 39, 1)
@@ -88,7 +80,7 @@ Screens:
                         Text: =fxTranslate("ServiceTeam", "Service Team")
                         Wrap: =false
                   - sws_language_selector:
-                      Control: ModernDropdown@1.0.2
+                      Control: ModernDropdown
                       Properties:
                         AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
                         Default: |-
@@ -102,7 +94,7 @@ Screens:
                         OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
                         Width: =72
                   - sws_header_cancel:
-                      Control: ModernButton@1.0.0
+                      Control: ModernButton
                       Properties:
                         AccessibleLabel: =fxTranslate("CancelServiceWizard", "Service-Erstellung abbrechen")
                         Appearance: =ButtonAppearance.Secondary
@@ -113,7 +105,7 @@ Screens:
                         Text: =fxTranslate("Cancel", "Abbrechen")
                         Width: =110
             - sws_agent_content:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -130,7 +122,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - sws_intro:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -143,7 +135,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - sws_intro_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               AutoHeight: =true
@@ -160,7 +152,7 @@ Screens:
                               Text: =fxTranslate("CreateNewService", "Neuen Service erstellen")
                               Wrap: =false
                         - sws_intro_detail:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(82, 94, 115, 1)
@@ -175,7 +167,7 @@ Screens:
                               Text: =fxTranslate("ServiceWizardIntro", "Konfigurieren Sie einen neuen Service, seine Felder und Auswahlwerte.")
                               Wrap: =false
                   - sws_stepper:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -200,7 +192,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - sws_step_1_indicator:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =If(varServiceWizardStep = 1, RGBA(255, 255, 255, 1), RGBA(87, 35, 129, 1))
@@ -221,7 +213,7 @@ Screens:
                               Text: ="1  " & fxTranslate("ServiceWizardStepDetails", "Basisdaten")
                               Wrap: =false
                         - sws_step_2_indicator:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =If(varServiceWizardStep = 2, RGBA(255, 255, 255, 1), RGBA(87, 35, 129, 1))
@@ -242,7 +234,7 @@ Screens:
                               Text: ="2  " & fxTranslate("ServiceWizardStepFields", "Felder")
                               Wrap: =false
                         - sws_step_3_indicator:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =If(varServiceWizardStep = 3, RGBA(255, 255, 255, 1), RGBA(87, 35, 129, 1))
@@ -263,7 +255,7 @@ Screens:
                               Text: ="3  " & fxTranslate("ServiceWizardStepOptions", "Auswahlwerte")
                               Wrap: =false
                         - sws_step_4_indicator:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =If(varServiceWizardStep = 4, RGBA(255, 255, 255, 1), RGBA(87, 35, 129, 1))
@@ -284,7 +276,7 @@ Screens:
                               Text: ="4  " & fxTranslate("ServiceWizardStepReview", "Prüfen & Speichern")
                               Wrap: =false
                   - sws_step_1:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -307,7 +299,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - sws_step_1_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(17, 24, 39, 1)
                               FontWeight: =FontWeight.Bold
@@ -322,7 +314,7 @@ Screens:
                               Text: =fxTranslate("ServiceDetails", "Service-Details")
                               Wrap: =false
                         - sws_title_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -336,7 +328,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_title_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -352,7 +344,7 @@ Screens:
                                     Width: =210
                                     Wrap: =false
                               - sws_title:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ServiceTitleRequired", "Service-Titel *")
                                     Appearance: =Appearance.Outline
@@ -362,7 +354,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Placeholder: =fxTranslate("ServiceTitlePlaceholder", "Service-Titel eingeben...")
                         - sws_code_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -376,7 +368,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_code_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -392,7 +384,7 @@ Screens:
                                     Width: =210
                                     Wrap: =false
                               - sws_code:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ServiceCodeRequired", "Service-Code *")
                                     Appearance: =Appearance.Outline
@@ -402,7 +394,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Placeholder: =fxTranslate("ServiceCodePlaceholder", "z. B. SOFTWARE_REQUEST")
                         - sws_category_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -416,7 +408,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_category_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -432,7 +424,7 @@ Screens:
                                     Width: =210
                                     Wrap: =false
                               - sws_category:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ServiceCategory", "Kategorie")
                                     Appearance: =Appearance.Outline
@@ -442,7 +434,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Placeholder: =fxTranslate("ServiceCategoryPlaceholder", "Kategorie eingeben...")
                         - sws_description_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -455,7 +447,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_description_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -471,7 +463,7 @@ Screens:
                                     Width: =210
                                     Wrap: =false
                               - sws_description:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ServiceDescription", "Beschreibung")
                                     Appearance: =Appearance.Outline
@@ -482,7 +474,7 @@ Screens:
                                     Placeholder: =fxTranslate("ServiceDescriptionPlaceholder", "Service und Zielgruppe beschreiben...")
                                     Type: =TextInputType.Multiline
                         - sws_queue_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -496,7 +488,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_queue_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -512,7 +504,7 @@ Screens:
                                     Width: =210
                                     Wrap: =false
                               - sws_queue:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("FulfillmentQueueRequired", "Fulfillment-Queue *")
                                     Appearance: =Appearance.Outline
@@ -522,7 +514,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Placeholder: =fxTranslate("FulfillmentQueuePlaceholder", "z. B. IT-SERVICE-DESK")
                         - sws_priority_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -536,7 +528,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_priority_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -552,7 +544,7 @@ Screens:
                                     Width: =210
                                     Wrap: =false
                               - sws_priority:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("DefaultServicePriority", "Standardpriorität")
                                     Default: |-
@@ -565,7 +557,7 @@ Screens:
                                     LayoutMinHeight: =0
                                     LayoutMinWidth: =0
                         - sws_template_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -579,7 +571,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_template_label:
-                                  Control: ModernText@1.0.0
+                                  Control: ModernText
                                   Properties:
                                     Color: =RGBA(51, 65, 85, 1)
                                     FontWeight: =FontWeight.Semibold
@@ -595,7 +587,7 @@ Screens:
                                     Width: =210
                                     Wrap: =false
                               - sws_template:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ServiceTemplate", "Vorlage")
                                     Default: |-
@@ -609,7 +601,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     OnChange: =Set(varWizardTemplate, Self.Selected.Value)
                         - sws_apply_template_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -623,7 +615,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_apply_template:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ApplyServiceTemplate", "Vorlage anwenden")
                                     BasePaletteColor: =RGBA(87, 35, 129, 1)
@@ -651,7 +643,7 @@ Screens:
                                     Text: =fxTranslate("ApplyServiceTemplate", "Vorlage anwenden")
                                     Width: =180
                   - sws_step_2:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -674,7 +666,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - sws_fields_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(17, 24, 39, 1)
                               FontWeight: =FontWeight.Bold
@@ -689,7 +681,7 @@ Screens:
                               Text: =fxTranslate("ServiceFieldDefinitions", "Service-Felder")
                               Wrap: =false
                         - sws_fields_intro:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AlignInContainer: =AlignInContainer.Stretch
                               Color: =RGBA(82, 94, 115, 1)
@@ -703,7 +695,7 @@ Screens:
                               Size: =13
                               Text: =fxTranslate("ServiceFieldDefinitionsIntro", "Fügen Sie die Informationen hinzu, die beim Anfordern dieses Service abgefragt werden.")
                         - sws_fields_gallery:
-                            Control: Gallery@2.15.0
+                            Control: Gallery
                             Variant: Vertical
                             Properties:
                               AccessibleLabel: =fxTranslate("ConfiguredServiceFields", "Konfigurierte Service-Felder")
@@ -717,7 +709,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_field_item:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(226, 232, 240, 1)
@@ -741,7 +733,7 @@ Screens:
                                     Y: =4
                                   Children:
                                     - sws_field_item_text:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(17, 24, 39, 1)
                                           FillPortions: =1
@@ -757,7 +749,7 @@ Screens:
                                           Text: =ThisItem.Title & "  |  " & ThisItem.FieldKey & "  |  " & Switch(ThisItem.FieldType, "Text", fxTranslate("ServiceFieldTypeText", "Text"), "LongText", fxTranslate("ServiceFieldTypeLongText", "Langer Text"), "Choice", fxTranslate("ServiceFieldTypeChoice", "Auswahl"), "Person", fxTranslate("ServiceFieldTypePerson", "Person"), ThisItem.FieldType)
                                           Wrap: =false
                                     - sws_field_remove:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AccessibleLabel: =Substitute(fxTranslate("RemoveServiceFieldTemplate", "Feld {0} entfernen"), "{0}", ThisItem.Title)
                                           Appearance: =ButtonAppearance.Secondary
@@ -771,7 +763,7 @@ Screens:
                                           Text: =fxTranslate("Remove", "Entfernen")
                                           Width: =116
                         - sws_fields_empty:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(100, 116, 139, 1)
@@ -788,7 +780,7 @@ Screens:
                               Visible: =IsEmpty(colServiceWizardFields)
                               Width: =Parent.Width
                         - sws_add_field_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -801,7 +793,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_field_label_input:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ServiceFieldLabel", "Feldbezeichnung")
                                     Appearance: =Appearance.Outline
@@ -811,7 +803,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Placeholder: =fxTranslate("ServiceFieldLabel", "Feldbezeichnung")
                               - sws_field_key_input:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ServiceFieldKey", "Feldschlüssel")
                                     Appearance: =Appearance.Outline
@@ -821,7 +813,7 @@ Screens:
                                     Placeholder: =fxTranslate("ServiceFieldKeyPlaceholder", "FELDSCHLUESSEL")
                                     Width: =190
                               - sws_field_type_input:
-                                  Control: ModernDropdown@1.0.2
+                                  Control: ModernDropdown
                                   Properties:
                                     AccessibleLabel: =fxTranslate("ServiceFieldType", "Feldtyp")
                                     Default: |-
@@ -834,7 +826,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Width: =130
                               - sws_add_field:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("AddServiceField", "Feld hinzufügen")
                                     BasePaletteColor: =RGBA(87, 35, 129, 1)
@@ -853,7 +845,7 @@ Screens:
                                     Text: =fxTranslate("Add", "Hinzufügen")
                                     Width: =120
                   - sws_step_3:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -877,7 +869,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - sws_options_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(17, 24, 39, 1)
                               FontWeight: =FontWeight.Bold
@@ -892,7 +884,7 @@ Screens:
                               Text: =fxTranslate("ChoiceFieldOptions", "Auswahlwerte")
                               Wrap: =false
                         - sws_options_intro:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(82, 94, 115, 1)
                               Height: =20
@@ -905,7 +897,7 @@ Screens:
                               Size: =13
                               Text: =fxTranslate("ChoiceFieldOptionsIntro", "Konfigurieren Sie die Werte für Choice-Felder.")
                         - sws_choice_field:
-                            Control: ModernDropdown@1.0.2
+                            Control: ModernDropdown
                             Properties:
                               AccessibleLabel: =fxTranslate("SelectChoiceField", "Choice-Feld auswählen")
                               Height: =38
@@ -917,7 +909,7 @@ Screens:
                               Visible: =!IsEmpty(Filter(colServiceWizardFields, FieldType = "Choice"))
                               Width: =Parent.Width
                         - sws_no_choice_fields:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(100, 116, 139, 1)
@@ -934,7 +926,7 @@ Screens:
                               Visible: =IsEmpty(Filter(colServiceWizardFields, FieldType = "Choice"))
                               Width: =Parent.Width
                         - sws_options_gallery:
-                            Control: Gallery@2.15.0
+                            Control: Gallery
                             Variant: Vertical
                             Properties:
                               AccessibleLabel: =fxTranslate("ConfiguredChoiceOptions", "Konfigurierte Auswahlwerte")
@@ -949,7 +941,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_option_item:
-                                  Control: GroupContainer@1.5.0
+                                  Control: GroupContainer
                                   Variant: AutoLayout
                                   Properties:
                                     BorderColor: =RGBA(226, 232, 240, 1)
@@ -973,7 +965,7 @@ Screens:
                                     Y: =4
                                   Children:
                                     - sws_option_item_text:
-                                        Control: ModernText@1.0.0
+                                        Control: ModernText
                                         Properties:
                                           Color: =RGBA(17, 24, 39, 1)
                                           FillPortions: =1
@@ -989,7 +981,7 @@ Screens:
                                           Text: =ThisItem.Title & "  |  " & ThisItem.Value
                                           Wrap: =false
                                     - sws_option_remove:
-                                        Control: ModernButton@1.0.0
+                                        Control: ModernButton
                                         Properties:
                                           AccessibleLabel: =Substitute(fxTranslate("RemoveOptionTemplate", "Auswahlwert {0} entfernen"), "{0}", ThisItem.Title)
                                           Appearance: =ButtonAppearance.Secondary
@@ -1000,7 +992,7 @@ Screens:
                                           Text: =fxTranslate("Remove", "Entfernen")
                                           Width: =116
                         - sws_add_option_row:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -1014,7 +1006,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_option_label_input:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("OptionLabel", "Bezeichnung")
                                     Appearance: =Appearance.Outline
@@ -1024,7 +1016,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Placeholder: =fxTranslate("OptionLabel", "Bezeichnung")
                               - sws_option_value_input:
-                                  Control: ModernTextInput@1.1.1
+                                  Control: ModernTextInput
                                   Properties:
                                     AccessibleLabel: =fxTranslate("OptionValue", "Wert")
                                     Appearance: =Appearance.Outline
@@ -1034,7 +1026,7 @@ Screens:
                                     LayoutMinWidth: =0
                                     Placeholder: =fxTranslate("OptionValue", "Wert")
                               - sws_add_option:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("AddOption", "Auswahlwert hinzufügen")
                                     BasePaletteColor: =RGBA(87, 35, 129, 1)
@@ -1053,7 +1045,7 @@ Screens:
                                     Text: =fxTranslate("Add", "Hinzufügen")
                                     Width: =120
                   - sws_step_4:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -1077,7 +1069,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - sws_review_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(17, 24, 39, 1)
                               FontWeight: =FontWeight.Bold
@@ -1092,7 +1084,7 @@ Screens:
                               Text: =fxTranslate("ReviewNewService", "Neuen Service prüfen")
                               Wrap: =false
                         - sws_review_service:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(17, 24, 39, 1)
                               FontWeight: =FontWeight.Semibold
@@ -1107,7 +1099,7 @@ Screens:
                               Text: =Coalesce(Trim(sws_title.Text), fxTranslate("UntitledService", "Unbenannter Service"))
                               Wrap: =false
                         - sws_review_code:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(82, 94, 115, 1)
                               Height: =20
@@ -1121,7 +1113,7 @@ Screens:
                               Text: |-
                                 =fxTranslate("ServiceCode", "Service-Code") & ": " & Upper(Trim(sws_code.Text))
                         - sws_review_routing:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(82, 94, 115, 1)
                               Height: =20
@@ -1135,7 +1127,7 @@ Screens:
                               Text: |-
                                 =fxTranslate("ServiceRouting", "Routing") & ": " & Coalesce(Trim(sws_queue.Text), fxTranslate("NoQueue", "Keine Queue"))
                         - sws_review_fields:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(82, 94, 115, 1)
                               Height: =20
@@ -1148,7 +1140,7 @@ Screens:
                               Size: =13
                               Text: =Substitute(fxTranslate("ServiceFieldCount", "{0} Service-Felder"), "{0}", CountRows(colServiceWizardFields))
                         - sws_review_options:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(82, 94, 115, 1)
                               Height: =20
@@ -1161,7 +1153,7 @@ Screens:
                               Size: =13
                               Text: =Substitute(fxTranslate("ServiceOptionCount", "{0} Auswahlwerte"), "{0}", CountRows(colServiceWizardOptions))
                         - sws_review_status:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =If(varWizardPublished, RGBA(22, 101, 52, 1), RGBA(87, 35, 129, 1))
                               Fill: =If(varWizardPublished, RGBA(240, 253, 244, 1), RGBA(246, 240, 252, 1))
@@ -1180,7 +1172,7 @@ Screens:
                                 =If(varWizardPublished, fxTranslate("ServiceStatusPublished", "Status: Veröffentlicht"), fxTranslate("ServiceStatusDraft", "Status: Entwurf"))
                               Width: =190
                         - sws_save_actions:
-                            Control: GroupContainer@1.5.0
+                            Control: GroupContainer
                             Variant: AutoLayout
                             Properties:
                               DropShadow: =DropShadow.None
@@ -1193,7 +1185,7 @@ Screens:
                               Width: =Parent.Width
                             Children:
                               - sws_save_draft:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("SaveServiceAsDraft", "Service als Entwurf speichern")
                                     Appearance: =ButtonAppearance.Secondary
@@ -1228,7 +1220,7 @@ Screens:
                                     Text: =fxTranslate("SaveAsDraft", "Als Entwurf speichern")
                                     Width: =190
                               - sws_publish:
-                                  Control: ModernButton@1.0.0
+                                  Control: ModernButton
                                   Properties:
                                     AccessibleLabel: =fxTranslate("PublishService", "Service veröffentlichen")
                                     BasePaletteColor: =RGBA(87, 35, 129, 1)
@@ -1263,7 +1255,7 @@ Screens:
                                     Text: =fxTranslate("Publish", "Veröffentlichen")
                                     Width: =150
                   - sws_navigation:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -1277,7 +1269,7 @@ Screens:
                         Width: =Parent.Width
                       Children:
                         - sws_previous:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("PreviousWizardStep", "Vorheriger Schritt")
                               Appearance: =ButtonAppearance.Secondary
@@ -1289,7 +1281,7 @@ Screens:
                               Visible: =varServiceWizardStep > 1
                               Width: =110
                         - sws_next:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               AccessibleLabel: =fxTranslate("NextWizardStep", "Nächster Schritt")
                               BasePaletteColor: =RGBA(87, 35, 129, 1)
@@ -1302,7 +1294,7 @@ Screens:
                               Visible: =varServiceWizardStep < 4
                               Width: =110
             - sws_access_denied:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -1319,7 +1311,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - sws_access_denied_card:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         BorderColor: =RGBA(226, 232, 240, 1)
@@ -1343,7 +1335,7 @@ Screens:
                         Width: =540
                       Children:
                         - sws_access_denied_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(87, 35, 129, 1)
                               FontWeight: =FontWeight.Bold
@@ -1358,7 +1350,7 @@ Screens:
                               Text: =fxTranslate("ServiceTeamAccessDeniedTitle", "Kein Zugriff auf das Service Team")
                               Wrap: =false
                         - sws_access_denied_message:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(82, 94, 115, 1)
                               Height: =44

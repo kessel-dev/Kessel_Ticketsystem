@@ -1,11 +1,3 @@
-# ************************************************************************************************
-# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
-# Use the maker portal to create and edit your Power Apps.
-# 
-# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
-# 
-# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
-# ************************************************************************************************
 Screens:
   request_type_screen:
     Properties:
@@ -16,7 +8,7 @@ Screens:
         Set(varSelectedService, "")
     Children:
       - rts_root:
-          Control: GroupContainer@1.5.0
+          Control: GroupContainer
           Variant: AutoLayout
           Properties:
             DropShadow: =DropShadow.None
@@ -26,7 +18,7 @@ Screens:
             Width: =Parent.Width
           Children:
             - dbd_topbar_1:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -42,7 +34,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - dbd_brand_container_1:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -58,7 +50,7 @@ Screens:
                         Width: =fxDbdSidebarWidth + (fxDbdPagePadding * 2)
                       Children:
                         - dbd_logo_1:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(255, 255, 255, 1)
@@ -66,6 +58,7 @@ Screens:
                               FontWeight: =FontWeight.Semibold
                               LayoutMinHeight: =0
                               LayoutMinWidth: =0
+                              OnSelect: =Navigate(dashboard_screen_v2)
                               PaddingBottom: =0
                               PaddingLeft: =0
                               PaddingRight: =0
@@ -78,7 +71,7 @@ Screens:
                               Text: ="KESSEL"
                               Width: =32
                         - dbd_topbar_title_1:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(18, 31, 52, 1)
                               FillPortions: =1
@@ -93,7 +86,7 @@ Screens:
                               Text: =fxTranslate("ItServicePortal", "IT Service Portal")
                               Wrap: =false
                   - dbd_header_spacer_1:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: ManualLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -101,7 +94,7 @@ Screens:
                         LayoutMinHeight: =0
                         LayoutMinWidth: =0
                   - dbd_header_actions_1:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -114,10 +107,20 @@ Screens:
                         LayoutMinHeight: =0
                         LayoutMinWidth: =0
                         PaddingRight: =fxDbdPagePadding
-                        Width: =236
+                        Width: =420
                       Children:
+                        - rts_overview_button:
+                            Control: ModernButton
+                            Properties:
+                              AccessibleLabel: =fxTranslate("BackToOverview", "Zurück zur Übersicht")
+                              Appearance: =ButtonAppearance.Secondary
+                              Height: =36
+                              Icon: ="Home"
+                              OnSelect: =Navigate(dashboard_screen_v2, ScreenTransition.Fade)
+                              Text: =fxTranslate("BackToOverview", "Zurück zur Übersicht")
+                              Width: =190
                         - rts_language_selector:
-                            Control: ModernDropdown@1.0.2
+                            Control: ModernDropdown
                             Properties:
                               AccessibleLabel: =fxTranslate("SelectLanguage", "Sprache auswählen")
                               Default: |-
@@ -131,7 +134,7 @@ Screens:
                               OnChange: =Set(varCurrentLanguage, Coalesce(Self.Selected.Code, "de"))
                               Width: =72
                   - dbd_user_menu_1:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -151,7 +154,7 @@ Screens:
                         Width: =132
                       Children:
                         - dbd_avatar_1:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Align: =Align.Center
                               Color: =RGBA(87, 35, 129, 1)
@@ -171,7 +174,7 @@ Screens:
                               Text: =Upper(Left(fxCurrentUser.FullName, 2))
                               Width: =32
                         - dbd_user_name_1:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               Color: =RGBA(35, 39, 47, 1)
                               FillPortions: =1
@@ -188,7 +191,7 @@ Screens:
                               Width: =58
                               Wrap: =false
             - rts_body:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   DropShadow: =DropShadow.None
@@ -204,7 +207,7 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - rts_intro:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -218,7 +221,7 @@ Screens:
                         Width: =Min(Parent.Width - 64, 1180)
                       Children:
                         - rts_intro_title:
-                            Control: ModernText@1.0.0
+                            Control: ModernText
                             Properties:
                               AutoHeight: =true
                               Color: =RGBA(17, 24, 39, 1)
@@ -228,7 +231,7 @@ Screens:
                               Text: =fxTranslate("HowCanWeHelp", "Wobei können wir helfen?")
                               Width: =Parent.Width - Parent.PaddingLeft - Parent.PaddingRight
                   - rts_choice_shell:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -243,7 +246,7 @@ Screens:
                         Width: =Min(Parent.Width - 64, 1180)
                       Children:
                         - rts_incident_card:
-                            Control: ModernCard@1.3.0
+                            Control: ModernCard
                             Properties:
                               AccessibleLabel: =fxTranslate("CreateIncident", "Incident erstellen")
                               AlignInContainer: =AlignInContainer.Stretch
@@ -258,7 +261,14 @@ Screens:
                               Image: ='1147337301'
                               LayoutMinHeight: =0
                               LayoutMinWidth: =0
-                              OnSelect: =Set(varRequestType, "Incident")
+                              OnSelect: |-
+                                =If(
+                                    varLastRequestTypeClick = "Incident" && DateDiff(varLastRequestTypeClickAt, Now(), TimeUnit.Milliseconds) < 700,
+                                    Navigate(incident_screen, ScreenTransition.CoverRight),
+                                    Set(varRequestType, "Incident");
+                                    Set(varLastRequestTypeClick, "Incident");
+                                    Set(varLastRequestTypeClickAt, Now())
+                                )
                               Subtitle: =If(varRequestType = "Incident", fxTranslate("Selected", "AUSGEWÄHLT"), fxTranslate("IncidentOrError", "STÖRUNG ODER FEHLER"))
                               SubtitleColor: =If(varRequestType = "Incident", RGBA(236, 219, 249, 1), RGBA(87, 35, 129, 1))
                               SubtitleSize: =12
@@ -266,7 +276,7 @@ Screens:
                               TitleColor: =If(varRequestType = "Incident", RGBA(255, 255, 255, 1), RGBA(17, 24, 39, 1))
                               TitleSize: =20
                         - rts_change_card:
-                            Control: ModernCard@1.3.0
+                            Control: ModernCard
                             Properties:
                               AccessibleLabel: =fxTranslate("CreateChange", "Change erstellen")
                               AlignInContainer: =AlignInContainer.Stretch
@@ -281,7 +291,14 @@ Screens:
                               Image: ='901627692'
                               LayoutMinHeight: =0
                               LayoutMinWidth: =0
-                              OnSelect: =Set(varRequestType, "Change")
+                              OnSelect: |-
+                                =If(
+                                    varLastRequestTypeClick = "Change" && DateDiff(varLastRequestTypeClickAt, Now(), TimeUnit.Milliseconds) < 700,
+                                    Navigate(ticket_screen, ScreenTransition.CoverRight),
+                                    Set(varRequestType, "Change");
+                                    Set(varLastRequestTypeClick, "Change");
+                                    Set(varLastRequestTypeClickAt, Now())
+                                )
                               Subtitle: =If(varRequestType = "Change", fxTranslate("Selected", "AUSGEWÄHLT"), fxTranslate("PlannedChange", "GEPLANTE ÄNDERUNG"))
                               SubtitleColor: =If(varRequestType = "Change", RGBA(236, 219, 249, 1), RGBA(87, 35, 129, 1))
                               SubtitleSize: =12
@@ -289,7 +306,7 @@ Screens:
                               TitleColor: =If(varRequestType = "Change", RGBA(255, 255, 255, 1), RGBA(17, 24, 39, 1))
                               TitleSize: =20
                         - rts_service_card:
-                            Control: ModernCard@1.3.0
+                            Control: ModernCard
                             Properties:
                               AccessibleLabel: =fxTranslate("OpenServiceCatalog", "Servicekatalog öffnen")
                               AlignInContainer: =AlignInContainer.Stretch
@@ -313,7 +330,7 @@ Screens:
                               TitleColor: =RGBA(17, 24, 39, 1)
                               TitleSize: =20
             - rts_footer:
-                Control: GroupContainer@1.5.0
+                Control: GroupContainer
                 Variant: AutoLayout
                 Properties:
                   BorderColor: =RGBA(229, 231, 235, 1)
@@ -330,16 +347,16 @@ Screens:
                   Width: =Parent.Width
                 Children:
                   - rts_back_button:
-                      Control: ModernButton@1.0.0
+                      Control: ModernButton
                       Properties:
                         Appearance: =ButtonAppearance.Secondary
                         Height: =40
                         Icon: ="ChevronLeft"
-                        OnSelect: =Navigate(dashboard_screen, ScreenTransition.CoverRight)
-                        Text: =fxTranslate("Zurück", "Zurück")
-                        Width: =120
+                        OnSelect: =Navigate(dashboard_screen_v2, ScreenTransition.Fade)
+                        Text: =fxTranslate("BackToOverview", "Zurück zur Übersicht")
+                        Width: =190
                   - rts_footer_actions:
-                      Control: GroupContainer@1.5.0
+                      Control: GroupContainer
                       Variant: AutoLayout
                       Properties:
                         DropShadow: =DropShadow.None
@@ -348,19 +365,12 @@ Screens:
                         LayoutAlignItems: =LayoutAlignItems.Center
                         LayoutDirection: =LayoutDirection.Horizontal
                         LayoutGap: =12
+                        LayoutJustifyContent: =LayoutJustifyContent.End
                         LayoutMinHeight: =40
                         Width: =300
                       Children:
-                        - rts_cancel_button:
-                            Control: ModernButton@1.0.0
-                            Properties:
-                              Appearance: =ButtonAppearance.Secondary
-                              Height: =40
-                              OnSelect: =Navigate(dashboard_screen, ScreenTransition.CoverRight)
-                              Text: =fxTranslate("Cancel", "Abbrechen")
-                              Width: =120
                         - rts_next_button:
-                            Control: ModernButton@1.0.0
+                            Control: ModernButton
                             Properties:
                               Height: =40
                               Icon: ="ChevronRight"
