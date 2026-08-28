@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ImportExportXml version="9.2.26073.158" SolutionPackageVersion="9.2" languagecode="1031" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26073.158" OrganizationSchemaType="Full" CRMServerServiceabilityVersion="9.2.26074.00157">
+<ImportExportXml version="9.2.26073.158" SolutionPackageVersion="9.2" languagecode="1031" generatedBy="CrmLive" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" OrganizationVersion="9.2.26073.158" OrganizationSchemaType="Full" CRMServerServiceabilityVersion="9.2.26074.00160">
   <SolutionManifest>
     <UniqueName>Ticketsystem</UniqueName>
     <LocalizedNames>
@@ -7,7 +7,7 @@
     </LocalizedNames>
     <Descriptions />
     <Version>1.0.0.6</Version>
-    <Managed>0</Managed>
+    <Managed>2</Managed>
     <Publisher>
       <UniqueName>KESSEL_SE_Co_KG</UniqueName>
       <LocalizedNames>
